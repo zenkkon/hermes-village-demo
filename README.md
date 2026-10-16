@@ -260,3 +260,16 @@ sandfarben 0xc9ae7e, Breite 0.95), Segment für Segment entlang der Kurve gelegt
 mit kleinen Steinchen (0x9a988f) am Rand und fünf Querwegen zwischen
 Nachbarwegen. Kopfsteinpflaster-Wege und Platz unverändert. Review rv17: Tag +
 Nacht Headless, 0 JS-Fehler, dbg normal (robots 5, proto true).
+## M20 · Stufe 12 / Beta 16 (16.10.2026 ~22:18, Phase 22:00)
+Optik-Gap-Punkt 2: Bach + Wasserfall + Bruecke. Der bisher losgeloeste
+Wasserfall-Box ist an die Suedish-Ost-Kante umgesetzt (17.9, -2.4, 10.55,
+radial ausgerichtet) und wird jetzt vom Bach gespeist: geschwungener
+Bachlauf vom Teich (12.6, 7.4) zur Kante, 14 Segmente Wasser (0x4a90c2)
+mit dunklen Uferstreifen (0x6b4f33), Weisswasser-Lippe, Gischt-Ellipse
+und 3 animierte Ripples im Meer (eigener __extraTick-Chain). Holzbruecke
+quer zum Bach (Deck, zwei Rails, vier Pfosten, zwei Traeger, matWall-Holz).
+Neuer Hook __wasser (stream/fall/bridge/segs). Changelog-Chip auf v1.2,
+Eintraege Stufe 09/10 und 11 ergaenzt. Review rv18 (7 Winkel): Tag, Nacht
+und 17:00-Nachmittagslicht, 0 JS-Fehler, dbg normal; Bach + Bruecke in
+rv18_wasser_f/g klar sichtbar, Wasserfall-Sturz aus Standardwinkeln dezent
+(Feinschliff-Kandidat: prominenter machen).

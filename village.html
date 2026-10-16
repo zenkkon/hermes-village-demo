@@ -117,11 +117,27 @@ const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
   new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.25, metalness: 0.15}));
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
 scene.add(water);
-// Wasserfall ueber die Kante
-const fall = new THREE.Mesh(new THREE.BoxGeometry(1.5, 5.4, 0.16),
+// Wasserfall ueber die Kante (Ausgang des Bachs, radial ausgerichtet)
+const fall = new THREE.Mesh(new THREE.BoxGeometry(1.5, 5.9, 0.16),
   new THREE.MeshStandardMaterial({color: 0xbfe4f5, transparent: true, opacity: 0.85, roughness: 0.05}));
-fall.position.set(-14.6, -2.6, 12.2); fall.rotation.y = Math.PI/2.2;
+fall.position.set(17.9, -2.4, 10.55); fall.rotation.y = Math.atan2(0.86, 0.505);
 scene.add(fall);
+const fallLip = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.45, 0.2),
+  new THREE.MeshStandardMaterial({color: 0xe8f6ff, transparent: true, opacity: 0.9, roughness: 0.1}));
+fallLip.position.set(17.62, 0.42, 10.32); fallLip.rotation.y = Math.atan2(0.86, 0.505);
+scene.add(fallLip);
+const splash = new THREE.Mesh(new THREE.CircleGeometry(1.15, 14),
+  new THREE.MeshStandardMaterial({color: 0xdff2ff, transparent: true, opacity: 0.75, roughness: 0.1}));
+splash.rotation.x = -Math.PI/2; splash.position.set(18.35, -5.32, 10.8);
+scene.add(splash);
+const bachRipples = [];
+for (let i = 0; i < 3; i++){
+  const rp = new THREE.Mesh(new THREE.RingGeometry(0.75, 0.95, 18),
+    new THREE.MeshStandardMaterial({color: 0xcfe9f7, transparent: true, opacity: 0.4, side: THREE.DoubleSide}));
+  rp.rotation.x = -Math.PI/2; rp.position.set(18.3, -5.3, 10.8);
+  rp.userData.ph = i / 3;
+  scene.add(rp); bachRipples.push(rp);
+}
 
 // --- Baumaterial ---
 const matWall = c => new THREE.MeshStandardMaterial({color: c, roughness: 0.9});
@@ -333,6 +349,70 @@ pond.receiveShadow = true; scene.add(pond);
 const pondRim = new THREE.Mesh(new THREE.RingGeometry(3.2, 3.55, 26),
   new THREE.MeshStandardMaterial({color: 0x9c8a6a, roughness: 1}));
 pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.add(pondRim);
+
+// Bach vom Teich zur Inselkante + Holzbruecke
+(function bach(){
+  const P0 = [14.5, 8.5], P1 = [15.7, 10.1], P2 = [17.55, 10.3];
+  const q = t => { const u = 1 - t;
+    return [u*u*P0[0] + 2*u*t*P1[0] + t*t*P2[0], u*u*P0[1] + 2*u*t*P1[1] + t*t*P2[1]]; };
+  const wMat = new THREE.MeshStandardMaterial({color: 0x4a90c2, transparent: true, opacity: 0.92, roughness: 0.1, metalness: 0.1});
+  const bankMat = new THREE.MeshStandardMaterial({color: 0x6b4f33, roughness: 1});
+  const n = 14;
+  let prev = null, segs = 0;
+  for (let i = 0; i <= n; i++){
+    const t = i / n, pt = q(t);
+    if (prev){
+      const L = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
+      const seg = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.035, L + 0.12), wMat);
+      seg.position.set((pt[0]+prev[0])/2, 0.607, (pt[1]+prev[1])/2);
+      seg.rotation.y = Math.atan2(pt[0]-prev[0], pt[1]-prev[1]);
+      scene.add(seg);
+      const tx = (pt[0]-prev[0])/L, tz = (pt[1]-prev[1])/L;
+      for (const s of [-1, 1]){
+        const bank = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, L + 0.12), bankMat);
+        bank.position.set((pt[0]+prev[0])/2 - tz*s*0.72, 0.618, (pt[1]+prev[1])/2 + tx*s*0.72);
+        bank.rotation.y = seg.rotation.y;
+        scene.add(bank);
+      }
+      segs++;
+    }
+    prev = pt;
+  }
+  // Holzbruecke ueber den Bach (Mitte der Kurve, quer zum Lauf)
+  const mid = q(0.5), nxt = q(0.62);
+  const dx = nxt[0]-mid[0], dz = nxt[1]-mid[1], L2 = Math.hypot(dx, dz) || 1;
+  const px = dz/L2, pz = -dx/L2;
+  const bridge = new THREE.Group();
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.07, 0.95), matWall(0x8a6a48));
+  deck.position.y = 0.7; deck.castShadow = true; deck.receiveShadow = true; bridge.add(deck);
+  for (const s of [-1, 1]){
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.05, 0.06), matWall(0x6e5238));
+    rail.position.set(0, 0.16, s*0.42); bridge.add(rail);
+  }
+  for (const [ax, az] of [[-1.0, -0.42], [-1.0, 0.42], [1.0, -0.42], [1.0, 0.42]]){
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.5, 6), matWall(0x6e5238));
+    post.position.set(ax, 0.2, az); post.castShadow = true; bridge.add(post);
+  }
+  for (const s of [-1, 1]){
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.06, 0.14), matWall(0x6e5238));
+    beam.position.set(0, 0.635, s*0.3); bridge.add(beam);
+  }
+  bridge.position.set(mid[0], 0, mid[1]);
+  bridge.rotation.y = Math.atan2(px, pz);
+  scene.add(bridge);
+  // sanfte Ripples am Wasserfall-Basis-Punkt
+  const ptW = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (ptW) ptW(dt, t);
+    bachRipples.forEach(rp => {
+      const ph = (t*0.5 + rp.userData.ph) % 1;
+      const s = 0.5 + ph * 1.4;
+      rp.scale.set(s, s, s);
+      rp.material.opacity = (1 - ph) * 0.45;
+    });
+  };
+  window.__wasser = () => ({stream: true, fall: true, bridge: true, segs});
+})();
 
 // 8) Telegram-Bootshaus am Teich
 function buildBoathouse(x, z, ry){
@@ -1512,13 +1592,15 @@ tick(); setInterval(tick, 30000);
     #vpanel .vclose{color:#8a8474;font-size:11px;margin-top:6px;text-align:right;cursor:pointer}`;
   document.head.appendChild(style);
   const CHANGELOG = [
+    ["v1.2 · Stufe 11", "Organisch geschwungene Wege, Bach mit Wasserfall über die Kante, Holzbrücke"],
+    ["v1.1 · Stufe 09/10", "Wettersystem mit Regen, Dorf-Statistik-HUD, Minimap"],
     ["v1.0 · Stufe 06", "Souls-Schicht: Status-Leuchten je Gebäude, Wartebank, Versions-Chip"],
     ["v0.9 · Stufe 05d", "Wolken, Teich-Wellen, Lagerfeuer, Kamera-Autotour"],
     ["v0.8 · Stufe 05c", "Windmühle, Teleskop, Gemüsegarten, Vögel, Glühwürmchen"],
     ["v0.7 · Stufe 05b", "Wege, Platzbelag, Blumen, Höhen-Fix, Kamera-Hooks"],
     ["v0.6 · Stufe 05", "Router-Mast mit Pulsen, Notice Board, Kücken, Feuerwerk"]
   ];
-  const chip = document.createElement("div"); chip.id = "vchip"; chip.textContent = "v1.0";
+  const chip = document.createElement("div"); chip.id = "vchip"; chip.textContent = "v1.2";
   const panel = document.createElement("div"); panel.id = "vpanel";
   panel.innerHTML = "<h4>Hermes Village · Changelog</h4>" + CHANGELOG.map(([v, d]) =>
     `<div><span class="vstage">${v}</span><ul><li>${d}</li></ul></div>`).join("") +
