@@ -301,6 +301,20 @@ gegen kanzie-referenz.png, Inselrahmen vergleichbar. ZIP beta18
 (401 kB, 6 Dateien), Push 2447d37..? (Beta 18). Naechste Phase 00:00:
 Optik-Gap-Punkt 5 (Mobiliar: Baenke, Picknick, Sonnenschirm, Laternen).
 
+## M23 · Stufe 15 / Beta 19 (17.10.2026 ~00:06, Phase 00:00, Nachtruhe)
+Optik-Gap-Punkt 5: Mobiliar. 3 neue Holzbaenke (Rueckenlehne, entlang der
+Weg-Speichen), Picknick-Set am Teich-Weg (Tisch mit Balken-Gestell, 2
+Hocker, Brotlaib), roter Sonnenschirm darueber, blauer Sonnenschirm am
+Plaza-Rand mit 2 Hockern (Kegelform, DoubleSide), 6 neue Laternen
+entlang der Speichen (insgesamt 12). Neuer Hook __mobiliar (benches=3/
+picnic=true/parasols=2/lampsNew=6/stools=3). village.html + standalone
+gepatcht, node --check rc 0 beide. Review rv21 (Tag 10:00, Nacht 22:30,
+Nahaufnahme Plaza): 0 JS-Fehler, dbg normal (robots 5, proto true),
+Mobiliar sichtbar und im Stil passend (Holz 0x8a6a48/0x6e5238), Vergleich
+gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
+(403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
+Optik-Gap-Punkt 6 (nachts Lichtdichte).
+
 ## Stufe 04 - Datenvertrag als TypeScript (contract/)
 - `contract/village-snapshot.ts` - VillageSnapshot, drei Ebenen als
   nominal getrennte Typen; Verstoese gegen die Trennung sind Compilerfehler
