@@ -273,3 +273,34 @@ Eintraege Stufe 09/10 und 11 ergaenzt. Review rv18 (7 Winkel): Tag, Nacht
 und 17:00-Nachmittagslicht, 0 JS-Fehler, dbg normal; Bach + Bruecke in
 rv18_wasser_f/g klar sichtbar, Wasserfall-Sturz aus Standardwinkeln dezent
 (Feinschliff-Kandidat: prominenter machen).
+
+## M21 · Stufe 13 / Beta 17 (16.10.2026 ~23:12, Phase 23:00, Nachtruhe)
+Optik-Gap-Punkt 3: Baumvielfalt. Herbstpalette (0xd9822b, 0xc2542a,
+0xe8a33d, 0xb57a2e): jede dritte Kiefer herbstlich gefaerbt, runde
+Kronenbaeume abwechselnd gruen/herbstlich, 8 neue runde Kronenbaeume
+(Mix), 8 Herbstbuesche, 12 Felsen (IcosahedronGeometry, flat shading,
+Grautoene 0x8d8d85/0x7a7a72/0x9a968c, verstreut + am Inselrand, keiner
+auf Wegen), 3 Blumenflecken (Cluster aus 8 Blueten, rosa/gelb/lila) nahe
+der Plaza-Wegflaechen. Neuer Hook __flora (autumn/rocks=12/bushes=8/
+roundExtra=8/patches=3). village.html + standalone gepatcht, node --check
+rc 0 beide. Review rv19 (Tag 10:00, Nacht 22:30, Abend 17:00 + Nahkamera):
+0 JS-Fehler, dbg normal, __flora true; Herbstfarben, Felsen, Buesche und
+Blumenflecken sichtbar, Vergleich gegen kanzie-referenz.png bestaetigt
+Baumvielfalt auf Kanzie-Niveau. ZIP beta17 (398.6 kB, 6 Dateien), Push
+e9bd522..? (Beta 17). Naechste Phase 00:00: Optik-Gap-Punkt 4 (Kamera
+naeher, Insel fuellt den Rahmen).
+
+## Stufe 04 - Datenvertrag als TypeScript (contract/)
+- `contract/village-snapshot.ts` - VillageSnapshot, drei Ebenen als
+  nominal getrennte Typen; Verstoese gegen die Trennung sind Compilerfehler
+  (Beweisdatei `contract/layer-rules.test-d.ts`, @ts-expect-error).
+  "Unbekannt bleibt unbekannt": fehlende Felder degradieren nach
+  'unknown'/null, nur der Feed-Kopf ist strikt.
+- `contract/snapshot-provider.ts` - Provider mit Live/Mock-Umschaltung;
+  das Quellen-Badge liest `meta.source` aus dem Feed, nicht den Modus.
+- `contract/dist/` - kompilierte ES-Module fuer village.html.
+- `contract/smoke.test.mjs` - laeuft gegen die echten Feeds in `feed/`.
+- `contract/REVIEW-LOOP.md` - Pruefungsreihenfolge + Performance-Budget.
+- `contract/INTEGRATION.md` - Einbindung in village.html ohne Bundler.
+Pruefungen: tsc --noEmit (0 Fehler, Pflicht) + `node contract/smoke.test.mjs`
+(alle gruen, Pflicht) vor jeder Uebergabe.
