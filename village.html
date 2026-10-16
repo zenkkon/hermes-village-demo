@@ -413,6 +413,60 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
   };
   window.__wasser = () => ({stream: true, fall: true, bridge: true, segs});
 })();
+// Wasser-Feinschliff (Optik-Gap 7): organischer Teich, Ufer, Seerosen, prominenter Wasserfall
+(function wasserPolish(){
+  // Teich und Ufer organisch stauchen (Ellipse statt Kreis)
+  pond.scale.set(1.18, 0.88, 1);
+  pondRim.scale.set(1.18, 0.88, 1);
+  // Bucht nach Suedwesten (organische Ausbuchtung)
+  const lob = new THREE.Mesh(new THREE.CircleGeometry(1.35, 20), pond.material.clone());
+  lob.rotation.x = -Math.PI / 2; lob.scale.set(1.1, 0.85, 1);
+  lob.position.set(11.3, 0.603, 6.2); scene.add(lob);
+  // Ufersteine (regelmaessig-versetzt, keine auf dem Bach-Weg)
+  const shoreM = [0x8d8d85, 0x7a7a72, 0x9a968c].map(c => matWall(c));
+  const shoreSpots = [[11.9,10.4],[9.6,9.3],[8.7,7.4],[9.4,5.7],[11.3,4.6],[13.9,4.6],[16.5,6.9],[10.2,5.0],[12.4,4.8]];
+  shoreSpots.forEach((p, i) => {
+    const st = new THREE.Mesh(new THREE.DodecahedronGeometry(0.15 + (i % 3) * 0.05), shoreM[i % 3]);
+    st.position.set(p[0], 0.09, p[1]); st.rotation.y = i * 1.7; st.castShadow = true; scene.add(st);
+  });
+  // Schilf am Ufer
+  const reedM = [0x3d7a3f, 0x4d8a4a];
+  [[9.0,6.5],[11.6,10.2],[16.1,5.6]].forEach((p, ci) => {
+    for (let i = 0; i < 3; i++){
+      const reed = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.42 + i * 0.09, 5), matWall(reedM[i % 2]));
+      reed.position.set(p[0] + (i - 1) * 0.09, 0.24, p[1] + (i % 2) * 0.06);
+      reed.rotation.z = (i - 1) * 0.12; scene.add(reed);
+    }
+  });
+  // Seerosenblaetter mit zwei Blueten
+  const padM = matWall(0x3f7d3f);
+  const bloomM = matWall(0xe8a0c8);
+  [[11.8,7.9,0.3],[13.4,8.3,0.26],[12.2,6.5,0.34],[14.0,6.9,0.28]].forEach((p, i) => {
+    const pad = new THREE.Mesh(new THREE.CircleGeometry(p[2], 10), padM);
+    pad.rotation.x = -Math.PI / 2; pad.position.set(p[0], 0.61, p[1]); scene.add(pad);
+    if (i < 2){
+      const bl = new THREE.Mesh(new THREE.IcosahedronGeometry(0.08), bloomM);
+      bl.position.set(p[0] + 0.06, 0.66, p[1] - 0.04); scene.add(bl);
+    }
+  });
+  // Wasserfall prominenter: breiter, heller, mit Schaum-Streifen
+  fall.scale.x = 1.45; fallLip.scale.x = 1.45;
+  fall.material.color.set(0xd6f0ff); fall.material.opacity = 0.9;
+  splash.scale.set(1.35, 1.35, 1); splash.material.opacity = 0.85;
+  const foamM = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, depthWrite: false});
+  for (let i = 0; i < 4; i++){
+    const st = new THREE.Mesh(new THREE.BoxGeometry(0.09, 5.4, 0.02), foamM);
+    st.position.set((i - 1.5) * 0.42, 0.1, 0.13);
+    fall.add(st);
+  }
+  // zusatzlicher Schaum-Ring an der Fall-Basis
+  const foamRp = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.9, 18),
+    new THREE.MeshStandardMaterial({color: 0xeaf6ff, transparent: true, opacity: 0.4, side: THREE.DoubleSide}));
+  foamRp.rotation.x = -Math.PI / 2; foamRp.position.set(18.35, -5.3, 10.85);
+  foamRp.userData.ph = 0.5; scene.add(foamRp); bachRipples.push(foamRp);
+  const wPrev = window.__wasser;
+  window.__wasser = () => Object.assign({}, wPrev(), {polish: true});
+})();
 
 // 8) Telegram-Bootshaus am Teich
 function buildBoathouse(x, z, ry){
@@ -2142,6 +2196,19 @@ addEventListener("resize", () => {
   camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
-</script>
+
+// Debug-Hook: Teich-Position, Projektion und Verdecker-Check (Optik-Gap 7)
+window.__pond = () => {
+  const v = new THREE.Vector3(); pond.getWorldPosition(v);
+  const ndc = v.clone().project(camera);
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera({x: ndc.x, y: ndc.y}, camera);
+  const hits = rc.intersectObjects(scene.children, true).filter(h => h.object !== pond && h.object.parent !== pond);
+  return {pos: {x: +v.x.toFixed(2), y: +v.y.toFixed(2), z: +v.z.toFixed(2)},
+    ndc: {x: +ndc.x.toFixed(3), y: +ndc.y.toFixed(3)},
+    pondVisible: pond.visible,
+    firstHit: hits.length ? (hits[0].object.type + " dist " + hits[0].distance.toFixed(1)) : "none",
+    pondInHits: rc.intersectObjects(scene.children, true).some(h => h.object === pond)};
+};</script>
 </body>
 </html>

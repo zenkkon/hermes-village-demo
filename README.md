@@ -315,6 +315,25 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M25 · Stufe 17 / Beta 21 (17.10.2026 ~01:28, Phase 01:00, Nachtruhe)
+Optik-Gap-Punkt 7: Wasser- und Teich-Feinschliff. Teich organisch
+gestaucht (Ellipse 1.18 x 0.88) plus Bucht nach Suedwesten, 9
+Ufersteine, 3 Schilf-Buschel, 4 Seerosenblaetter mit 2 Blueten;
+Wasserfall prominenter (Breite x1.45, heller 0xd6f0ff, 4
+Schaum-Streifen, Splash x1.35, zusaetzlicher Schaum-Ring an der
+Basis). Neuer permanenter Debug-Hook __pond (Position, Projektion,
+Verdecker-Check). village.html + standalone gepatcht, node --check rc 0
+beide. Review rv23f/h (Tag rotY -1.2/-1.4 + Nacht 22:30): 0 JS-Fehler,
+dbg normal (robots 5, proto true), __wasser polish true, Teich mit
+Bucht, Ufersteinen, Seerosen und Schilf sichtbar, nachts warm
+ausgeleuchtet. Fall-Sturz aus Ueberwasser-Winkeln unter der
+Inselkante nicht einnehmbar (Geometrie, nicht Fehler) - Aenderung
+code-verifiziert. Vergleich kanzie-referenz bestaetigt. ZIP beta21,
+Push ba29a5a..? (Beta 21). Alle 7 Optik-Gap-Punkte abgearbeitet;
+naechste Phase 01:30: Feinschliff-Runde (Wasserfall-Sturz-Sichtbarkeit
+per Kamera-Tiefstand pruefen, Restdetails), dann Abschlussvorschlag
+an Konstantin (nach 07:00).
+
 ## M24 · Stufe 16 / Beta 20 (17.10.2026 ~00:39, Phase 00:30, Nachtruhe)
 Optik-Gap-Punkt 6: nachts Lichtdichte. Lichtpool unter jeder der 12
 Laternen (CircleGeometry 1.7, AdditiveBlending, warm 0xffc860, Opacity
