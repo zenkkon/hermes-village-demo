@@ -315,6 +315,23 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M26 · Stufe 18 / Beta 22 (17.10.2026 ~01:42, Phase 01:30, Nachtruhe)
+Feinschliff-Runde nach allen 7 Optik-Gap-Punkten. Lagerfeuer-Umgebung:
+3 Sitz-Stuempfe (Zylinder 0.15/0.34, Holz 0x8a6a48, Top 0xb08d5e)
++ 4 zusaetzliche Steine am Feuer-Ring (Radius 0.62). village.html +
+standalone gepatcht, node --check rc 0 beide. Review rv24 (Feuer
+Tag/Nacht, Wasserfall-Tiefwinkel rotY -1.2/-1.4, pitch 0.15-0.35,
+dist 30): 0 JS-Fehler, dbg normal (robots 5, proto true). WICHTIG:
+Wasserfall-Sturz jetzt sichtbar bestaetigt - aus tiefem Aussenwinkel
+zeigt er den Sturz ueber die Kante mit Schaum-Ringen am Fuss
+(1523 Fall-Pixel im Scan). Abschlussvergleich rv25/vergleich_final.png
+(Kanzie-Referenz 18:46 vs. Build 18:45): Stimmung, Lichter, Wege,
+Wasser, Baeume, Mobiliar auf Referenzniveau; Rest-Gap: cinematischere
+Kamerafuehrung (niedrigerer Winkel, Bloom) und nochere
+Gebaeudedichte in der Referenz. ALLE 7 Optik-Gap-Punkte + Feinschliff
+abgearbeitet. Abschlussvorschlag an Konstantin vorbereitet, Auslieferung
+zur Phase 07:00 (Nachtruhe-Regel).
+
 ## M25 · Stufe 17 / Beta 21 (17.10.2026 ~01:28, Phase 01:00, Nachtruhe)
 Optik-Gap-Punkt 7: Wasser- und Teich-Feinschliff. Teich organisch
 gestaucht (Ellipse 1.18 x 0.88) plus Bucht nach Suedwesten, 9
