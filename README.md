@@ -290,6 +290,17 @@ Baumvielfalt auf Kanzie-Niveau. ZIP beta17 (398.6 kB, 6 Dateien), Push
 e9bd522..? (Beta 17). Naechste Phase 00:00: Optik-Gap-Punkt 4 (Kamera
 naeher, Insel fuellt den Rahmen).
 
+## M22 · Stufe 14 / Beta 18 (16.10.2026 ~23:37, Phase 23:30, Nachtruhe)
+Optik-Gap-Punkt 4: Kamera naeher. Standardkamera dist 24 -> 18.5 und
+rotX 0.88 -> 0.8, die Insel fuellt jetzt den Rahmen wie in der
+Kanzie-Referenz (Gebaeude deutlich groesster Bildanteil); Zoom-Minimum
+bleibt 9, Nutzer kann per Mausrad weiterhin frei zoomen. village.html +
+standalone gepatcht, node --check rc 0 beide. Review rv20 (17:00 +
+22:30): 0 JS-Fehler, dbg normal (robots 5, proto true), Framing geprueft
+gegen kanzie-referenz.png, Inselrahmen vergleichbar. ZIP beta18
+(401 kB, 6 Dateien), Push 2447d37..? (Beta 18). Naechste Phase 00:00:
+Optik-Gap-Punkt 5 (Mobiliar: Baenke, Picknick, Sonnenschirm, Laternen).
+
 ## Stufe 04 - Datenvertrag als TypeScript (contract/)
 - `contract/village-snapshot.ts` - VillageSnapshot, drei Ebenen als
   nominal getrennte Typen; Verstoese gegen die Trennung sind Compilerfehler
