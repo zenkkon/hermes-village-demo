@@ -253,3 +253,10 @@ synthetischen Feed (1 Run als `failed`, damit die Tafel im Demo sichtbar ist).
   inkl. fullui_v2 mit sichtbarem HUD + Minimap (echter Seiten-Screenshot, da
   __snap nur die 3D-Szene aufnimmt).
 - Packets: hermes-nexus-stufe04-beta14.zip, village-standalone.html neu gebaut.
+## M19 · Stufe 11 / Beta 15 (16.10.2026 ~21:45, Phase 21:30)
+Optik-Gap-Punkt 1: Wege organisch geschwungen. Die sechs geraden Speichen sind
+ersetzt durch Quadratic-Bezier-Wege (pro Gebäude deterministischer Versatz,
+sandfarben 0xc9ae7e, Breite 0.95), Segment für Segment entlang der Kurve gelegt,
+mit kleinen Steinchen (0x9a988f) am Rand und fünf Querwegen zwischen
+Nachbarwegen. Kopfsteinpflaster-Wege und Platz unverändert. Review rv17: Tag +
+Nacht Headless, 0 JS-Fehler, dbg normal (robots 5, proto true).
