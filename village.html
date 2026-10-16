@@ -92,7 +92,7 @@ function updateDayNight(){
   moon.intensity = (1 - day) * 0.25;
   hemi.intensity = 0.3 + day * 0.55;
   const lampOn = 1 - day;
-  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 1.8; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
+  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.1; if (l.pool) l.pool.material.opacity = lampOn * 0.3; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.25 ? " · Tag" : " · Nacht");
 }
@@ -530,9 +530,12 @@ function lampPost(x, z){
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8),
     new THREE.MeshStandardMaterial({color: 0xffe6b0, emissive: 0xffc860, emissiveIntensity: 0.8}));
   bulb.position.set(0.28, 1.42, 0); g.add(bulb);
-  const l = new THREE.PointLight(0xffc860, 0.2, 7); l.position.set(0.28, 1.42, 0); g.add(l);
+  const l = new THREE.PointLight(0xffc860, 0.2, 8.5); l.position.set(0.28, 1.42, 0); g.add(l);
+  const pool = new THREE.Mesh(new THREE.CircleGeometry(1.7, 18),
+    new THREE.MeshBasicMaterial({color: 0xffc860, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false}));
+  pool.rotation.x = -Math.PI / 2; pool.position.set(0.28, 0.06, 0); g.add(pool);
   g.position.set(x, 0, z); scene.add(g);
-  worldLamps.push({light: l, win: bulb});
+  worldLamps.push({light: l, win: bulb, pool: pool});
 }
 // Stufe 15: Mobiliar - Baenke, Picknick mit Sonnenschirm, mehr Laternen
 (function mobiliar(){
@@ -1648,7 +1651,7 @@ tick(); setInterval(tick, 30000);
     cloudMat.color.setScalar(1 - nf * 0.72);
     const fl = 0.85 + Math.sin(t*11)*0.12 + Math.sin(t*23)*0.08;
     flame1.scale.set(1, fl, 1); flame2.scale.set(1, 0.8 + fl*0.4, 1);
-    fireLight.intensity = nf * fl * 1.6;
+    fireLight.intensity = nf * fl * 2.1;
     fireClock += dt;
     if (fireClock > 0.5){ fireClock = 0; firePuff(); }
     for (let i = fireSmoke.length-1; i >= 0; i--){

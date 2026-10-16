@@ -315,6 +315,20 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M24 · Stufe 16 / Beta 20 (17.10.2026 ~00:39, Phase 00:30, Nachtruhe)
+Optik-Gap-Punkt 6: nachts Lichtdichte. Lichtpool unter jeder der 12
+Laternen (CircleGeometry 1.7, AdditiveBlending, warm 0xffc860, Opacity
+mit lampOn 0 bis 0.3), Lampen-PointLight 7 -> 8.5 Reichweite und
+Intensitaet nachts 1.8 -> 2.1, Lagerfeuer-Licht flackert jetzt mit 2.1
+statt 1.6. village.html + standalone gepatcht, node --check rc 0 beide.
+Review rv22 (Nacht 22:30, Lagerfeuer-Nahaufnahme, Tag 10:00 als
+Regression): 0 JS-Fehler, dbg normal (robots 5, proto true), Lichtpools
+auf den Wegen sichtbar, Nacht deutlich waermer/dichter, Vergleich gegen
+kanzie-referenz.png bestaetigt. ZIP beta20 (404 kB, 6 Dateien), Push
+ba29a5a..? (Beta 20). Naechste Phase 01:00: Optik-Gap-Punkt 7
+(Wasser/Teich-Form, Feinschliff), danach resterender Feinschliff +
+Abschlussvorschlag.
+
 ## Stufe 04 - Datenvertrag als TypeScript (contract/)
 - `contract/village-snapshot.ts` - VillageSnapshot, drei Ebenen als
   nominal getrennte Typen; Verstoese gegen die Trennung sind Compilerfehler
