@@ -315,6 +315,22 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M28 · Stufe 20 / Beta 24 (17.10.2026 ~02:43, Phase 02:30, Nachtruhe)
+Kamera-Feinjustierung auf Basis belegter Rest-Gaps aus M27
+(Teich-Ausrichtung rechts oben statt links, Insel zu gross im
+Rahmen). __pond-Hook-Sweep ueber yaw -0.8/-1.0/-1.2/-1.6/-2.0 bei
+dist 38, rotX 0.5: Teich-NDC wandert von x 0.471 (yaw -0.8) nach
+x 0.046 (yaw -2.0), pondVisible ueberall true. Screenshots
+rv30_yaw* angesehen: yaw -2.0 beste Referenzkomposition (ganze
+Insel, dunkler Abendhimmel, Wolken, Teich oben mitte). Finale
+Standardkamera: rotY -2.0, rotX 0.5, dist 38. village.html +
+standalone gepatcht, node --check rc 0 beide. Review rv31
+(Daemmerung 18:45, Tag 10:00, Nacht 22:30): 0 JS-Fehler, dbg
+normal (robots 5, proto true), pond ndc x 0.044 visible true.
+vergleich_final.png neu (Referenz vs. finale Kamera). Rest-Detail:
+Yaw der Referenz weicht ab (Referenz-Teich links mitte), optisch
+klein. Alle Optik-Gap-Punkte + Feinschliff + Kamera abgeschlossen.
+
 ## M27 · Stufe 19 / Beta 23 (17.10.2026 ~02:13, Phase 02:00, Nachtruhe)
 Kamera-Feinschliff auf Referenzkomposition (Phase 02:00, 4 iterierte
 Vergleiche gegen kanzie-referenz.png): Standardkamera rotY 0.7 -> -1.2
