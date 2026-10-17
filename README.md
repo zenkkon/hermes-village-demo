@@ -315,6 +315,23 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M27 · Stufe 19 / Beta 23 (17.10.2026 ~02:13, Phase 02:00, Nachtruhe)
+Kamera-Feinschliff auf Referenzkomposition (Phase 02:00, 4 iterierte
+Vergleiche gegen kanzie-referenz.png): Standardkamera rotY 0.7 -> -1.2
+(Teich-/Wasserfallseite nach vorn), rotX 0.8 -> 0.5 (niedriger,
+cinematischer Winkel), dist 18.5 -> 36 (Insel mit Abendhimmel
+drumrum, wie Referenz). Iterationen: rv26 (rotX 0.58/dist 20, noch
+zu steil), rv27 (0.52/25, Rahmen laeuft voll), rv28 (0.5/30, besser,
+Kante fehlt), rv29 (0.5/36, beste Uebereinstimmung: dunkler Himmel
+um die Insel, warme Lichter, Teich + Berge sichtbar). village.html +
+standalone gepatcht, node --check rc 0 beide. Review rv29 Tag+Nacht+
+Daemmerung: 0 JS-Fehler, dbg normal (robots 5, proto true).
+vergleich_final.png neu gebaut (Referenz vs. iter.4). Rest-Abweichungen,
+dokumentiert: Insel noch etwas groesser im Rahmen als in der Referenz,
+Erdquerschnitt-Kante unten teilweise angeschnitten, Teich-Ausrichtung
+rechts oben statt links mitte (Yaw-Detail). Einstufung: Kamera-Gap
+weitgehend geschlossen, Rest feinjustierbar.
+
 ## M26 · Stufe 18 / Beta 22 (17.10.2026 ~01:42, Phase 01:30, Nachtruhe)
 Feinschliff-Runde nach allen 7 Optik-Gap-Punkten. Lagerfeuer-Umgebung:
 3 Sitz-Stuempfe (Zylinder 0.15/0.34, Holz 0x8a6a48, Top 0xb08d5e)
