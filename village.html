@@ -85,6 +85,7 @@ function updateDayNight(){
   hemi.intensity = 0.3 + day * 0.55;
   const lampOn = 1 - day;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.1; if (l.pool) l.pool.material.opacity = lampOn * 0.3; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
+  (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.15 + lampOn * 2.4; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.25 ? " · Tag" : " · Nacht");
 }
@@ -1492,7 +1493,11 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
       const lamp = new THREE.PointLight(0xffb340, 0.5, 7);
       lamp.position.set(d.x, 1.0, d.z);
       scene.add(lamp);
-      worldLamps.push({light: lamp, win: null});
+      const pool = new THREE.Mesh(new THREE.CircleGeometry(1.6, 18),
+        new THREE.MeshBasicMaterial({color: 0xffc860, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false}));
+      pool.rotation.x = -Math.PI / 2; pool.position.set(d.x, 0.06, d.z);
+      scene.add(pool);
+      worldLamps.push({light: lamp, win: null, pool: pool});
       window.__cottagePlaced[key] = true;
       window.__cottageCount = (window.__cottageCount || 0) + 1;
       n++;
@@ -1523,6 +1528,30 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
   });
   if (n) window.__scale6 = n;
 })();
+
+
+// Stufe 39 / Feinschliff 7: Lichtdichte nachts - Fensterlichter + Kern-Laternen
+(function windowFix(){
+  window.__nightWins = window.__nightWins || [];
+  const re = /^(Win|Window)/;
+  function scan(){
+    scene.traverse(o => {
+      const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+      for (const m of mats){
+        if (m && m.emissive && re.test(m.name) && !m.userData.glowLit){
+          m.userData.glowLit = true;
+          m.emissive.set(0xffd9a0);
+          window.__nightWins.push(m);
+          window.__glowCount = (window.__glowCount || 0) + 1;
+        }
+      }
+    });
+  }
+  scan();
+  let tries = 0;
+  const t = setInterval(() => { scan(); if (++tries > 40) clearInterval(t); }, 500);
+})();
+lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
 window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap,
@@ -2348,6 +2377,7 @@ tick(); setInterval(tick, 30000);
     d.facade = window.__facadeLit || 0;
     d.cottages = window.__cottageCount || 0;
     d.scale6 = window.__scale6 || 0;
+    d.glow = window.__glowCount || 0;
     return d;
   };
 })();
