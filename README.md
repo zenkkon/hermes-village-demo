@@ -727,3 +727,9 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Review rv55 (Tag 14:00 + Nacht 22:30, Port 8977): alle Swaps intakt (facade 6, cottages 4, scale6 8, glow 12, props 3/1/2/4, threads 10, paths 8, flora 12/8/3/12, mountains 3, clouds 6, vig), nightMood9 true, 0 JS-Fehler. Vergleich rv55_vergleich.png gegen kanzie-referenz.png.
 - Befund: Nacht-Lichtdichte und dunkles Meer nahe am Kanzie-Niveau; unser Nachtgras liest sich noch deutlich gruen, Kanzies Gras blaugruen (staerkerer blauer Umgebungs-Tint). -> Feinschliff 10: Nacht-Tint direkt auf Gras-/Terrainmaterial (color.lerp Richtung 0x274a44 bei Nacht).
 - Zip: hermes-village-beta45.zip
+## M50 · Stufe 42 / Beta 46 (20.10.2026 ~00:40, Phase 00:30, Feinschliff 10)
+- Nacht-Tint direkt aufs Terrainmaterial: window.__terrainMats sammelt alle 4 Erdschichten-Materialien, im updateDayNight lerpt die Gras-/Terrainfarbe nachts von 0x6fb048 Richtung 0x27524a (blaugruen wie Kanzie); dbg terrainTint 4, nightMood10.
+- Wegmaterial nachts abgedunkelt: pathRibbons-Farbe 0xe8dab4 -> 0x8a7f66 bei Nacht (Sand liest sich nicht mehr tags hell).
+- Review rv56 (Tag 14:00 + Nacht 22:30, je eigener Browser-Prozess): alle Swaps intakt (facade 6, cottages 4, scale6 8, glow 12, props 3/1/2/4, threads 10, paths 8, flora 12/8/3/12, mountains 3, clouds 6, vig), nightMood10 true, terrainTint 4, 0 JS-Fehler. Vergleich rv56_vergleich.png gegen kanzie-referenz.png.
+- Befund: Nachtgras jetzt blaugruen wie bei Kanzie, Nachtstimmung insgesamt nah am Referenzniveau. Tag bleibt unveraendert korrekt (Tint leert sich bei Tag vollstaendig). Rest-Differenz: Kanzies Kern noch dichter bebaut/beleuchtet; Baeume wirken bei uns duenner verteilt. -> Feinschliff 11: Kern-Dichte (5. Haus) + Baumgruppen-Trio am Suedrand.
+- Zip: hermes-village-beta46.zip
