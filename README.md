@@ -709,3 +709,7 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 ## M46 · Stufe 38 / Beta 42 (19.10.2026 ~22:40, Phase 22:30, Feinschliff 6)
 
 **Gebaeudegroesse (Kanzie-Massstab).** scaleDown() setzt alle 8 BUILDINGS-Gruppen einheitlich auf 0.85 (Kanzies Haeuser sind kleiner und enger), Kaminanker (chimTop) werden mit skaliert, Marker userData.scaled6, dbg scale6:8. Headless-Review Tag (14:00) + Nacht (22:30): alle Swaps intakt (facade 6, cottages 3, threads 10, paths 8, roofLit 7), 0 JS-Fehler. Screenshot-Vergleich gegen kanzie-referenz.png: Insel wirkt gefuellter, Proportionen naeher am Original; groesste Rest-Differenz jetzt nachts Lichtdichte (Kanzie: viele Fenster-/Laternenlichter, enges Zentrum) und Haeuserdichte im Kern. Beta 42 gepusht.
+
+## M47 · Stufe 39 / Beta 43 (19.10.2026 ~23:15, Phase 23:00, Feinschliff 7)
+
+**Lichtdichte nachts.** windowFix() setzt alle GLB-Fenstermaterialien (Win*/Window*) auf warmes Emissive 0xffd9a0 und koppelt sie an den Nacht-Faktor (0.15 + lampOn*2.4, dbg glow:9); die drei Dorfhaeuschen bekommen additive Licht-Pools am Boden (wie Laternen), plus vier neue Laternen im Kern und am Nordrand (-1.8,-4.4), (8.2,0.6), (-3.6,7.4), (0.2,11.8). Headless-Review Tag (14:00) + Nacht (22:30): alle Swaps intakt, glow 9, cottages 3, scale6 8, 0 JS-Fehler. Vergleich gegen kanzie-referenz.png: Lichtdichte nachts deutlich naeher am Original (Fenster gluehen, Pools am Boden); Rest-Differenz: Kanzies Nacht ist blauer/dunkler und sein Kern noch dichter beleucht. Beta 43 gepusht.
