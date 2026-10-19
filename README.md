@@ -316,6 +316,30 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
 
+## M41 · Stufe 33 / Beta 37 (19.10.2026 ~20:15, Phase 20:00, Feinschliff 1)
+
+**Gras-Mottling + Flora-Dichte 3.** Direkter Vergleich rv42_vergleich.png gegen
+kanzie-referenz.png: groesste Rest-Differenzen sind die untexturierte, flache
+Wiese (Kanzie hat Flecken und Dichte) und Luecken im Baumbestand. Zwei Eingriffe:
+(1) flora3(): 12 unregelmaessige Gras-Ton-Patches (CircleGeometry, 4 Gruentoene,
+skaliert/rotiert, y 0.612, receiveShadow), (2) dritte Flora-Welle: 12 Randring-
+Baeume (Mix Kegel/rund, Gruen/Herbst, Wasserfall-Seite um (17,10) freigehalten),
+8 Buesche im Innenbereich, 3 Blumenflecken. dbg um flora3 erweitert.
+
+**Review rv43 (Port 8953, Tag 14:00 / Nacht 22:30):** flora3 {trees 12, bushes 8,
+patches 3, motes 12} Tag+Nacht, alle Swaps intakt (props 3/1/2/4, domeSwap,
+paths 8, roofLit 7), threads 10, keine echten JS-Fehler (8x 404 stream,
+Polling-Fallback). Erster Screenshot-Lauf Timeout bei Fonts/Render, zweiter Lauf
+mit erhoehtem Timeout sauber. rv43_day: Wiese wirkt gemustert statt flach,
+Randring dichter, keine Kollisionen mit Wegen/Gebaeuden sichtbar. rv43_night:
+Lichtdichte gehalten. rv43_vergleich.png aktualisiert.
+
+**Artefakte:** /workspace/hermes-village-beta37.zip. Standalone aktualisiert.
+Naechste Phasen: Feinschliff 2 (Nahaufnahme-/Kamera-Check gegen Referenz,
+Wasserfall-/Bruecke-Detail), dann Abschlussvorschlag, sobald der Vergleich
+Kanzie-Niveau belegt.
+
+
 ## M40 · Stufe 32 / Beta 36 (19.10.2026 ~19:45, Phase 19:30)
 
 **GLB-Dachfarben etwas heller.** roofFix() traversiert die Szene und hellt
