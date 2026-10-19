@@ -315,6 +315,18 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+
+## M37 · Stufe 29 / Beta 33 (19.10.2026 ~18:25, Phase 18:00)
+
+**Mobiliar als echte Blender-Modelle (Bank, Picknick-Tisch, Sonnenschirm, Hocker).** assets/build_props.py (bpy 5.0.1, LD_LIBRARY_PATH-Debian-Libs) baut vier Sitz-/Möbel-Modelle mit M_WOOD (#8a6a47, 0.54 roughness), M_DARKWOOD, M_CANOPY (#d94f3d) und M_MAST: Bank mit Sitzfläche, Rückenlehne, 4 Beinen und Armlehnen; Picknick-Tisch mit Deckel und 2 Seitenbänken; Sonnenschirm mit Mast, 8-Segment-Kegel-Kanopy und Knauf; Hocker als Zylinder-Stumpf. Export: ac_bench.glb 9648 B, ac_table.glb 8004 B, ac_umbrella.glb 13032 B, ac_stool.glb 2972 B; Render-Preview prev_props.png geprüft.
+
+**Einbau in village.html:** PROPS_B64-Block (4 Base64-GLBs) + GLTFLoader.parse → Prototypen benchProto/tableProto/umbProto/stoolProto; trySwapProps() ersetzt in der mobiliar-IIFE die Code-Primitiven: 3 Bänke (woodBench), Picknick-Tisch (tbl), beide Sonnenschirme (Canopy-Farbe bleibt rot/blau via Materialname "Canopy"), 3 Hocker. Die Gruppen behalten Position/Rotation/col; Ursprung der GLBs ist Objektmitte am Boden. window.__mobG hält die Gruppenreferenzen; dbg erweitert um props {bench,table,umbrella,stool}.
+
+**Fixes:** Patch-Anker beim ersten Lauf zu früh gesetzt (Props-Block mitten im robot-Load) → SyntaxError "Unexpected token 'const'"; village.html aus Beta-32-Stand (/tmp/hvd) wiederhergestellt und mit vollem Statement-Anker neu gepatcht. build_props.py: primitive_cylinder_add radius1 in bpy 5.0.1 unzulässig → cone-Hack (radius1=radius2).
+
+**Review rv39 (Port 8945, Tag 14:00 / Nacht 22:30):** props {bench:3, table:1, umbrella:2, stool:4} je Struktur, alle früheren Swaps intakt (acHouse/acMill/acStudio/acMedia/acMine/acGate je 1, houseSwap/gateSwap true), chicks 1, threads 10, 0 echte JS-Fehler (nur 2× erwartete 404 /api/village/stream, SSE-frei). Zoom-Shots rv39_picnic_day/night: roter Schirm über Picknick-Tisch, Nachts Lampen an. rv39_vergleich.png (Referenz 1024×640 vs rv39_day) angelegt.
+
+**Artefakte:** /workspace/hermes-village-beta33.zip (village.html 1.07 MB + README + OPTIK-GAP + REA-Notizen + GLBs + Preview). Standalone aktualisiert. Nächste Phasen (Rest-Gaps): Research-Observatory-Kuppel als GLB, Weg-Textur organisch, GLB-Dachfarben etwas heller, mehr Laternen im Dorfverteiler; danach Feinschliff.
 ## M36 · Stufe 28 / Beta 32 (19.10.2026 ~17:55, Phase 17:30)
 
 **Telegram-Zentrale als echtes Blender-Modell.** Der prozedurale Boathouse (Kisten-Haus am Teich) ist ersetzt durch `ac_tele.glb` (57.7 kB, Blender 5.0.1 headless): Sockel-Plinthe 2.3×2.1, blaugrauer Korpus 2.0×1.8×1.4 (0x7a94b8 ≙ Original-Farbwelt), Creme-Trim-Kranz, 4-seitiges Kegeldach 0x3f6fb5 mit Überhang, Ziegel-Schornstein mit Kappe, dunkle Fenster-Schlitze, Holz-Türrahmen an der +Z-Seite. Bevels 0.04/2 (Dach 0.03/2).
