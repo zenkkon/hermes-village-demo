@@ -316,6 +316,29 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
 
+## M39 · Stufe 31 / Beta 35 (19.10.2026 ~19:25, Phase 19:00)
+
+**Weg-Textur organisch (Kopfsteinpflaster auf Sandbaendern).** Die 8 Weg-Speichen
+bekommen unter die Kopfsteine geschwungene Sandbaender: pathRibbon() baut pro Weg
+einen 2n-Streifen aus Quads mit Sand-Canvas-Textur (4 Farbtupfer, 900 Speckles),
+leichter S-Kurve (curv = sin(t*1.6*pi + phase)*0.7), Wellen-Kante (wob =
+sin(t*2.2*pi + phase)*0.55), laufender Breite 0.9-1.4, Normalen manuell auf
+(0,1,0), receiveShadow. Farbton 0xe8dab4 auf 0xd8c8a4-Basis, UV-Wiederholung
+entlang des Wegs. Baender liegen bei y 0.015 unter den Kopfsteinen (0.035), sodass
+beide Schichten sichtbar bleiben. dbg um paths (8) erweitert.
+
+**Review rv41 (Port 8949, Tag 14:00 / Nacht 22:30):** paths 8 Tag+Nacht, alle
+Swaps intakt (props 3/1/2/4, domeSwap, alle Gebaeude), threads 10, keine echten
+JS-Fehler (nur 7x 404 /api/village/stream, Polling-Fallback im Review ohne
+Backend). rv41_day: Wege lesen sich von oben jetzt als sandige Pfade mit
+unregelmaessiger Kante statt Beton-Speichen. rv41_night: Lichtdichte gehalten,
+Baender dunkel aber sichtbar. rv41_vergleich.png aktualisiert.
+
+**Artefakte:** /workspace/hermes-village-beta35.zip. Standalone aktualisiert.
+Rest-Gaps: GLB-Dachfarben etwas heller, dann Feinschliff. (Bemerkung: /tmp wurde
+zwischen den Phasen gewischt, Review-Script neu aufgebaut, /tmp/hvd-Klon neu.)
+
+
 ## M38 · Stufe 30 / Beta 34 (19.10.2026 ~18:45, Phase 18:30)
 
 **Research Observatory als echtes Blender-Modell + mehr Laternen.** assets/build_dome.py (bpy 5.0.1): 10-seitiger Turmkorpus (Stein #d8d3c8), Gesimsring creme, Halbkugel-Kuppel (Skalierung 0.78, blaugrau #8b93a8-Anmutung), Kuppel-Basisring, Holztür mit Rahmen, 2 Seitenfenster, Teleskop-Ansatz schräg aus der Kuppel, Plinthe. ac_dome.glb 57936 B. Zwei Build-Fehler gefixt: box() hatte Höhe/Tiefe vertauscht (Bleche statt Wände), Render-Kamera nutzte falsches Track-Achsen-Paar ('-Y','Z' → '-Z','Y'), deshalb zunächst nur Boden im Preview.
