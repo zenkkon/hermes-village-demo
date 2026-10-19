@@ -316,6 +316,28 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
 
+## M40 · Stufe 32 / Beta 36 (19.10.2026 ~19:45, Phase 19:30)
+
+**GLB-Dachfarben etwas heller.** roofFix() traversiert die Szene und hellt
+Materialien mit Name "Roof" oder "Cap" auf (offsetHSL 0, -0.02, +0.09, einmalig
+per userData.roofLit markiert), per setInterval alle 500 ms bis 40 Versuche, damit
+asynchrone GLB-Swaps sicher abgedeckt sind; window.__roofFix und window.__roofLit
+als Zähler. Getroffen: 7 Materialien (House, Media, Mill, Mine, Studio, Tele,
+Webhotel-Cap); Gate (Stein) und Dome (Kuppel) bleiben bewusst unberuehrt. dbg um
+roofLit erweitert.
+
+**Review rv42 (Port 8951, Tag 14:00 / Nacht 22:30):** roofLit 7 Tag+Nacht, alle
+Swaps intakt (props 3/1/2/4, domeSwap, paths 8, alle Gebaeude), threads 10, keine
+echten JS-Fehler (6x 404 /api/village/stream, Polling-Fallback im Review).
+rv42_day: Daecher wirken etwas heller und lesslicher gegen das Gruen, Silhouetten
+bleiben lesbar. rv42_night: Lichtdichte gehalten. rv42_vergleich.png aktualisiert.
+
+**Artefakte:** /workspace/hermes-village-beta36.zip. Standalone aktualisiert.
+Damit sind alle OPTIK-GAP-Punkte (1-7) mindestens einmal angegangen; nächste
+Phasen: Feinschliff (Details aus dem Vergleich), dann Abschlussvorschlag an
+Konstantin, sobald der Vergleich Kanzie-Niveau belegt.
+
+
 ## M39 · Stufe 31 / Beta 35 (19.10.2026 ~19:25, Phase 19:00)
 
 **Weg-Textur organisch (Kopfsteinpflaster auf Sandbaendern).** Die 8 Weg-Speichen

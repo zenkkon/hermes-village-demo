@@ -645,6 +645,28 @@ function lampPost(x, z){
 lampPost(-2.6, -1.4); lampPost(2.6, -3.4); lampPost(5.2, -0.6);
 lampPost(-4.2, 1.6); lampPost(3.4, 4.2); lampPost(-5.6, -5.0);
 
+// Stufe 32: GLB-Dachfarben etwas heller (Roof/Cap-Materialien)
+function roofFix(){
+  let n = 0;
+  scene.traverse(o => {
+    const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+    for (const m of mats){
+      if (m && (m.name === 'Roof' || m.name === 'Cap') && !m.userData.roofLit){
+        m.userData.roofLit = true;
+        m.color.offsetHSL(0, -0.02, 0.09);
+        n++;
+      }
+    }
+  });
+  if (n) window.__roofLit = (window.__roofLit || 0) + n;
+}
+let roofTries = 0;
+const roofTimer = setInterval(() => {
+  roofFix();
+  if (++roofTries > 40) clearInterval(roofTimer);
+}, 500);
+window.__roofFix = roofFix;
+
 // Stufe 15: Mobiliar - Baenke, Picknick mit Sonnenschirm, mehr Laternen
 (function mobiliar(){
   const benches = [], parasols = [], stools = [];
@@ -2397,6 +2419,7 @@ tick(); setInterval(tick, 30000);
     const d = dbgPrev ? dbgPrev() : {};
     d.minimap = true;
     d.paths = window.__pathCount || 0;
+    d.roofLit = window.__roofLit || 0;
     return d;
   };
 })();
