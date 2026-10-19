@@ -315,6 +315,16 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M33 · Stufe 25 / Beta 29 (19.10.2026 ~16:10, Phase 16:00, Shimeria Media Haus als Blender-Modell)
+
+Shimeria Media Haus (lila 3-Etage, -10.5/3.5) ist jetzt ein echtes Blender-GLB statt Code-Klötze.
+
+**Modell** (`assets/build_media.py`, 1 Durchlauf): drei Etagen 3.6×1.15×2.8 (Lila #b070a8) mit Creme-Trims (#f2e8dc) auf jeder Etagen-Kante, Pyramidendach 4-seitig (Radius 2.66, Höhe 1.0) in Violett #6a4fa3, Bevels (0.04, 2 Segmente). Export: `assets/ac_media.glb` (11.2 kB), Preview `assets/prev_media.png` (CYCLES).
+
+**Einbau**: Primitiven in `hotel()` benannt (`mh_body`, `mh_trim`, `mh_roof`), `MEDIA_B64` + `GLTFLoader.parse` → `mediaProto`; `swapMedia()` versteckt die `mh_*`-Kinder und setzt das GLB ein. Das prozedurale Neon-Schild (Canvas-Textur "SHIMERIA HAUS", emissiveMap) und die emissiven Fenster bleiben sichtbar und leuchten nachts weiter; `chimTop` unverändert. `window.__mhSwap = media`; dbg um `acMedia` + `mhSwap` erweitert.
+
+**Review** (Headless, Port 8936, ?time=14:00 und 22:30): dbg Tag + Nacht: acMedia 1, acStudio 1, acHouse 1, acMill 1, mhSwap true, studioSwap true, 0 JS-Fehler. rv35_day/night angesehen, Vergleich rv35_vergleich.png gegen kanzie-referenz.png: Media-Haus wirkt weicher (Trims + Bevel-Dach), Schild leuchtet nacht weiter an der gleichen Stelle. Rest-Gaps: verbleibende Primitive-Bauten (Observatorium ok als Kuppel, Backup Mine, Cron Gatehouse), Weg-Textur von oben, Farblicht der großen Dächer (GLB-Dach etwas heller als Primitive-Vorgänger).
+
 ## M32 · Stufe 24 / Beta 28 (19.10.2026 ~15:35, Phase 15:30, Copy Studio als Blender-Modell)
 
 Copy Studio (blauer Pyramiden-Dach-Bau, -5.5/-3) ist jetzt ein echtes Blender-GLB statt Code-Klötze.
