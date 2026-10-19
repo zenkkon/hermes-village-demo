@@ -65,6 +65,7 @@ sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x0d1024), skyDawn = new THREE.Color(0xe8946a);
+const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 
 const timeOverride = (new URLSearchParams(location.search).get("time") || "")
   .split(":").map(n => parseFloat(n)).filter(n => !isNaN(n));
@@ -82,7 +83,8 @@ function updateDayNight(){
   sun.intensity = 0.25 + day * 1.45;
   moon.position.set(-20, 18, -10);
   moon.intensity = (1 - day) * 0.25;
-  hemi.intensity = 0.3 + day * 0.55;
+  if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day);
+  hemi.intensity = 0.16 + day * 0.69;
   const lampOn = 1 - day;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.1; if (l.pool) l.pool.material.opacity = lampOn * 0.3; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
   (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.15 + lampOn * 2.4; });
@@ -109,6 +111,7 @@ layers.forEach(L => {
 const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
   new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.25, metalness: 0.15}));
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
+window.__seaMat = water.material;
 scene.add(water);
 // Wasserfall ueber die Kante (Ausgang des Bachs, radial ausgerichtet)
 const fall = new THREE.Mesh(new THREE.BoxGeometry(1.5, 5.9, 0.16),
@@ -1463,7 +1466,8 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
   const DEFS = [
     {x: -9, z: -11, ry: 0.55, s: 0.78, tint: 0xd98a7a, src: 'house'},
     {x: 6, z: 11, ry: -0.85, s: 0.7, tint: 0x8fb7d9, src: 'house'},
-    {x: 16.8, z: 1.2, ry: 2.4, s: 0.62, tint: 0xa8d0b8, src: 'studio'}
+    {x: 16.8, z: 1.2, ry: 2.4, s: 0.62, tint: 0xa8d0b8, src: 'studio'},
+    {x: 2.6, z: 2.6, ry: -0.4, s: 0.58, tint: 0xd9b07a, src: 'house'}
   ];
   function place(){
     let n = 0;
@@ -1554,7 +1558,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap,
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
