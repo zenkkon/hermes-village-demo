@@ -67,6 +67,7 @@ scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x0d1024), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
+const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
 
 const timeOverride = (new URLSearchParams(location.search).get("time") || "")
   .split(":").map(n => parseFloat(n)).filter(n => !isNaN(n));
@@ -86,6 +87,8 @@ function updateDayNight(){
   moon.intensity = (1 - day) * 0.32;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
+  if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day));
+  pathRibbons.forEach(m => m.material.color.set(pathDay).lerp(pathNight, 1 - day));
   hemi.intensity = 0.16 + day * 0.69;
   const lampOn = 1 - day;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.3; if (l.pool) l.pool.material.opacity = lampOn * 0.38; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
@@ -103,10 +106,13 @@ const layers = [
 ];
 const worldLamps = [];
 const BUILDINGS = [];
+window.__terrainMats = window.__terrainMats || [];
 layers.forEach(L => {
+  const tm = new THREE.MeshStandardMaterial({color: L.c, roughness: 0.95});
+  window.__terrainMats.push({mat: tm, day: L.c});
   const m = new THREE.Mesh(
     new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 44),
-    new THREE.MeshStandardMaterial({color: L.c, roughness: 0.95}));
+    tm);
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);
 });
@@ -1560,7 +1566,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
