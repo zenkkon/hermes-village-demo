@@ -316,6 +316,19 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
 
+## M38 · Stufe 30 / Beta 34 (19.10.2026 ~18:45, Phase 18:30)
+
+**Research Observatory als echtes Blender-Modell + mehr Laternen.** assets/build_dome.py (bpy 5.0.1): 10-seitiger Turmkorpus (Stein #d8d3c8), Gesimsring creme, Halbkugel-Kuppel (Skalierung 0.78, blaugrau #8b93a8-Anmutung), Kuppel-Basisring, Holztür mit Rahmen, 2 Seitenfenster, Teleskop-Ansatz schräg aus der Kuppel, Plinthe. ac_dome.glb 57936 B. Zwei Build-Fehler gefixt: box() hatte Höhe/Tiefe vertauscht (Bleche statt Wände), Render-Kamera nutzte falsches Track-Achsen-Paar ('-Y','Z' → '-Z','Y'), deshalb zunächst nur Boden im Preview.
+
+**Einbau:** DOME_B64 + GLTFLoader.parse → window.__domeGL; applyDome() versteckt do_base/do_dome/do_door und hängt blenderdome in die dome-Gruppe; der Code-Slit (emissive) und die Lampe bleiben für die Nachtleucht-Logik erhalten (worldLamps.win unangetastet). applyDome wird sowohl aus dem Loader-Callback als auch aus dome() gerufen (Reihenfolge-unabhängig, kein TDZ). Erster Versuch scheiterte: window.__domeGroup-Zuweisung landete hinter return (toter Code) → Probe-Script zeigte group:false, Fix vor return.
+
+**Laternen:** 6 neue lampPost-Aufrufe im Mobiliar-Block (Gesamt 12, lampsNew 6→12).
+
+**Review rv40 (Port 8946/8948, Tag 14:00 / Nacht 22:30):** domeSwap true + blenderdome-Knoten vorhanden, alle Swaps intakt (props 3/1/2/4, alle Gebäude), chicks 1, threads 10, 0 echte JS-Fehler. Zoom rv40_dome_day/night: Kuppel sitzt sauber auf dem Turm, nachts Lampen + Kuppelspalt sichtbar. rv40_vergleich.png aktualisiert.
+
+**Artefakte:** /workspace/hermes-village-beta34.zip. Standalone aktualisiert. Rest-Gaps: Weg-Textur organisch, GLB-Dachfarben etwas heller; danach Feinschliff.
+
+
 ## M37 · Stufe 29 / Beta 33 (19.10.2026 ~18:25, Phase 18:00)
 
 **Mobiliar als echte Blender-Modelle (Bank, Picknick-Tisch, Sonnenschirm, Hocker).** assets/build_props.py (bpy 5.0.1, LD_LIBRARY_PATH-Debian-Libs) baut vier Sitz-/Möbel-Modelle mit M_WOOD (#8a6a47, 0.54 roughness), M_DARKWOOD, M_CANOPY (#d94f3d) und M_MAST: Bank mit Sitzfläche, Rückenlehne, 4 Beinen und Armlehnen; Picknick-Tisch mit Deckel und 2 Seitenbänken; Sonnenschirm mit Mast, 8-Segment-Kegel-Kanopy und Knauf; Hocker als Zylinder-Stumpf. Export: ac_bench.glb 9648 B, ac_table.glb 8004 B, ac_umbrella.glb 13032 B, ac_stool.glb 2972 B; Render-Preview prev_props.png geprüft.
