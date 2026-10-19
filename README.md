@@ -713,3 +713,11 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 ## M47 · Stufe 39 / Beta 43 (19.10.2026 ~23:15, Phase 23:00, Feinschliff 7)
 
 **Lichtdichte nachts.** windowFix() setzt alle GLB-Fenstermaterialien (Win*/Window*) auf warmes Emissive 0xffd9a0 und koppelt sie an den Nacht-Faktor (0.15 + lampOn*2.4, dbg glow:9); die drei Dorfhaeuschen bekommen additive Licht-Pools am Boden (wie Laternen), plus vier neue Laternen im Kern und am Nordrand (-1.8,-4.4), (8.2,0.6), (-3.6,7.4), (0.2,11.8). Headless-Review Tag (14:00) + Nacht (22:30): alle Swaps intakt, glow 9, cottages 3, scale6 8, 0 JS-Fehler. Vergleich gegen kanzie-referenz.png: Lichtdichte nachts deutlich naeher am Original (Fenster gluehen, Pools am Boden); Rest-Differenz: Kanzies Nacht ist blauer/dunkler und sein Kern noch dichter beleucht. Beta 43 gepusht.
+## M48 · Stufe 40 / Beta 44 (19.10.2026 ~23:55, Phase 23:30, Feinschliff 8)
+- Nachtstimmung: Meer lerpt nachts auf Tiefblau 0x0a1830 (seaDay 0x2c5f86 -> seaNight), gekoppelt an den Tagesfaktor; dbg sea8.
+- Grundlichter nachts gedimmt: hemi 0.16 + day*0.69 (vorher 0.3 + day*0.55), Nacht liest sich dunkler und waermer statt flach gruen.
+- Kern-Dichte: 4. Dorfhaeuschen am Plaza-Ostrand (2.6, 2.6), scale 0.58, warm getoent 0xd9b07a, eigene Lampe + Licht-Pool; dbg cottages 4.
+- Review rv54 (Tag 14:00 + Nacht 22:30, Port 8977): alle Swaps intakt (facade 6, scale6 8, glow 12, props 3/1/2/4, threads 10, paths 8, flora 12/8/3/12, mountains 3, clouds 6, vig), nightMood8 true, 0 JS-Fehler. Vergleich rv54_vergleich.png gegen kanzie-referenz.png.
+- Befund: Nacht deutlich naeher an Kanzie (Meer dunkel, Lichtdichte hoch). Rest-Differenz: Kanzies Nacht wirkt blauer in der Umgebungslicht-Farbe (Gras liest sich blaugruen statt dunkelgruen) und Kernbeleuchtung noch etwas homogener. -> Feinschliff 9.
+- Standalone nach Sandbox-Restart neu angelegt (village-standalone.html, Kopie von village.html + __snap-Hook nur in der Review-Kopie); Chromium-Review benutzt /workspace/.cache/ms-playwright + /workspace/deps.
+- Zip: hermes-village-beta44.zip
