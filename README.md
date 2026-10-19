@@ -701,3 +701,7 @@ jetzt als dezente Faeden statt Netzplan, Himmel ruhiger, Berge treten zurueck.
 **Artefakte:** /workspace/hermes-village-beta40.zip. Push (Beta 40).
 Naechste Phase 22:00: Feinschliff 5 (Rest-Differenzen aus rv50_vergleich:
 Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
+
+## M45 · Stufe 37 / Beta 41 (19.10.2026 ~22:20, Phase 22:00, Feinschliff 5)
+
+**Gebäudedichte + Fassadenfarben (Kanzie-Palette).** `facadeFix()` tintet die Wand-Materialien (Wall/Walls/Body) der 6 GLB-Gebäude Richtung Kanzie-Palette: Copy Studio terrakotta 0xcf7a5f, Media violett 0x9f7fd0, Web Hotel blau 0x8fb7d9, Mill ocker 0xd9b98a, Mine braun 0xc49a6a, Telegram blaugrau 0x8fa8cc (Lerp 0.55, Material-Marker facadeTinted, dbg facade:6). Drei neue Dorfhaeuschen aus den Blender-Protos (houseProto ×2, studioProto ×1) auf freien Rasenstellen (-9,-11), (6,11), (16.8,1.2), skaliert 0.62-0.78, gedreht, eigene Materialklone in terracotta/blau/mint, jeweils warme Lampe über worldLamps (dbg cottages:3). Headless-Review Tag+Nacht: alle Swaps intakt, facade 6, cottages 3, 0 JS-Fehler. Vergleich gegen kanzie-referenz.png: Fassadenfarben sichtbar, Haeuschen kollisionsfrei; groesste Rest-Differenz jetzt Gebaeudegroesse/Lebensdichte (Kanzie-Haeuser kleiner und enger gestellt). Beta 41 gepusht.
