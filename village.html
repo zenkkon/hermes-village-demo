@@ -101,6 +101,7 @@ function updateDayNight(){
 // Insel mit Erdschichten-Querschnitt
 const layers = [
   {r: 20.5, y: 0.0, h: 1.2, c: 0x6fb048},
+  {r: 20.9, y: -0.7, h: 0.7, c: 0x6fb048},
   {r: 19.8, y: -1.4, h: 1.6, c: 0x8a6242},
   {r: 19.0, y: -3.0, h: 1.4, c: 0xa8845c},
   {r: 18.0, y: -4.4, h: 1.4, c: 0x6e655c},
@@ -1488,7 +1489,8 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
     {x: 6, z: 11, ry: -0.85, s: 0.7, tint: 0x8fb7d9, src: 'house'},
     {x: 16.8, z: 1.2, ry: 2.4, s: 0.62, tint: 0xa8d0b8, src: 'studio'},
     {x: 2.6, z: 2.6, ry: -0.4, s: 0.58, tint: 0xd9b07a, src: 'house'},
-    {x: -2.6, z: 2.6, ry: 0.4, s: 0.58, tint: 0xb8a0c8, src: 'house'}
+    {x: -2.6, z: 2.6, ry: 0.4, s: 0.58, tint: 0xb8a0c8, src: 'house'},
+    {x: -4.2, z: 4.8, ry: -1.2, s: 0.6, tint: 0xd9a8a8, src: 'house'}
   ];
   function place(){
     let n = 0;
@@ -1579,7 +1581,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
