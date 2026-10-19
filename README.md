@@ -315,6 +315,16 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M32 · Stufe 24 / Beta 28 (19.10.2026 ~15:35, Phase 15:30, Copy Studio als Blender-Modell)
+
+Copy Studio (blauer Pyramiden-Dach-Bau, -5.5/-3) ist jetzt ein echtes Blender-GLB statt Code-Klötze.
+
+**Modell** (`assets/build_studio.py`, 1 Durchlauf): Körper 3.4×2.7×3.4 (Creme #e8d5ae, wie bisher), Pyramiden-Dach zweiteilig (Kranz + Spitze) mit Überhang in Blau #3f6fb5, Tür in Holz #5a3c28 an der Front (+Z), Kamin in Ziegel #9a4f3d auf der Rückseite mit Abdeckkappe, Bevels (0.05, 2 Segmente) für weiche AC-Kanten. Export: `assets/ac_studio.glb` (10.1 kB), Preview `assets/prev_studio.png` (CYCLES).
+
+**Einbau**: `STUDIO_B64` + `GLTFLoader.parse` → `studioProto`; `swapStudio()` versteckt alle nicht-emissiven Primitiven der studio-Gruppe (Körper, Dach, Tür, Kamin) und setzt das GLB ein. Die emissiven Fenster (winA/B/C) bleiben prozedural und leuchten nachts weiter, `chimTop` unverändert (Rauch kommt weiter aus der Kaminposition). `window.__studioSwap = studio` nach der Erzeugung; dbg um `acStudio` + `studioSwap` erweitert.
+
+**Review** (Headless, Port 8935, ?time=14:00 und 22:30): dbg Tag + Nacht: acStudio 1, acMill 1, acHouse 1, studioSwap true, houseSwap true, 0 JS-Fehler. Screenshots rv34_day.png / rv34_night.png angesehen, Vergleich rv34_vergleich.png gegen kanzie-referenz.png: Studio-Dach wirkt weicher, Bevel sichtbar; nachts Lichtdichte gehalten. Rest-Gaps: große Flachdächer (Media Haus, Bibliothek) und der Beton-Look der Wege von oben; Baum-/Buschdichte inzwischen nah am Original.
+
 ## M31 · Stufe 23 / Beta 27 (19.10.2026 ~15:20, Phase 15:00, Flora-Dichte + Kamera naeher)
 Zweite Flora-Welle (flora2-IIFE nach Stufe 13): +12 Baeume (Mix
 Kegel/rund, gruen + Herbstfarben, Rand- und Zwischenraeume), +8
