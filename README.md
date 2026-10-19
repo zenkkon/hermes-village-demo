@@ -733,3 +733,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Review rv56 (Tag 14:00 + Nacht 22:30, je eigener Browser-Prozess): alle Swaps intakt (facade 6, cottages 4, scale6 8, glow 12, props 3/1/2/4, threads 10, paths 8, flora 12/8/3/12, mountains 3, clouds 6, vig), nightMood10 true, terrainTint 4, 0 JS-Fehler. Vergleich rv56_vergleich.png gegen kanzie-referenz.png.
 - Befund: Nachtgras jetzt blaugruen wie bei Kanzie, Nachtstimmung insgesamt nah am Referenzniveau. Tag bleibt unveraendert korrekt (Tint leert sich bei Tag vollstaendig). Rest-Differenz: Kanzies Kern noch dichter bebaut/beleuchtet; Baeume wirken bei uns duenner verteilt. -> Feinschliff 11: Kern-Dichte (5. Haus) + Baumgruppen-Trio am Suedrand.
 - Zip: hermes-village-beta46.zip
+## M51 · Stufe 43 / Beta 47 (20.10.2026 ~01:25, Phase 01:00, Feinschliff 11)
+- Kern-Dichte: 5. Haus in cottages-DEFS westlich am Plaza (-2.6, 2.6, ry 0.4, s 0.58, tint 0xb8a0c8, Lampen + Pool, dbg cottages 5, core5).
+- Baumgruppen-Trio Suedrand: 3 Baeume (-5.5,-14.8) (-1,-15.2) (3,-14.2) gemischt rund/Kegel mit Herbstfarben + 2 Buesche (dbg flora4 3), Luecke zwischen -5 und +7 bei z ~ -15 gefuellt.
+- Kleinkram: Favicon-Platzhalter (data:) gegen die automatische Favicon-404 im Headless-Review.
+- Review rv57 (Tag 14:00 + Nacht 22:30, je eigener Browser-Prozess, Sandbox-Restart hatte /tmp geleert - Script neu angelegt): alle Swaps intakt, cottages 5, glow 15, flora4 3, terrainTint 4, 0 Skript-Fehler; die geloggte 404 ist die Backend-Anfrage /api/village/stream der Demo gegen den rein statischen Review-Server (im Deploy mit Backend normal), kein Skriptfehler. Vergleich rv57_vergleich.png gegen kanzie-referenz.png.
+- Befund: Nacht auf Kanzie-Niveau (Gras blaugruen, Lichtdichte, dunkles Meer), Kern jetzt dichter, Suedrand gefuellt. Rest-Differenz: Kanzies Kern hat noch mehr Gebaeude-Kohaesion und das Ufer wirkt bei uns steiler. -> Feinschliff 12: 6. Haus am Nordkern + Uferabsatz (zweite Gras-Terrasse vor der Erdschicht).
+- Zip: hermes-village-beta47.zip
