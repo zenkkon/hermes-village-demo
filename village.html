@@ -767,6 +767,44 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   });
   window.__flora = () => ({autumn: true, rocks: 12, bushes: 8, roundExtra: 8, patches: 3});
 })();
+// Stufe 23 (M31): Flora-Dichte 2 - zweite Welle Baeume/Buesche/Felsen/Blumenflecken
+(function flora2(){
+  const greens2 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
+  const autumn2 = [0xd9822b, 0xc2542a, 0xe8a33d, 0xb57a2e];
+  // zusaetzliche Baeume (Mix Kegel/rund), nahe Rand + Zwischenraeume
+  const t2 = [
+    [-5.5, 14.8, 1.2], [8.5, 13, 1.25], [-11, 12, 1.15], [15.5, -9, 1.25],
+    [-14.5, -12.5, 1.3], [12.5, -11.5, 1.15], [-17.5, -3, 1.0], [17.8, -4, 1.1],
+    [-2, -12.5, 1.05], [4, -13.2, 1.1], [-17.5, 3.2, 1.05], [10, -1.5, 1.0]
+  ];
+  t2.forEach((a, i) => (i % 2 ? roundTree : tree)(a[0], a[1], a[2], i % 3 === 2 ? autumn2[i % 4] : greens2[i % 4]));
+  // Buesche an Gebaeude-Raendern und Zwischenflaechen
+  [[-7.2, 4.8, 0.8], [2.8, 6.2, 0.7], [-3, -2.5, 0.75], [6, -1.5, 0.7],
+   [-10.5, -8.5, 0.7], [13, 0.5, 0.75], [-12.5, 2, 0.7], [9.5, 11, 0.7]].forEach((a, i) =>
+    bush(a[0], a[1], a[2], i % 2 ? autumn2[(i + 1) % 4] : greens2[(i + 2) % 3]));
+  // Felsen 2
+  [[-6, 11.5, 0.5], [3.2, -3.2, 0.35], [14.2, -7.5, 0.45], [-15, 7.5, 0.4]].forEach(a => {
+    const r = new THREE.Mesh(new THREE.IcosahedronGeometry(a[2], 0),
+      new THREE.MeshStandardMaterial({color: [0x8d8d85, 0x7a7a72, 0x9a968c][Math.abs(Math.round(a[0]*7 + a[1]*3)) % 3], roughness: 0.95, flatShading: true}));
+    r.position.set(a[0], a[2]*0.55, a[1]); r.rotation.set(0.3, a[1], 0.08);
+    r.castShadow = true; r.receiveShadow = true; scene.add(r);
+  });
+  // Blumenflecken 2
+  const pc2 = [0xff5f7a, 0xffd60a, 0xbf5af2];
+  [[-11, 8.5], [7.5, 7.8], [-2, -9]].forEach((c, ci) => {
+    for (let k = 0; k < 8; k++){
+      const ang = k * 0.785 + ci * 0.4, rr = 0.45 + (k % 3) * 0.26;
+      const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 4), matWall(0x3f7f36));
+      stem.position.set(fx, 0.68, fz); scene.add(stem);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 6, 5),
+        new THREE.MeshStandardMaterial({color: pc2[(ci + k) % 3]}));
+      head.position.set(fx, 0.79, fz); head.castShadow = true; scene.add(head);
+    }
+  });
+  window.__flora2 = () => ({trees: 12, bushes: 8, rocks: 4, patches: 3});
+})();
+
 
 // Blumen
 const flowerCols = [0xff5f7a, 0xffd60a, 0xff9f0a, 0xbf5af2, 0xf2f2f7];
@@ -966,7 +1004,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.5, dist = 38;
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.46, dist = 30;
 addEventListener("pointerdown", e => { down = true; mx = e.clientX; my = e.clientY; });
 addEventListener("pointerup", () => down = false);
 addEventListener("pointermove", e => {
@@ -1223,7 +1261,7 @@ tick(); setInterval(tick, 30000);
     if (len < 4.2){ bi++; continue; }
     const t0 = Math.min(2.3/len, 0.9), t1 = Math.max((len-2.2)/len, t0 + 0.05);
     const x0 = bx*t0, z0 = bz*t0, x1 = bx*t1, z1 = bz*t1;
-    const bulge = (((bi*47) % 7) - 3) * 0.16 + Math.sin(bi*2.1) * 0.1;
+    const bulge = (((bi*47) % 7) - 3) * 0.22 + Math.sin(bi*2.1) * 0.14;
     const mx = (x0+x1)/2, mz = (z0+z1)/2;
     const dx = x1-x0, dz = z1-z0, L = Math.hypot(dx, dz) || 1;
     const cx = mx - (dz/L)*bulge, cz = mz + (dx/L)*bulge;

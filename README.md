@@ -315,6 +315,23 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M31 · Stufe 23 / Beta 27 (19.10.2026 ~15:20, Phase 15:00, Flora-Dichte + Kamera naeher)
+Zweite Flora-Welle (flora2-IIFE nach Stufe 13): +12 Baeume (Mix
+Kegel/rund, gruen + Herbstfarben, Rand- und Zwischenraeume), +8
+Buesche an Gebaeude-Raendern, +4 Felsen, +3 Blumenflecken
+(window.__flora2 als dbg). Kamera naeher: dist 38 -> 30, rotX
+0.5 -> 0.46, Insel fuellt den Rahmen deutlich besser. Wege
+schwingen staerker: bulge 0.16 -> 0.22 plus Sinus-Anteil. Checks:
+node --check rc 0; Headless-Review rv33 Tag + Nacht: dbg acHouse 1,
+acMill 1, houseSwap true, proto true, 0 JS-Fehler; Vergleichsbild
+rv33_vergleich.png (kanzie-referenz + Tag + Nacht) angesehen:
+Framing deutlich naeher an der Referenz, Rest-Gaps bleiben
+Gebaeude (noch Primitive-Bloecke, naechste Blender-Phase) und
+Grund-Textur. Korrektur zu M30: village-standalone.html wird seit
+Beta 26 als Kopie von feed/village.html gefuehrt, der Baum-Swap
+ist dort also vorhanden (M30-Notiz zur Luchtecke hinfaellig).
+ZIP beta27 (488 kB-Klasse), Push auf main.
+
 ## M30 · Stufe 22 / Beta 26 (19.10.2026 ~14:45, Phase 14:30, Blender-Modelle Web Hotel + Digest Mill)
 Zwei weitere Code-Primitiven durch echte Blender-Modelle ersetzt
 (build_ac_buildings.py, 3 Iterationen: Dome-Roofs via cut_below
