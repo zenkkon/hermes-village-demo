@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="de">
 <head>
+<link rel="icon" href="data:,">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hermes Village - Beta</title>
@@ -973,6 +974,17 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   window.__flora3 = () => ({trees: 12, bushes: 8, patches: 3, motes: 12});
 })();
 
+// Stufe 42 / Feinschliff 11: Kern-Dichte (5. Haus in cottages-DEFS) + Baumgruppen-Trio Suedrand
+(function flora4(){
+  const greens4 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
+  const autumn4 = [0xd9822b, 0xc2542a, 0xe8a33d, 0xb57a2e];
+  const t4 = [[-5.5, -14.8, 1.25], [-1, -15.2, 1.35], [3, -14.2, 1.15]];
+  t4.forEach((a, i) => (i % 2 ? tree : roundTree)(a[0], a[1], a[2], i % 3 === 2 ? autumn4[i % 4] : greens4[i % 4]));
+  [[-3.2, -13.4, 0.75], [1.4, -12.8, 0.7]].forEach((a, i) =>
+    bush(a[0], a[1], a[2], i % 2 ? autumn4[(i + 2) % 4] : greens4[(i + 1) % 3]));
+  window.__flora4Count = 3;
+})();
+
 
 // Blumen
 const flowerCols = [0xff5f7a, 0xffd60a, 0xff9f0a, 0xbf5af2, 0xf2f2f7];
@@ -1475,7 +1487,8 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
     {x: -9, z: -11, ry: 0.55, s: 0.78, tint: 0xd98a7a, src: 'house'},
     {x: 6, z: 11, ry: -0.85, s: 0.7, tint: 0x8fb7d9, src: 'house'},
     {x: 16.8, z: 1.2, ry: 2.4, s: 0.62, tint: 0xa8d0b8, src: 'studio'},
-    {x: 2.6, z: 2.6, ry: -0.4, s: 0.58, tint: 0xd9b07a, src: 'house'}
+    {x: 2.6, z: 2.6, ry: -0.4, s: 0.58, tint: 0xd9b07a, src: 'house'},
+    {x: -2.6, z: 2.6, ry: 0.4, s: 0.58, tint: 0xb8a0c8, src: 'house'}
   ];
   function place(){
     let n = 0;
@@ -1566,7 +1579,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
