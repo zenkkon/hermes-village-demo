@@ -315,6 +315,56 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M30 · Stufe 22 / Beta 26 (19.10.2026 ~14:45, Phase 14:30, Blender-Modelle Web Hotel + Digest Mill)
+Zwei weitere Code-Primitiven durch echte Blender-Modelle ersetzt
+(build_ac_buildings.py, 3 Iterationen: Dome-Roofs via cut_below
+abgeflacht, Bevels reduziert, Schornstein auf Kaminseite +Y, keine
+Front-Fenster). AC-Web Hotel: rosa Waende #e8b0b8, Rosen-Dach
+#d17888, Stelzen #8a6a4a, Schornstein mit Kappe, Seitenfenster mit
+Rahmen. Digest Mill: cremefarbene Steinbasis #e8d9b8, gruenes
+Dach #3f7f5c, Kamin, Windrad-artige Flügel-Andeutung, Wasserrad-
+Körper (Animation window.__wheel bleibt an der Cottage-Stelle,
+Rad-Look jetzt aus dem GLB). Export: assets/ac_webhotel.glb
+(20.9 kB), assets/ac_mill.glb (49.7 kB), Previews
+prev_webhotel.png / prev_mill.png. Einbau: WEBHOUSE_B64 /
+MILL_B64 als Base64, GLTFLoader.parse + swapWebhouse()/swapMill()
+tauschen die Primitive (wh_body/wh_roof/wh_leg bzw. mm_*),
+Primitiven benannt und entfernt, prozedurale Fenster bleiben für
+Glow; window.__whSwap/__millSwap für Checks, dbg erweitert
+(acHouse, acMill). village-standalone.html gleich gepatcht.
+Pruefungen: node --check rc 0 beide Dateien; Headless-Review
+rv32 (Tag + Nacht, 1280x800): dbg acHouse 1, acMill 1,
+houseSwap true, proto true, 0 echte JS-Fehler; Close-ups
+rv32_close_a/b/c bestaetigen beide Modelle im Dorf sichtbar
+(Web Hotel links auf Stelzen mit rosa Dach, Mill am Teich mit
+gruenem Dach). Vergleichsbild rv32_vergleich.png (Referenz +
+Tag + Nacht): Richtung stimmt, Rest-Gap bleibt Dichte/Kamera
+(Phase M31: Wege organisch + Baeume vielfaeltiger + Kamera).
+Standalone-Lücke: Baum-Swap (AC_TREE_B64/upgradeTrees) fehlt
+dort noch, nächste Phase nachholen. ZIP beta26.
+
+## M29 · Stufe 21 / Beta 25 (19.10.2026 ~14:08, Phase 13:30, erster Blender-Build)
+Konstantin hat entschieden (13:30): Weiterbau mit echten Blender-Modellen
+statt Code-Primitiven. bpy 5.0.1 headless im Workspace installiert
+(fe produziert libGL/libglx .debs, entpackt nach /workspace/deps,
+LD_LIBRARY_PATH=/workspace/deps/usr/lib/x86_64-linux-gnu). Erstes
+Modell: hermes-nexus/models/boathouse.glb (17 kB, handgebautes Haus:
+Waende #7a94b8, Satteldach #34528a mit First und Ueberstand, Sockel,
+Fenster beidseitig, Schornstein mit Kappe, Bevels) via bpy-Skript
+/tmp/make_boathouse.py exportiert. Einbau: GLB als Base64 in
+village-standalone.html + feed/village.html eingebettet (HOUSE_B64),
+GLTFLoader.parse tauscht im Boathouse ("Telegram Zentrale") body+roof
+gegen den GLB-Klon (prozedurale Tuer bleibt fuer Lampen-/Fenster-Glow),
+rotation.y = PI (Tuer zur Steg-Seite), eigenes DoorFront im GLB
+ausgeblendet. dbg erweitert (house, houseSwap). Pruefungen: node
+--check rc 0 beide Dateien; dbg-Check: house true, houseSwap true,
+robots 5, proto true, 0 echte JS-Fehler (nur erwarteter file://-CORS-
+Stream-Hinweis); Review rv34: Tag + Nacht Ganzansicht, isolierte
+Modellansicht (rv34_model_iso.png) sauber, Crop am Teich zeigt
+Satteldach-Kante statt Pyramide. Naechste Phase 14:00: weitere
+Gebaeude auf Blender-Modelle umstellen + Feincheck der Ausrichtung
+im Einsatz.
+
 ## M28 · Stufe 20 / Beta 24 (17.10.2026 ~02:43, Phase 02:30, Nachtruhe)
 Kamera-Feinjustierung auf Basis belegter Rest-Gaps aus M27
 (Teich-Ausrichtung rechts oben statt links, Insel zu gross im
