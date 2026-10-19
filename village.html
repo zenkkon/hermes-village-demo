@@ -1504,6 +1504,26 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
   const t = setInterval(() => { place(); if (++tries > 40) clearInterval(t); }, 500);
 })();
 
+
+// Stufe 38 / Feinschliff 6: Gebaeude kleiner stellen (Kanzie-Massstab)
+(function scaleDown(){
+  const F = 0.85;
+  let n = 0;
+  BUILDINGS.forEach(b => {
+    if ((b.userData || {}).scaled6) return;
+    b.userData.scaled6 = true;
+    b.scale.setScalar(F);
+    const ct = b.userData && b.userData.chimTop;
+    if (ct){
+      ct.x = b.position.x + (ct.x - b.position.x) * F;
+      ct.z = b.position.z + (ct.z - b.position.z) * F;
+      ct.y = ct.y * F;
+    }
+    n++;
+  });
+  if (n) window.__scale6 = n;
+})();
+
 connectStream();
 window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap,
   stream: streamState,
@@ -2327,6 +2347,7 @@ tick(); setInterval(tick, 30000);
     d.benchRobots = benchRobots.length;
     d.facade = window.__facadeLit || 0;
     d.cottages = window.__cottageCount || 0;
+    d.scale6 = window.__scale6 || 0;
     return d;
   };
 })();
