@@ -315,6 +315,16 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M34 · Stufe 26 / Beta 30 (19.10.2026 ~16:40, Phase 16:30, Backup Mine als Blender-Modell)
+
+Backup Mine (2, 8) ist jetzt ein echtes Blender-GLB mit Stollen und Gleisen statt Code-Primitiven.
+
+**Modell** (`assets/build_mine.py`): Huettenkoerper 3.6×3.2×2.3 in Sand #cbb99a, 4-seitiges Pyramidendach mit Ueberhang in Ziegel #8a4a3a, Stollen-Eingang an der Front (dunkler Kasten #14100c) mit Holzrahmen (zwei Stuetzpfosten + Sturz, #6e5238), Seitentuern-Holzblende #5a3c28, zwei Stuetzbalken unter dem Dach, Gleise Richtung Inselmitte (zwei Stahl-Schienen #777777, 4 Holz-Schwellen). Bevels 0.05/2 auf Struktur, Schienen/Schwellen ohne. Export: `assets/ac_mine.glb` (23.1 kB), Preview `assets/prev_mine.png` (CYCLES, Front-Ansicht mit Gleisen).
+
+**Einbau**: `window.__mineSwap = mine` an `mineBuild(2, 8)`; `MINE_B64` + `GLTFLoader.parse` → `mineProto`; `swapMine()` versteckt alle nicht-emissiven Top-Level-Meshes der Gruppe (Koerper, Dach, Tuer, Kamin, Stollen-Loch, Schienen, Schwellen) und setzt das GLB ein. Die Lore (`window.__cart`, animiert, Fahrt 4.4 ± 1.6) bleibt unberuehrt und faehrt weiter auf den GLB-Gleisen; das emissive Fenster der Huette leuchtet nachts weiter. dbg um `acMine` + `mineSwap` erweitert.
+
+**Review** (Headless, Port 8936, ?time=14:00 und 22:30): dbg Tag + Nacht: acMine 1, acMedia 1, acStudio 1, acHouse 1, acMill 1, mineSwap/mhSwap/studioSwap true, 0 JS-Fehler. rv36_day/night + Vergleich rv36_vergleich.png gegen kanzie-referenz.png: Dorf intakt, Mine sitzt an ihrem Platz am Kreuzungsweg; Close-up-Search durchs KIRA-Dialog-Overlay verdeckt, Befund stuetzt sich auf dbg + Ganzszenen. Rest-Gaps: Cron Gatehouse + Telegram-Zentrale als GLB, Weg-Textur von oben, Dachfarben der GLB-Modelle etwas heller als die Primitive-Vorgaenger.
+
 ## M33 · Stufe 25 / Beta 29 (19.10.2026 ~16:10, Phase 16:00, Shimeria Media Haus als Blender-Modell)
 
 Shimeria Media Haus (lila 3-Etage, -10.5/3.5) ist jetzt ein echtes Blender-GLB statt Code-Klötze.
