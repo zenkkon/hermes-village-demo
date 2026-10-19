@@ -315,6 +315,22 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M36 · Stufe 28 / Beta 32 (19.10.2026 ~17:55, Phase 17:30)
+
+**Telegram-Zentrale als echtes Blender-Modell.** Der prozedurale Boathouse (Kisten-Haus am Teich) ist ersetzt durch `ac_tele.glb` (57.7 kB, Blender 5.0.1 headless): Sockel-Plinthe 2.3×2.1, blaugrauer Korpus 2.0×1.8×1.4 (0x7a94b8 ≙ Original-Farbwelt), Creme-Trim-Kranz, 4-seitiges Kegeldach 0x3f6fb5 mit Überhang, Ziegel-Schornstein mit Kappe, dunkle Fenster-Schlitze, Holz-Türrahmen an der +Z-Seite. Bevels 0.04/2 (Dach 0.03/2).
+
+**Bau-Fehler gefunden und behoben:** erster Export stand kopfüber im Bach-Rahmen (Höhe/Tiefe im Build-Skript vertauscht, Blender Z=oben) und das Kegeldach war um die falsche Achse gedreht (Y statt Z). Beides via Headless-Preview + Szenen-Zoom-Review sichtbar gemacht und korrigiert.
+
+**Einbau:** HOUSE_B64 in `feed/village.html` durch das neue GLB ersetzt (Patch-Skript), prozedurale Tür + Lampe (0x8ec8ff) bleiben erhalten, `hm.rotation.y = PI` richtet den Türrahmen zur Szene. Syntax-Check OK, Standalone aktualisiert.
+
+**Neuer Debug-Hook:** `window.__look(x,y,z)` verschiebt den Orbit-Mittelpunkt (neben `__cam`), damit Gebäude ab jetzt gezielt im Headless-Review anzoomt werden können.
+
+**Review rv38 (Headless, Tag + Nacht, Port 8937):** alle Swaps true (houseSwap/studioSwap/mhSwap/mineSwap/gateSwap), acHouse/acMill/acStudio/acMedia/acMine/acGate je 1, 0 echte JS-Fehler (die zwei 404s sind nur `/api/village/stream`, SSE-frei im Demo-Modus). Zoom-Shots Tag + Nacht an der Teichstelle: Haus steht korrekt, Türseite zeigt zum Steg, nachts leuchtet die Lampe auf die Wand.
+
+**Artefakte:** `rv38_vergleich.png` (Kanzie-Referenz links, rv38 Tag rechts), `rv38_day_zoom.png` / `rv38_night_zoom.png`. ZIP Beta 32 (village-standalone.html, README.md, REA-KANZIE-NOTIZEN.md, OPTIK-GAP-KANZIE.md, feed/village.html, feed/events-synthetic.json).
+
+**Nächste Phasen:** Research-Observatory-Kuppel als Blender-Modell (sieht schon gut aus, aber fehlt in der GLB-Familie), Weg-Textur, GLB-Dachfarben leicht hellen, Mobiliar (Bänke, Picknick-Tisch, Sonnenschirm, mehr Laternen). Danach Feinschliff, dann Abschlussvorschlag, sobald der Screenshot-Vergleich Kanzie-Niveau belegt.
+
 ## M35 · Stufe 27 / Beta 31 (19.10.2026 ~17:12, Phase 17:00, Cron Gatehouse als Blender-Modell)
 
 Cron Gatehouse (Uhrturm, 1.2 / -6.5) ist jetzt ein echtes Blender-GLB; Ziffernblatt, Zeiger, Leuchtkugel und Lampe bleiben prozedural (die Zeiger laufen animiert ueber window.__clock).
