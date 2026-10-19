@@ -315,6 +315,16 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 (403 kB, 6 Dateien), Push 3303d54..? (Beta 19). Naechste Phase 00:30:
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
+## M35 · Stufe 27 / Beta 31 (19.10.2026 ~17:12, Phase 17:00, Cron Gatehouse als Blender-Modell)
+
+Cron Gatehouse (Uhrturm, 1.2 / -6.5) ist jetzt ein echtes Blender-GLB; Ziffernblatt, Zeiger, Leuchtkugel und Lampe bleiben prozedural (die Zeiger laufen animiert ueber window.__clock).
+
+**Modell** (`assets/build_gate.py`): Turmschaft 10-seitig, unten 1.25 oben 1.05, Hoehe 5.6 (Stein #9aa0ac), Kranz-Gesims unter dem Dach, Sockel-Plinthe (1.6 unten), 8-seitiges Kegeldach #9aa0ac mit Bevel, Eingang an der Front (dunkle Tuer #14100c + Holzrahmen: 2 Pfosten + Sturz #6e5238), zwei dunkle Fenster-Schlitze an den Flanken. bpy 5.0.1: primitive_cylinder_add kennt kein radius1/radius2 mehr, Kegel-Primitiven nutzen. Export: `assets/ac_gate.glb` (20.3 kB), Preview `assets/prev_gate.png` (CYCLES).
+
+**Einbau**: Prozedurale Primitive in clockTower() benannt (`gt_base` Koerper, `gt_roof` Kegeldach); `swapGate()` versteckt nur `gt_*`-Kinder und haellt Ziffernblatt (emissiv), Rand, Zeiger (animiert), Leuchtkugel und Lampe unberuehrt. `window.__gateSwap = gate`; `GATE_B64` + `GLTFLoader.parse` → `gateProto`; dbg um `acGate` + `gateSwap` erweitert.
+
+**Review** (Headless, Port 8936, ?time=14:00 und 22:30): dbg Tag + Nacht: acGate 1, acMine 1, acMedia 1, acStudio 1, acHouse 1, acMill 1, alle Swaps true, 0 JS-Fehler. rv37_day/night + Vergleich rv37_vergleich.png gegen kanzie-referenz.png: Turm sitzt an der Plaza-Nordseite, nachts leuchtet das Ziffernblatt weiter an alter Stelle, Dorf intakt. Rest-Gaps: Telegram-Zentrale + Research-Observatory-Kuppel (Kuppel sieht schon gut aus), Weg-Textur von oben, GLB-Dachfarben etwas heller als Primitive-Vorgaenger, Mobiliar (Baenke, Picknick, Sonnenschirm).
+
 ## M34 · Stufe 26 / Beta 30 (19.10.2026 ~16:40, Phase 16:30, Backup Mine als Blender-Modell)
 
 Backup Mine (2, 8) ist jetzt ein echtes Blender-GLB mit Stollen und Gleisen statt Code-Primitiven.
