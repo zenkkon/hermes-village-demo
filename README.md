@@ -678,3 +678,26 @@ vig true), threads 10, 0 echte JS-Fehler (8x 404 stream). rv49_day/night
 angesehen; rv49_vergleich.png (Kanzie | Tag | Nacht): Kamerablick jetzt
 klar naeher an Kanzie, Berge + Horizont vorhanden. village-standalone.html
 1156784 Zeichen. ZIP beta39, Push (Beta 39).
+
+## M44 · Stufe 36 / Beta 40 (19.10.2026 ~21:45, Phase 21:30, Feinschliff 4: Himmel & Leitungen)
+
+**Netz-Look weicher (groesster Rest-Differenz aus rv49_vergleich: die schwarzen
+Leitungen machten das Dorf zum Diagramm).** Drei Eingriffe in feed/village.html:
+1. Gebaeude-Router-Draehte: Farbe 0x22262e -> 0x39424c, Opacity 0.7 -> 0.26
+   (Pulse laufen weiter auf denselben Kurven).
+2. Masten-Draehte (sagWire): transparent, Opacity 0.6 statt deckend.
+3. Wolken: Opacity 0.92 -> 0.5, Farbe 0xffffff -> 0xf4f8fb, Kugel-Radius
+   0.9/0.35-Staffel -> 0.7/0.28-Staffel; Berge gedampft (body 0x93a0a8 ->
+   0x89949c, Schnee 0xeef3f7 -> 0xe6edf3), Groesse/Position unveraendert.
+Neue dbg-Felder: clouds 6, wireSoft true. node --check rc 0, Standalone sync.
+
+**Review rv50 (Headless, Port 8971, Tag 14:00 + Nacht 22:30):** alle Swaps
+intakt (house/studio/mh/mine/gate/dome/props 3/1/2/4), threads 10, paths 8,
+roofLit 7, flora3 12/8/3/12, vig true, mountains 3, clouds 6, wireSoft true,
+0 echte JS-Fehler (2x erwartete 404 /api/village/stream). rv50_day/night
+angesehen, rv50_vergleich.png (Kanzie | Tag | Nacht): Leitungen lesen sich
+jetzt als dezente Faeden statt Netzplan, Himmel ruhiger, Berge treten zurueck.
+
+**Artefakte:** /workspace/hermes-village-beta40.zip. Push (Beta 40).
+Naechste Phase 22:00: Feinschliff 5 (Rest-Differenzen aus rv50_vergleich:
+Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
