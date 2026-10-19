@@ -26,6 +26,8 @@
     border-radius:10px;padding:8px 12px;font:italic 13px/1.35 Georgia,serif;display:none;z-index:3;
     transform:translate(-50%,-120%);pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
   #bubble .who{font:700 10px/1 -apple-system,sans-serif;letter-spacing:.08em;color:#c2601e;text-transform:uppercase}
+  #vig{position:fixed;inset:0;pointer-events:none;z-index:4;
+    background:radial-gradient(ellipse at center, transparent 58%, rgba(8,10,22,.45) 100%)}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
@@ -35,6 +37,7 @@
 <div id="hud"><span id="src" class="badge">lädt…</span><span id="stamp" class="badge"></span><span id="tod" class="badge"></span></div>
 <div id="panel"></div>
 <div id="bubble"></div>
+<div id="vig"></div>
 <div id="hint">Ziehen: Kamera · Scrollen: zoom · Gebäude/Figur anklicken</div>
 <button id="toggle">Weiche Schatten: an</button>
 <script type="module">
@@ -2463,6 +2466,7 @@ tick(); setInterval(tick, 30000);
     d.paths = window.__pathCount || 0;
     d.roofLit = window.__roofLit || 0;
     d.flora3 = (window.__flora3 && window.__flora3()) || null;
+    d.vig = !!document.getElementById("vig");
     return d;
   };
 })();

@@ -316,6 +316,31 @@ gegen kanzie-referenz.png bestaetigt Mobiliar-Dichte. ZIP beta19
 Optik-Gap-Punkt 6 (nachts Lichtdichte).
 
 
+## M42 · Stufe 34 / Beta 38 (19.10.2026 ~20:40, Phase 20:30, Feinschliff 2)
+
+**Vignette + Kamera-Nahaufnahme-Check.** Kanzie hat eine deutliche dunkle
+Vignette an den Raendern; wir hatten einen flachen hellen Hintergrund. Eingriff:
+#vig als fixed Overlay (radial-gradient, transparent 58% -> rgba(8,10,22,.45) 100%,
+pointer-events none, z-index 4) direkt nach #bubble; dbg um vig erweitert.
+
+**Kamera-Nahaufnahme:** rv44_fall (Nacht, __cam(1.04, 0.55, 15)) und
+rv44_fall_day (Tag, __cam(1.15, 0.6, 13)): Der Dorf-Kern haelt Nahaufnahme -
+Platz, Uhr-Turm, Marktstaende, Wege sauber, keine erkennbaren Z-Fighting- oder
+Texturfehler. Wasserfall/Teich im Vollbild sichtbar; Bach, Holzbruecke und
+Wasserfall existieren bereits (M36) und wirken im Detail unauffaellig.
+
+**Review rv44 (Port 8955, Tag 14:00 / Nacht 22:30):** vig true Tag+Nacht, alle
+Swaps intakt (props 3/1/2/4, domeSwap, paths 8, roofLit 7, flora3 12/8/3/12),
+threads 10, keine echten JS-Fehler (7x 404 stream, Polling-Fallback).
+rv44_day: Randvignette rauscht die Szene Richtung Kanzie-Mood, Inselmitte bleibt
+hell. rv44_night: Vignette verstaerkt die warme Lichtdichte. rv44_vergleich.png
+aktualisiert.
+
+**Artefakte:** /workspace/hermes-village-beta38.zip. Standalone aktualisiert.
+Naechste Phase 21:00: Feinschliff 3 (Rest-Differenzen aus rv44_vergleich), dann
+Abschlussvorschlag, sobald der Vergleich Kanzie-Niveau belegt.
+
+
 ## M41 · Stufe 33 / Beta 37 (19.10.2026 ~20:15, Phase 20:00, Feinschliff 1)
 
 **Gras-Mottling + Flora-Dichte 3.** Direkter Vergleich rv42_vergleich.png gegen
