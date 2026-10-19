@@ -140,12 +140,12 @@ for (let i = 0; i < 3; i++){
   ];
   defs.forEach(d => {
     const body = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r, d.h, 7),
-      new THREE.MeshStandardMaterial({color: 0x93a0a8, roughness: 1, flatShading: true}));
+      new THREE.MeshStandardMaterial({color: 0x89949c, roughness: 1, flatShading: true}));
     body.position.set(d.x, d.h/2 - 3, d.z);
     scene.add(body);
     const snowH = d.h * 0.3;
     const snow = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r * 0.42, snowH, 7),
-      new THREE.MeshStandardMaterial({color: 0xeef3f7, roughness: 0.9, flatShading: true}));
+      new THREE.MeshStandardMaterial({color: 0xe6edf3, roughness: 0.9, flatShading: true}));
     snow.position.set(d.x, d.h - 3 - snowH/2 + 0.05, d.z);
     snow.rotation.y = 0.4;
     scene.add(snow);
@@ -768,7 +768,7 @@ function sagWire(a, b){
   const mid = a.clone().add(b).multiplyScalar(0.5); mid.y -= 0.28;
   const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
   const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(12));
-  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color: 0x22262e})));
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color: 0x22262e, transparent: true, opacity: 0.6})));
 }
 for (let i = 0; i < wirePts.length - 1; i++) sagWire(wirePts[i], wirePts[i+1]);
 
@@ -1736,9 +1736,10 @@ tick(); setInterval(tick, 30000);
     mid.y -= 0.35;
     const curve = new THREE.QuadraticBezierCurve3(a, mid, V3(routerPos.x, 2.1, routerPos.z));
     const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(16));
-    scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color: 0x22262e, transparent: true, opacity: 0.7})));
+    scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color: 0x39424c, transparent: true, opacity: 0.26})));
     wireMap.push({curve, b});
   });
+  window.__wireSoft = true;
   const pulses = [];
   function firePulse(building, color){
     const wm = wireMap.find(w => w.b === building) || wireMap[0];
@@ -1980,14 +1981,14 @@ tick(); setInterval(tick, 30000);
 
 // --- Stufe 05d: Leben im Dorf (Wolken, Wasser-Wellen, Lagerfeuer, Kamera-Autotour) ---
 (function(){
-  const cloudMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.92 });
+  const cloudMat = new THREE.MeshBasicMaterial({ color: 0xf4f8fb, transparent: true, opacity: 0.5 });
   const clouds = new THREE.Group();
   const cloudDefs = [[-16,21,10],[10,23,14],[22,20,-6],[-6,24,-18],[28,21,4],[-24,20,-10]];
   cloudDefs.forEach(([cx,cy,cz], ci) => {
     const c = new THREE.Group();
     const n = 4 + (ci % 2);
     for (let i = 0; i < n; i++){
-      const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.9 + (i % 3) * 0.35, 0), cloudMat);
+      const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7 + (i % 3) * 0.28, 0), cloudMat);
       m.position.set((i - n/2) * 1.1, (i % 2) * 0.4, (i % 3) * 0.4 - 0.4);
       m.scale.y = 0.55;
       c.add(m);
@@ -1996,6 +1997,7 @@ tick(); setInterval(tick, 30000);
     clouds.add(c);
   });
   scene.add(clouds);
+  window.__cloudCount = cloudDefs.length;
 
   function ripple(x, z, r0, y){
     const g = new THREE.Mesh(new THREE.RingGeometry(0.95, 1.0, 24),
@@ -2490,6 +2492,8 @@ tick(); setInterval(tick, 30000);
     d.flora3 = (window.__flora3 && window.__flora3()) || null;
     d.vig = !!document.getElementById("vig");
     d.mountains = window.__mountains || 0;
+    d.clouds = window.__cloudCount || 0;
+    d.wireSoft = !!window.__wireSoft;
     return d;
   };
 })();
