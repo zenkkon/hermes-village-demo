@@ -721,3 +721,9 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Befund: Nacht deutlich naeher an Kanzie (Meer dunkel, Lichtdichte hoch). Rest-Differenz: Kanzies Nacht wirkt blauer in der Umgebungslicht-Farbe (Gras liest sich blaugruen statt dunkelgruen) und Kernbeleuchtung noch etwas homogener. -> Feinschliff 9.
 - Standalone nach Sandbox-Restart neu angelegt (village-standalone.html, Kopie von village.html + __snap-Hook nur in der Review-Kopie); Chromium-Review benutzt /workspace/.cache/ms-playwright + /workspace/deps.
 - Zip: hermes-village-beta44.zip
+## M49 · Stufe 41 / Beta 45 (20.10.2026 ~00:20, Phase 00:00, Feinschliff 9)
+- Blaue Nacht-Ambient-Farbe: hemi.groundColor lerpt nachts von warmbraun 0x4a4436 auf blaugruen 0x1d3340 (groundDay/groundNight), Mond auf 0.32 fuer Formen.
+- Kernlicht-Homogenitaet: Lampen 0.05 + lampOn*2.3 (vorher 2.1), Licht-Pools 0.38 (vorher 0.3); dbg nightMood9.
+- Review rv55 (Tag 14:00 + Nacht 22:30, Port 8977): alle Swaps intakt (facade 6, cottages 4, scale6 8, glow 12, props 3/1/2/4, threads 10, paths 8, flora 12/8/3/12, mountains 3, clouds 6, vig), nightMood9 true, 0 JS-Fehler. Vergleich rv55_vergleich.png gegen kanzie-referenz.png.
+- Befund: Nacht-Lichtdichte und dunkles Meer nahe am Kanzie-Niveau; unser Nachtgras liest sich noch deutlich gruen, Kanzies Gras blaugruen (staerkerer blauer Umgebungs-Tint). -> Feinschliff 10: Nacht-Tint direkt auf Gras-/Terrainmaterial (color.lerp Richtung 0x274a44 bei Nacht).
+- Zip: hermes-village-beta45.zip
