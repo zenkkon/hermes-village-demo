@@ -654,3 +654,27 @@ Abschlussvorschlag.
 - `contract/INTEGRATION.md` - Einbindung in village.html ohne Bundler.
 Pruefungen: tsc --noEmit (0 Fehler, Pflicht) + `node contract/smoke.test.mjs`
 (alle gruen, Pflicht) vor jeder Uebergabe.
+
+
+## M43 · Stufe 35 / Beta 39 (19.10.2026 ~21:25, Phase 21:00, Feinschliff 3)
+
+**Kamera auf Kanzie-Winkel + Berge im Hintergrund.** Der Vergleich rv44
+gegen kanzie-referenz.png zeigte die groesste Rest-Differenz: Kanzie sieht
+die Insel deutlich seitlicher (Insel fuellt den Rahmen, Horizont sichtbar),
+wir von steil oben. Eingriffe in feed/village.html:
+1. Kamera-Default rotX 0.46 -> 0.95, dist 30 -> 28 (Wheel-Clamps bleiben
+   0.12..1.25 / 9..60). Jetzt seitenaehnliche Sicht wie Kanzie, Insel
+   fuellt den Rahmen, Inselrand und Meer sichtbar.
+2. Berge im Hintergrund neu (IIFE mountains(), dbg __mountains=3):
+   3 Schneekegel hinter der Insel (Richtung +x/+z, hinter dem Dorf),
+   h 12/10/9, Basis auf dem Meeresboden (y -3), Koerper 0x93a0a8 hell,
+   Schnee 0xeef3f7. Erste Versuche (h 19-26) waren zu dominant bzw.
+   unsichtbar (steile Kamera) -> iterativ verkleinert/versetzt.
+3. Wolken hoeher gesetzt (y 14-16 -> 20-24), sonst haengen sie bei der
+   flacheren Kamera vor dem Dorf.
+Review rv49 (Port 8967): Tag 14:00 + Nacht 22:30, mountains 3, alle Swaps
+intakt (props 3/1/2/4, domeSwap, paths 8, roofLit 7, flora3 12/8/3/12,
+vig true), threads 10, 0 echte JS-Fehler (8x 404 stream). rv49_day/night
+angesehen; rv49_vergleich.png (Kanzie | Tag | Nacht): Kamerablick jetzt
+klar naeher an Kanzie, Berge + Horizont vorhanden. village-standalone.html
+1156784 Zeichen. ZIP beta39, Push (Beta 39).

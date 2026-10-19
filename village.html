@@ -131,6 +131,28 @@ for (let i = 0; i < 3; i++){
   scene.add(rp); bachRipples.push(rp);
 }
 
+// Stufe 35: Hintergrund-Berge hinter der Insel (Kanzie-Mood)
+(function mountains(){
+  const defs = [
+    {x: 16, z: 36, r: 6.5, h: 12},
+    {x: 30, z: 27, r: 5.5, h: 10},
+    {x: 6, z: 42, r: 5, h: 9}
+  ];
+  defs.forEach(d => {
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r, d.h, 7),
+      new THREE.MeshStandardMaterial({color: 0x93a0a8, roughness: 1, flatShading: true}));
+    body.position.set(d.x, d.h/2 - 3, d.z);
+    scene.add(body);
+    const snowH = d.h * 0.3;
+    const snow = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r * 0.42, snowH, 7),
+      new THREE.MeshStandardMaterial({color: 0xeef3f7, roughness: 0.9, flatShading: true}));
+    snow.position.set(d.x, d.h - 3 - snowH/2 + 0.05, d.z);
+    snow.rotation.y = 0.4;
+    scene.add(snow);
+  });
+  window.__mountains = defs.length;
+})();
+
 // --- Baumaterial ---
 const matWall = c => new THREE.MeshStandardMaterial({color: c, roughness: 0.9});
 function winPlane(w, h){
@@ -1240,7 +1262,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.46, dist = 30;
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.95, dist = 28;
 let camC = null; window.__look = (x,y,z)=>{ camC = (x==null ? null : {x, y, z}); };
 addEventListener("pointerdown", e => { down = true; mx = e.clientX; my = e.clientY; });
 addEventListener("pointerup", () => down = false);
@@ -1960,7 +1982,7 @@ tick(); setInterval(tick, 30000);
 (function(){
   const cloudMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.92 });
   const clouds = new THREE.Group();
-  const cloudDefs = [[-14,14.5,6],[8,15.5,10],[18,13.5,-8],[-4,16.5,-14],[24,15,2],[-20,14,-6]];
+  const cloudDefs = [[-16,21,10],[10,23,14],[22,20,-6],[-6,24,-18],[28,21,4],[-24,20,-10]];
   cloudDefs.forEach(([cx,cy,cz], ci) => {
     const c = new THREE.Group();
     const n = 4 + (ci % 2);
@@ -2467,6 +2489,7 @@ tick(); setInterval(tick, 30000);
     d.roofLit = window.__roofLit || 0;
     d.flora3 = (window.__flora3 && window.__flora3()) || null;
     d.vig = !!document.getElementById("vig");
+    d.mountains = window.__mountains || 0;
     return d;
   };
 })();
