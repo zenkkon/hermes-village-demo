@@ -57,6 +57,7 @@ document.body.appendChild(renderer.domElement);
 
 // Licht: Tag-Nacht nach echter lokaler Uhrzeit
 const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x4a4436, 0.6); scene.add(hemi);
+const nightAmbient = new THREE.AmbientLight(0xffb060, 0); scene.add(nightAmbient);
 const groundDay = new THREE.Color(0x4a4436), groundNight = new THREE.Color(0x1d3340);
 const sun = new THREE.DirectionalLight(0xfff2d8, 1.0);
 sun.castShadow = true;
@@ -66,7 +67,7 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
-const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x0d1024), skyDawn = new THREE.Color(0xe8946a);
+const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
 
@@ -85,13 +86,14 @@ function updateDayNight(){
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
   sun.intensity = 0.25 + day * 1.45;
   moon.position.set(-20, 18, -10);
-  moon.intensity = (1 - day) * 0.32;
+  moon.intensity = (1 - day) * 0.44;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
   if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day));
   pathRibbons.forEach(m => m.material.color.set(pathDay).lerp(pathNight, 1 - day));
-  hemi.intensity = 0.16 + day * 0.69;
+  hemi.intensity = 0.16 + day * 0.62 + (1 - day) * 0.22;
   const lampOn = 1 - day;
+  nightAmbient.intensity = lampOn * 0.3;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.55; if (l.pool) l.pool.material.opacity = lampOn * 0.45; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
   (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.15 + lampOn * 2.4; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
