@@ -780,3 +780,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - **Nachtfenster fuer beide Blender-Cottages**: Materialien werden im Swap geklont; Window-Materialien bekommen emissive 0xffd98a und werden in `window.__nightWins` registriert, der bestehende Nacht-Loop treibt deren emissiveIntensity (dbg nightWins 31).
 - Review rv63: Tag 14:00 + Nacht 22:30 + Close-up 18:30 (eingebauter __cam-Hook, dist 15) sauber, dbg b52done true / b53done true / cottages 7 / nightWins 31, 0 JS-Fehler. Vergleiche rv63_day/night/close/vergleich.png angesehen: L-Form sitzt suedlich der Plaza, Nacht laesst beide Blender-Fenster warm aufleuchten.
 - Beta 53 Zip: village-beta53.zip.
+
+## M58 · Stufe 50 / Beta 54 (dritte Blender-Cottage: Veranda-Variante)
+
+- **Drittes bpy-Modell**: cottage-ac3.glb (26,9 KB, 17 Meshes): Cremeweisse Wände, gruenes Satteldach mit Firstbalken (First entlang Z), Sued-Veranda (Holzdeck, 2 Pfosten, Pultdach 14 Grad), Tuer, 3 Fensterpaare mit Rahmen+Glas, Schornstein.
+- Swap gegen DEFS-Kern-Haus suedwest (key -2.6,2.6, vorher lila Box-Haus) im etablierten Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
+- Review rv64: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52done/b53done/b54done true, cottages 7, nightWins 37 (nachts mehr Fenster im Nacht-Loop registriert, erwartet), 0 JS-Fehler. rv64_day/night/close/vergleich.png angesehen: Kern hat jetzt 3 echte Blender-Cottages (Steg, sued, suedwest), Weitwinkel stimmig, Nacht laesst alle Blender-Fenster warm aufleuchten.
+- Beta 54 Zip: village-beta54.zip.
