@@ -772,3 +772,11 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - DEFS-Loop setzt jetzt `c.userData.cottageKey = key` auf jeder platzierten Cottage (Voraussetzung fuer saubere Swaps).
 - Review rv62: Tag 14:00 + Nacht 22:30 sauber, dbg b52 true / b52done true / cottages 7 / glow 22 / pier13 9 / harbor14 6, 0 JS-Fehler. Close-up 18:30 (eingebauter __cam-Hook, dist 15) bestaetigt die Optik: Satteldach, Schornstein, Fensterrahmen sichtbar und stillich passend.
 - Beta 52 Zip: village-beta52.zip.
+
+## M57 · Stufe 49 / Beta 53 (zweite Blender-Cottage + Nachtfenster)
+
+- **Zweites bpy-Modell**: cottage-ac2.glb (23,8 KB, 14 Meshes) im etablierten Muster gebaut: Terracotta-L-Form (Hauptkoerper laenglich + Fluegel mit 4-seitigem Turmdach), Satteldach mit First, Tuer, 3 Fenster mit Rahmen, Schornstein, L-Sockel.
+- Swap gegen DEFS-Kern-Haus sued (key 2.6,2.6) im selben Muster wie Beta 52 (Box3-Hoehenmatch, Position/Rotation uebernommen, Shadows an).
+- **Nachtfenster fuer beide Blender-Cottages**: Materialien werden im Swap geklont; Window-Materialien bekommen emissive 0xffd98a und werden in `window.__nightWins` registriert, der bestehende Nacht-Loop treibt deren emissiveIntensity (dbg nightWins 31).
+- Review rv63: Tag 14:00 + Nacht 22:30 + Close-up 18:30 (eingebauter __cam-Hook, dist 15) sauber, dbg b52done true / b53done true / cottages 7 / nightWins 31, 0 JS-Fehler. Vergleiche rv63_day/night/close/vergleich.png angesehen: L-Form sitzt suedlich der Plaza, Nacht laesst beide Blender-Fenster warm aufleuchten.
+- Beta 53 Zip: village-beta53.zip.
