@@ -757,3 +757,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Review rv60: Weitwinkel Tag (14:00) + Nacht (22:30) via wiederhergestellter Pipeline (Standalone nur mit __snap-Hook): dbg vollstaendig intakt (cottages 7, glow 21, pier13 9, harbor14 6, terrainTint 5, shore12, core5-7, flora4 3), 0 Skript-Fehler (404 nur Backend-Poll). Pier-Nahaufnahme (18:30, Kamera-Override window.__cam im Standalone): Planken korrekt ueber die Kante, Pfahl sichtbar, Laterne leuchtet. Haus7-Nahaufnahme 2x Browser-Crash ("browser closed"), vom Weitwinkel abgedeckt.
 - Befund Review-Infrastruktur: der Kamera-Override-Hook brach die Default-Kamera im Standalone (Weitwinkel renderte nur Himmel, ohne JS-Fehler) - Hook zurueckgesetzt, Standalone wieder Standard-Pipeline; Nahaufnahmen brauchen einen anderen Ansatz (z.B. Override nur fuer Einzellaufe per URL-Param). Nacht weiter auf Kanzie-Niveau; Rest-Diff: Kern-Kohaesion (Gebaeude schmaler/hoeller, enger gereiht).
 - Zip: hermes-village-beta50.zip
+
+## M55 · Stufe 47 / Beta 51 (Feinschliff 15: Kern-Kohaesion + Blender-Vorbereitung)
+
+- **Blender-Schiene steht**: bpy 5.0.1 headless im Workspace installiert (pip, Python 3.11); Systemlibs laufen ueber `LD_LIBRARY_PATH=/workspace/deps/usr/lib/x86_64-linux-gnu` (libXfixes u. a. lagen schon in deps). Mindesttest: low-poly Cottage (Koerper + 4-seitiges Dach + Tuer, Farbmaterialien) per bpy gebaut und als GLB exportiert -> `models/test-cottage.glb` (5.084 Bytes). Naechste Phase: erste echte Blender-Cottage als GLB in village.html via GLTFLoader.
+- **Kern-Kohaesion (Feinschliff 15)**: alle 7 DEFS-Cottages schlanker und hoeher (`c.scale.set(d.s*0.88, d.s*1.14, d.s*0.88)` statt einheitlichem Scalar), Richtung Kanzies schmalen, hohen Kernhaeusern. dbg-Marker `__dbgSlim15`.
+- Review rv61: Tag 14:00 + Nacht 22:30, dbg cottages 7 / slim15 true / glow 21 / pier13 9, 0 JS-Fehler (bekannter 404 `/api/village/stream` = Backend-Poll). Vergleiche rv61_day/rv61_night/rv61_vergleich.png angesehen: schlankere Silhouetten sichtbar, keine Clipping-Artefakte, Nacht unverichtet dicht.
+- Beta 51 Zip: village-beta51.zip (283 KB).
