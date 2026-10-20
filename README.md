@@ -764,3 +764,11 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - **Kern-Kohaesion (Feinschliff 15)**: alle 7 DEFS-Cottages schlanker und hoeher (`c.scale.set(d.s*0.88, d.s*1.14, d.s*0.88)` statt einheitlichem Scalar), Richtung Kanzies schmalen, hohen Kernhaeusern. dbg-Marker `__dbgSlim15`.
 - Review rv61: Tag 14:00 + Nacht 22:30, dbg cottages 7 / slim15 true / glow 21 / pier13 9, 0 JS-Fehler (bekannter 404 `/api/village/stream` = Backend-Poll). Vergleiche rv61_day/rv61_night/rv61_vergleich.png angesehen: schlankere Silhouetten sichtbar, keine Clipping-Artefakte, Nacht unverichtet dicht.
 - Beta 51 Zip: village-beta51.zip (283 KB).
+
+## M56 · Stufe 48 / Beta 52 (erste echte Blender-Cottage via GLTFLoader)
+
+- **Erstes bpy-Modell im Dorf**: cottage-ac.glb (16,5 KB, 10 Meshes: Sockel, Koerper, 2 geneigte Dachflaechen mit First und Ueberhang, Tuer, 2 Fenster mit Rahmen und Glas, Schornstein; Materialien Wall/Roof/Wood/Window/Trim/Brick) per bpy 5.0.1 gebaut und als GLB exportiert.
+- Einbettung im etablierten Muster: COTTAGE52_B64 (Base64, 22.008 Zeichen) + GLTFLoader.parse; der Blender-Cottage-Block ersetzt das DEFS-Kern-Haus am Steg (key 4.6,1.8): Groesse wird vom ersetzten Objekt uebernommen (Box3-Hoehenmatch), Position/Rotation identisch, Shadows an.
+- DEFS-Loop setzt jetzt `c.userData.cottageKey = key` auf jeder platzierten Cottage (Voraussetzung fuer saubere Swaps).
+- Review rv62: Tag 14:00 + Nacht 22:30 sauber, dbg b52 true / b52done true / cottages 7 / glow 22 / pier13 9 / harbor14 6, 0 JS-Fehler. Close-up 18:30 (eingebauter __cam-Hook, dist 15) bestaetigt die Optik: Satteldach, Schornstein, Fensterrahmen sichtbar und stillich passend.
+- Beta 52 Zip: village-beta52.zip.
