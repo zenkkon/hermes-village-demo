@@ -809,3 +809,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Swap gegen DEFS-Aussenhaus sued (key 6,11, vorher blaugraues Box-Haus 8fb7d9), etabliertes Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
 - Review rv67: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52-b57 alle true, cottages 7, nightWins 55, glow 38, 0 JS-Fehler. rv67_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. Blender-Modelle jetzt 6 von 7 Hausern; offen nur noch das Studio (16.8,1.2).
 - Beta 57 Zip: village-beta57.zip.
+
+## M62 · Stufe 54 / Beta 58 (siebtes Blender-Modell: Werkstatt-Studio am Studio ost)
+
+- **Siebtes bpy-Modell**: studio-ac7.glb (26,4 KB, 17 Meshes): Werkstatt-Studio mit sandfarbenen Waenden (0.82,0.76,0.66), dunkelgrauem Pultdach (7 Grad nach Nord), Dachfascia, grosser Glasfront sued (3 Atelierfenster mit Rahmen), Tuer, Fenster E/W, Skylight (Holzrahmen + Glas) auf dem Dach.
+- Swap gegen DEFS-Studio ost (key 16.8,1.2, src 'studio', vorher flaches Box-Studio a8d0b8) im etablierten Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins); Glasfelder und Skylight als Window-Material registriert.
+- Review rv68: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52-b58 alle true, cottages 7, nightWins 67, glow 44, 0 JS-Fehler. rv68_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. **Alle 7 Hauser stehen jetzt auf echten Blender-Modellen** (5 Cottages + Kreuzgiebel-Haus + Werkstatt-Studio).
+- Beta 58 Zip: village-beta58.zip.
