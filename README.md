@@ -838,3 +838,17 @@ props bench5/table2/umbrella3/stool6, nightWins 67, glow 44, **0 JS-Fehler**. Di
 kanzie-referenz.png: Nachtlicht jetzt deutlich dichter/wärmer als in Beta 59; Gap zur Kanzie-
 Abendreferenz (dichtes warmes Licht) kleiner, aber noch sichtbar.
 Beta-60-Zip: hermes-village-beta60.zip.
+## M65 · Stufe 57 / Beta 61 (07:50, nächtliche Lichtdichte final)
+
+**Nachtlicht-Abgleich gegen Kanzie-Abendlicht (Beta 61):** Nachthimmel 0x0d1024 → 0x14203d
+(sichtbares Dunkelblau statt Schwarz, wie die Kanzie-Referenz bei 18:46), Nacht-Grundhelligkeit:
+hemi nachts +0.22, neuer warmes AmbientLight 0xffb060 mit lampOn*0.3 (flächendeckend warm wie
+Kanzie), Mond 0.32 → 0.44.
+**Review rv71:** Tag 14:00 / Nacht 22:30 / Close 18:30 (__cam(-0.9, 0.85, 15)) sauber; dbg b52–b58
+true, mob60 true, props bench5/table2/umbrella3/stool6, nightWins 67, glow 44, **0 JS-Fehler**.
+Direkter Vergleich rv71_vergleich.png gegen kanzie-referenz.png: Nachtlicht jetzt dicht, warm und
+flächedeckend, Gap zur Kanzie-Abendreferenz klein; Restdifferenz ist Kanzies leicht flächenhaftere
+Ausleuchtung im Dorfzentrum (DoF-Unschärfe im Kanzie-Screenshot). Alle OPTIK-GAP-Punkte (Wege,
+Erdquerschnitt/Bach/Wasserfall/Brücke, Baumvielfalt, Kamera, Mobiliar, nächtliche Lichtdichte)
+damit abgearbeitet; 08:00-Phase: Gesamtabgleich + Abschlussvorschlag an Konstantin.
+Beta-61-Zip: hermes-village-beta61.zip.
