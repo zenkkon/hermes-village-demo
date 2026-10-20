@@ -974,6 +974,30 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   window.__pierLantern = bulb;
   scene.add(dg);
   window.__dbgPier13 = 9;
+  // Feinschliff 14: Hafen-Detail am Steg
+  const hg = new THREE.Group();
+  const woodD = new THREE.MeshStandardMaterial({color: 0x6f4a30, roughness: 0.95});
+  const woodB = new THREE.MeshStandardMaterial({color: 0x8a5a34, roughness: 0.9});
+  [[11.28, -11.28], [11.92, -11.92]].forEach(pp => {
+    const bol = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.7, 6), woodD);
+    bol.position.set(pp[0], 0.35, pp[1]); bol.castShadow = true; hg.add(bol);
+  });
+  const bar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.55, 10), woodB);
+  bar1.position.set(10.9, 0.28, -10.4); bar1.castShadow = true; hg.add(bar1);
+  const bar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.5, 10), woodB);
+  bar2.position.set(10.5, 0.25, -11.1); bar2.rotation.y = 0.6; bar2.castShadow = true; hg.add(bar2);
+  const crate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), woodD);
+  crate.position.set(11.4, 0.25, -9.9); crate.rotation.y = 0.4; crate.castShadow = true; hg.add(crate);
+  const boat = new THREE.Group();
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.35, 0.75), new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
+  hull.castShadow = true; boat.add(hull);
+  const rim1 = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.12, 0.1), woodD);
+  rim1.position.set(0, 0.2, 0.36); boat.add(rim1);
+  const rim2 = rim1.clone(); rim2.position.z = -0.36; boat.add(rim2);
+  boat.position.set(16.83, -5.15, -15.41); boat.rotation.y = Math.PI / 4;
+  hg.add(boat);
+  scene.add(hg);
+  window.__dbgHarbor14 = 6;
 })();
 const greens3 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
   const autumn3 = [0xd9822b, 0xc2542a, 0xe8a33d, 0xb57a2e];
@@ -1611,7 +1635,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
