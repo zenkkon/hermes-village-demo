@@ -787,3 +787,11 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Swap gegen DEFS-Kern-Haus suedwest (key -2.6,2.6, vorher lila Box-Haus) im etablierten Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
 - Review rv64: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52done/b53done/b54done true, cottages 7, nightWins 37 (nachts mehr Fenster im Nacht-Loop registriert, erwartet), 0 JS-Fehler. rv64_day/night/close/vergleich.png angesehen: Kern hat jetzt 3 echte Blender-Cottages (Steg, sued, suedwest), Weitwinkel stimmig, Nacht laesst alle Blender-Fenster warm aufleuchten.
 - Beta 54 Zip: village-beta54.zip.
+
+## M59 · Stufe 51 / Beta 55 (vierte Blender-Cottage: Zeltdach mit Gaube)
+
+- **Viertes bpy-Modell**: cottage-ac4.glb (20,9 KB, 12 Meshes): Warmgelbe Wände, dunkelrotes 4-seitiges Zeltdach (Cone vertices=4, gedreht 45 Grad), Sued-Gaube mit eigenem Pultdach (20 Grad) und Gaubenfenster, Tuer, Fensterpaare E/W, Schornstein.
+- Swap gegen DEFS-Kern-Haus nordwest (key -4.2,4.8, vorher rosa Box-Haus d9a8a8) im etablierten Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
+- Key-Check vor dem Bau: die in M57/M58 als naechste Kandidaten notierten Keys 1.4,3.8 / -1.4,3.8 existieren nicht in DEFS; echte Kern-Keys sind 2.6,2.6 / -2.6,2.6 / -4.2,4.8 / 4.6,1.8 (plus 3 Aussenhaeuser). Damit ist der vierte Nahe-Kern-Key jetzt belegt.
+- Review rv65: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52/b53/b54/b55 alle true, cottages 7, nightWins 43, glow 32, 0 JS-Fehler. rv65_day/night/close/vergleich.png angesehen: Kern hat jetzt 4 echte Blender-Cottages (Steg, sued, suedwest, nordwest), Weitwinkel stimmig, Nacht dicht.
+- Beta 55 Zip: village-beta55.zip.
