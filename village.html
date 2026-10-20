@@ -946,7 +946,36 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
     g.position.set(a[0], 0.612, a[1]); g.receiveShadow = true;
     scene.add(g);
   });
-  const greens3 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
+  // Feinschliff 13: Steg suedost ueber die Inselkante (Wasser y -5.4)
+(function(){
+  const dg = new THREE.Group();
+  const deckMat = new THREE.MeshStandardMaterial({color: 0x8a6242, roughness: 0.9});
+  const postMat = new THREE.MeshStandardMaterial({color: 0x6f4a30, roughness: 0.95});
+  const sx = 11.6, sz = -11.6, dirx = 0.707, dirz = -0.707, step = 0.8;
+  for (let i = 0; i < 9; i++) {
+    const plank = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.09, 1.15), deckMat);
+    plank.position.set(sx + dirx * step * i, 0.12, sz + dirz * step * i);
+    plank.rotation.y = Math.PI / 4;
+    plank.castShadow = true;
+    dg.add(plank);
+    if (i === 2 || i === 5 || i === 8) {
+      const pile = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 6.0, 8), postMat);
+      pile.position.set(plank.position.x, -2.85, plank.position.z);
+      dg.add(pile);
+    }
+  }
+  const lantern = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.9, 6), postMat);
+  lantern.position.set(sx + dirx * step * 7 + 0.42, 0.55, sz + dirz * step * 7 + 0.42);
+  dg.add(lantern);
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8),
+    new THREE.MeshStandardMaterial({color: 0xffd98a, emissive: 0xffd98a, emissiveIntensity: 0.9}));
+  bulb.position.set(lantern.position.x, 1.05, lantern.position.z);
+  dg.add(bulb);
+  window.__pierLantern = bulb;
+  scene.add(dg);
+  window.__dbgPier13 = 9;
+})();
+const greens3 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
   const autumn3 = [0xd9822b, 0xc2542a, 0xe8a33d, 0xb57a2e];
   // Randring-Baeume, Luecken fuellen (Wasserfall-Seite ~ (17,10) frei lassen)
   const t3 = [
@@ -1490,7 +1519,8 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
     {x: 16.8, z: 1.2, ry: 2.4, s: 0.62, tint: 0xa8d0b8, src: 'studio'},
     {x: 2.6, z: 2.6, ry: -0.4, s: 0.58, tint: 0xd9b07a, src: 'house'},
     {x: -2.6, z: 2.6, ry: 0.4, s: 0.58, tint: 0xb8a0c8, src: 'house'},
-    {x: -4.2, z: 4.8, ry: -1.2, s: 0.6, tint: 0xd9a8a8, src: 'house'}
+    {x: -4.2, z: 4.8, ry: -1.2, s: 0.6, tint: 0xd9a8a8, src: 'house'},
+    {x: 4.6, z: 1.8, ry: -0.5, s: 0.55, tint: 0xc8b88a, src: 'house'}
   ];
   function place(){
     let n = 0;
@@ -1581,7 +1611,7 @@ window.__snap = () => { renderer.render(scene, camera); return document.querySel
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
