@@ -795,3 +795,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Key-Check vor dem Bau: die in M57/M58 als naechste Kandidaten notierten Keys 1.4,3.8 / -1.4,3.8 existieren nicht in DEFS; echte Kern-Keys sind 2.6,2.6 / -2.6,2.6 / -4.2,4.8 / 4.6,1.8 (plus 3 Aussenhaeuser). Damit ist der vierte Nahe-Kern-Key jetzt belegt.
 - Review rv65: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52/b53/b54/b55 alle true, cottages 7, nightWins 43, glow 32, 0 JS-Fehler. rv65_day/night/close/vergleich.png angesehen: Kern hat jetzt 4 echte Blender-Cottages (Steg, sued, suedwest, nordwest), Weitwinkel stimmig, Nacht dicht.
 - Beta 55 Zip: village-beta55.zip.
+
+## M60 · Stufe 52 / Beta 56 (fuenfte Blender-Cottage: Farmer-Haus am Aussenhaus nordwest)
+
+- **Fuenftes bpy-Modell**: cottage-ac5.glb (22,3 KB, 14 Meshes): Rote Farmer-Variante (Ziegelrot 0.72,0.33,0.26), laenglicher Koerper 2.2x1.2, Satteldach entlang X mit Firstbalken (th 30 Grad, rise 0.566), Tuer an Suedlaengsseite, 2 Suedfenster + 1 Nordfenster, grosser Schornstein mit Steinhaube.
+- Swap gegen DEFS-Aussenhaus nordwest (key -9,-11, vorher rotes Box-Haus d98a7a), etabliertes Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
+- Review rv66: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52/b53/b54/b55/b56 alle true, cottages 7, nightWins 49, glow 35, 0 JS-Fehler. rv66_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. Blender-Modelle jetzt 5 von 7 Hausern (alle 4 Kern-Haeuser + Aussenhaus nordwest).
+- Beta 56 Zip: village-beta56.zip.
