@@ -802,3 +802,10 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Swap gegen DEFS-Aussenhaus nordwest (key -9,-11, vorher rotes Box-Haus d98a7a), etabliertes Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
 - Review rv66: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52/b53/b54/b55/b56 alle true, cottages 7, nightWins 49, glow 35, 0 JS-Fehler. rv66_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. Blender-Modelle jetzt 5 von 7 Hausern (alle 4 Kern-Haeuser + Aussenhaus nordwest).
 - Beta 56 Zip: village-beta56.zip.
+
+## M61 · Stufe 53 / Beta 57 (sechste Blender-Cottage: Kreuzgiebel-Haus am Aussenhaus sued)
+
+- **Sechstes bpy-Modell**: cottage-ac6.glb (26,9 KB, 17 Meshes): Hellblau-graue Wände (0.56,0.66,0.72), Kreuzgiebel: Hauptkoerper 1.9x1.2 mit Satteldach (th 33 Grad, rise 0.533) + suedlicher Querfluegel 1.1x0.9 mit eigenem Satteldach (beide ziegelrot), Tuer im Fluegel, 3 Fenster, Schornstein.
+- Swap gegen DEFS-Aussenhaus sued (key 6,11, vorher blaugraues Box-Haus 8fb7d9), etabliertes Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins).
+- Review rv67: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52-b57 alle true, cottages 7, nightWins 55, glow 38, 0 JS-Fehler. rv67_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. Blender-Modelle jetzt 6 von 7 Hausern; offen nur noch das Studio (16.8,1.2).
+- Beta 57 Zip: village-beta57.zip.
