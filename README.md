@@ -816,3 +816,9 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - Swap gegen DEFS-Studio ost (key 16.8,1.2, src 'studio', vorher flaches Box-Studio a8d0b8) im etablierten Muster (Box3-Hoehenmatch, Position/Rotation, Shadows, Material-Klon + __nightWins); Glasfelder und Skylight als Window-Material registriert.
 - Review rv68: Tag 14:00 + Nacht 22:30 + Close-up 18:30 sauber, dbg b52-b58 alle true, cottages 7, nightWins 67, glow 44, 0 JS-Fehler. rv68_day/night/close/vergleich.png angesehen: kein Artefakt, Weitwinkel stimmig, Nacht dicht. **Alle 7 Hauser stehen jetzt auf echten Blender-Modellen** (5 Cottages + Kreuzgiebel-Haus + Werkstatt-Studio).
 - Beta 58 Zip: village-beta58.zip.
+
+## M63 · Stufe 55 / Beta 59 (Kamera-Feinschliff gegen Kanzie)
+
+- OPTIK-GAP "Kamera naeher (Insel fuellt Rahmen)": Kamera-Defaults justiert: dist 28 -> 33, rotX 0.95 -> 0.78 (rad, ~45 Grad). Zwei Iterationen (erst 31/0.9, dann 33/0.78): jetzt ist die Insel komplett im Rahmen mit Luft rundum, Berge oben ganz sichtbar, Bildkomposition deutlich kanzie-aehnlicher (Referenz zeigt die Insel als komplette Torte).
+- Review rv69 (Iteration 1) + rv69b (Iteration 2): Tag 14:00 + Nacht 22:30 (+ Close-up 18:30 in rv69) sauber, dbg b52-b58 alle true, cottages 7, nightWins 67, glow 44, 0 JS-Fehler. rv69b_day/night/vergleich.png angesehen: kein Artefakt, Nacht dicht, Framing passt.
+- Beta 59 Zip: village-beta59.zip.
