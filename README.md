@@ -822,3 +822,19 @@ Gebaeudedichte/Fassadenfarben), danach Abschlussvorschlag.
 - OPTIK-GAP "Kamera naeher (Insel fuellt Rahmen)": Kamera-Defaults justiert: dist 28 -> 33, rotX 0.95 -> 0.78 (rad, ~45 Grad). Zwei Iterationen (erst 31/0.9, dann 33/0.78): jetzt ist die Insel komplett im Rahmen mit Luft rundum, Berge oben ganz sichtbar, Bildkomposition deutlich kanzie-aehnlicher (Referenz zeigt die Insel als komplette Torte).
 - Review rv69 (Iteration 1) + rv69b (Iteration 2): Tag 14:00 + Nacht 22:30 (+ Close-up 18:30 in rv69) sauber, dbg b52-b58 alle true, cottages 7, nightWins 67, glow 44, 0 JS-Fehler. rv69b_day/night/vergleich.png angesehen: kein Artefakt, Nacht dicht, Framing passt.
 - Beta 59 Zip: village-beta59.zip.
+## M64 · Stufe 56 / Beta 60 (07:30, Mobiliar-Vertiefung + nächtliche Lichtdichte)
+
+**Mobiliar-Vertiefung (Beta 60):** 2 neue Bänke (-0.8, 3.9 und 9.2, 8.0) und zweites Picknick-Set
+(-3.2, 8.6: Tisch rot -0.4, 2 Hocker, blauer Sonnenschirm 0x3f7fbf). Alle neuen Gruppen werden in
+`window.__mobG` registriert, sodass der bestehende Blender-Prop-Swap (Stufe 29) sie automatisch
+mit swapped: props-Swaps stiegen auf bench 5 / table 2 / umbrella 3 / stool 6. 4 neue Laternen
+(6.4,-5.8 / -9.0,3.4 / 12.4,4.2 / 4.6,11.0). **Nächtliche Lichtdichte:** Lampen-Intensity 2.3→2.55,
+Lichtpool-Opacity 0.38→0.45, Fenster-Emissive 1.7→1.9.
+Fehler im Patch-Verlauf gelernt: Stufe-60-Block zuerst vor Stufe 32 eingesetzt (lief vor der
+Mobiliar-Init, Guard brach ab), dann hinter Stufe 15 verlegt; TDZ-Fehler auf `tableProto` (let)
+wird jetzt im try/catch gepollt.
+**Review rv70:** Tag+Nacht+Close (18:30, __cam(-0.9, 0.85, 15)) sauber, dbg b52–b58 true, mob60 true,
+props bench5/table2/umbrella3/stool6, nightWins 67, glow 44, **0 JS-Fehler**. Direkter Vergleich gegen
+kanzie-referenz.png: Nachtlicht jetzt deutlich dichter/wärmer als in Beta 59; Gap zur Kanzie-
+Abendreferenz (dichtes warmes Licht) kleiner, aber noch sichtbar.
+Beta-60-Zip: hermes-village-beta60.zip.
