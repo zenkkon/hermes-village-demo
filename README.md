@@ -1413,3 +1413,8 @@ Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
 - Dateien: feed/village.html + village-standalone.html identisch, 1.462.996 B (vorher 1.460.023). Zip: hermes-village-beta86.zip (652.148 B).
 - Headless-Review rv93 (Playwright/Swiftshader, 1100×640): Toggle-Kette Auto→Tag→Nacht→Auto belegt (Uhr 23:10 → 12:00 · Tag → 22:30 · Nacht → 23:10), Übersicht-Panel sichtbar mit echten Feed-Daten (daily-backup · finished), 0 echte JS-Fehler (nur bekannter 404 /api/village/stream), pol17/18/19 unverändert (53/1932/20). Screenshots: review/rv93_*.png.
 - Nächster Baustein: Block 1 DASHBOARD abgeschlossen; ab Phase 23:30 vertiefen (Alerts interaktiv, Such-Treffer anspringen) oder direkt Block 5 WORLD (Blocky-Look abbauen) je nach Phase.
+
+## M93 · Stufe 85 / Beta 87: Block 5 WORLD (1) — Blocky-Sweep
+- Phase 23:30: Blocky-Look weiter abgebaut, Pass 1: 60 Code-Boxen (`THREE.BoxGeometry`) in `rboxGeo`-Rundboxen umgebaut (Schwelle min-Dimension >= 0.05, Radius 0.05, intern geklemmt) — Körper, Kisten, Sitze, Paneele, Torso etc. wirken jetzt Clay-artig gerundet; dünne Latten/Rails (min < 0.05) bewusst scharf gelassen. Ziel: weicher, Blender-artiger Look (Konstantin 09:47).
+- Review rv94 (village-standalone, Tag 14:00 + Nacht 22:30): 0 echte JS-Fehler (nur 2x 404 /api/village/stream), dbg pol17/18/19 = 53/1929/20, Dash/Tracker/Interaktion intakt. roofLit-Lesewert 7 war Timing (Akkumulator erreicht 24 bei t+12s, verifiziert). Screenshots rv94_tag14/rv94_nacht geprueft: sauber.
+- Zip hermes-village-beta87.zip (nur feed/village.html + village-standalone.html). Naechster Baustein: Block 5 WORLD Pass 2 (weiche Materialien/Roughness + organische Formen) oder DASHBOARD-Nachbesserung (Alerts interaktiv, Suche springt zu Treffern).

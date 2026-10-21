@@ -151,6 +151,7 @@ function updateDayNight(){
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.35 ? " · Tag" : (dusk > 0.3 ? " · Dämmerung" : " · Nacht"));
 }
 
+// Stufe 85 / Beta 87: WORLD-Block - Blocky-Sweep, 60 BoxGeometry -> rboxGeo (Clay-Rundungen)
 // Insel mit Erdschichten-Querschnitt
 const layers = [
   {r: 20.5, y: 0.0, h: 1.2, c: 0x6fb048},
@@ -177,11 +178,11 @@ water.rotation.x = -Math.PI/2; water.position.y = -5.4;
 window.__seaMat = water.material;
 scene.add(water);
 // Wasserfall ueber die Kante (Ausgang des Bachs, radial ausgerichtet)
-const fall = new THREE.Mesh(new THREE.BoxGeometry(1.5, 5.9, 0.16),
+const fall = new THREE.Mesh(new rboxGeo(1.5, 5.9, 0.16, 0.05),
   new THREE.MeshStandardMaterial({color: 0xbfe4f5, transparent: true, opacity: 0.85, roughness: 0.05}));
 fall.position.set(17.9, -2.4, 10.55); fall.rotation.y = Math.atan2(0.86, 0.505);
 scene.add(fall);
-const fallLip = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.45, 0.2),
+const fallLip = new THREE.Mesh(new rboxGeo(1.5, 0.45, 0.2, 0.05),
   new THREE.MeshStandardMaterial({color: 0xe8f6ff, transparent: true, opacity: 0.9, roughness: 0.1}));
 fallLip.position.set(17.62, 0.42, 10.32); fallLip.rotation.y = Math.atan2(0.86, 0.505);
 scene.add(fallLip);
@@ -315,9 +316,9 @@ function dome(x, z){
   const domeM = new THREE.Mesh(new THREE.SphereGeometry(1.75, 20, 12, 0, Math.PI*2, 0, Math.PI/2), matWall(0x8b93a8));
   domeM.position.y = 2.0; domeM.castShadow = true; g.add(domeM);
   domeM.name = "do_dome";
-  const slit = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.1, 1.9), slitMat);
+  const slit = new THREE.Mesh(new rboxGeo(0.42, 1.1, 1.9, 0.05), slitMat);
   slit.position.y = 2.5; g.add(slit);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.1, 0.1), matWall(0x5a3c28));
+  const door = new THREE.Mesh(new rboxGeo(0.6, 1.1, 0.1, 0.05), matWall(0x5a3c28));
   door.position.set(0, 0.55, 2.06); g.add(door);
   door.name = "do_door";
   const lamp = new THREE.PointLight(0x9fc4ff, 0.4, 8); lamp.position.set(0, 2.4, 2.4); g.add(lamp);
@@ -335,12 +336,12 @@ const observatory = dome(7, -3);
 function mineBuild(x, z){
   const g = cottage(x, z, 3.6, 2.3, 3.2, 0xcbb99a, 0x8a4a3a, "Backup Mine", "Backups, Vault, Guthaben-Wächter", ["Backup", "Restore", "Vault", "Wächter"]);
   // Stollen-Eingang (dunkler Bogen) an der Front
-  const hole = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.0, 0.2), matWall(0x14100c));
+  const hole = new THREE.Mesh(new rboxGeo(1.1, 1.0, 0.2, 0.05), matWall(0x14100c));
   hole.position.set(0, 0.5, 1.62); g.add(hole);
   // Gleise zur Inselmitte
   const railM = matWall(0x777777);
   for (const off of [-0.28, 0.28]){
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 3.4), railM);
+    const rail = new THREE.Mesh(new rboxGeo(0.06, 0.05, 3.4, 0.05), railM);
     rail.position.set(off, 0.05, 3.3); g.add(rail);
   }
   for (let i = 0; i < 4; i++){
@@ -349,7 +350,7 @@ function mineBuild(x, z){
   }
   // Lore
   const cart = new THREE.Group();
-  const box = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.4, 0.5), matWall(0x8a4a3a));
+  const box = new THREE.Mesh(new rboxGeo(0.62, 0.4, 0.5, 0.05), matWall(0x8a4a3a));
   box.position.y = 0.32; box.castShadow = true; cart.add(box);
   for (const off of [-0.24, 0.24]){
     const wh = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.06, 10), matWall(0x2c2c30));
@@ -387,7 +388,7 @@ function hotel(x, z){
   cx.fillStyle = "#ff5fa2"; cx.font = "bold 58px Georgia, serif"; cx.textAlign = "center";
   cx.fillText("SHIMERIA HAUS", 256, 68);
   const tex = new THREE.CanvasTexture(cv);
-  const sign = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.64, 0.1),
+  const sign = new THREE.Mesh(new rboxGeo(3.4, 0.64, 0.1, 0.05),
     new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 1.2}));
   sign.position.set(0, floors*fh + 1.35, d/2 - 0.4); g.add(sign);
   const lamp = new THREE.PointLight(0xff5fa2, 0.4, 8); lamp.position.set(0, floors*fh + 1.2, d/2 + 1); g.add(lamp);
@@ -437,7 +438,7 @@ function stiltHouse(x, z, ry){
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.3, 6), legM);
     leg.position.set(lx, 0.65, lz); leg.name = "wh_leg"; leg.castShadow = true; g.add(leg);
   }
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.1, 1.5), matWall(0xf2e3c9));
+  const body = new THREE.Mesh(new rboxGeo(1.7, 1.1, 1.5, 0.05), matWall(0xf2e3c9));
   body.name = "wh_body"; body.position.y = 1.85; body.castShadow = true; g.add(body);
   const roof = new THREE.Mesh(new THREE.ConeGeometry(1.45, 0.85, 4), matWall(0xd97e3f));
   roof.name = "wh_roof"; roof.position.y = 2.82; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
@@ -461,7 +462,7 @@ function mill(x, z, ry){
     rim.position.z = off; wheel.add(rim);
   }
   for (let i = 0; i < 8; i++){
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.9, 0.4), rimM);
+    const pad = new THREE.Mesh(new rboxGeo(0.22, 1.9, 0.4, 0.05), rimM);
     const a = i / 8 * Math.PI * 2;
     pad.position.set(Math.cos(a)*0.95, Math.sin(a)*0.95, 0); pad.rotation.z = a; wheel.add(pad);
   }
@@ -514,10 +515,10 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
   const dx = nxt[0]-mid[0], dz = nxt[1]-mid[1], L2 = Math.hypot(dx, dz) || 1;
   const px = dz/L2, pz = -dx/L2;
   const bridge = new THREE.Group();
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.07, 0.95), matWall(0x8a6a48));
+  const deck = new THREE.Mesh(new rboxGeo(2.3, 0.07, 0.95, 0.05), matWall(0x8a6a48));
   deck.position.y = 0.7; deck.castShadow = true; deck.receiveShadow = true; bridge.add(deck);
   for (const s of [-1, 1]){
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.05, 0.06), matWall(0x6e5238));
+    const rail = new THREE.Mesh(new rboxGeo(2.3, 0.05, 0.06, 0.05), matWall(0x6e5238));
     rail.position.set(0, 0.16, s*0.42); bridge.add(rail);
   }
   for (const [ax, az] of [[-1.0, -0.42], [-1.0, 0.42], [1.0, -0.42], [1.0, 0.42]]){
@@ -525,7 +526,7 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
     post.position.set(ax, 0.2, az); post.castShadow = true; bridge.add(post);
   }
   for (const s of [-1, 1]){
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.06, 0.14), matWall(0x6e5238));
+    const beam = new THREE.Mesh(new rboxGeo(2.0, 0.06, 0.14, 0.05), matWall(0x6e5238));
     beam.position.set(0, 0.635, s*0.3); bridge.add(beam);
   }
   // Patina: Dielenfugen quer, zwei Stuetzbogen, Laterne an jedem Ende
@@ -633,11 +634,11 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
 // 8) Telegram-Bootshaus am Teich
 function buildBoathouse(x, z, ry){
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.4, 1.8), matWall(0x7a94b8));
+  const body = new THREE.Mesh(new rboxGeo(2.0, 1.4, 1.8, 0.05), matWall(0x7a94b8));
   body.position.y = 0.7; body.castShadow = true; g.add(body);
   const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 4), matWall(0x34528a));
   roof.position.y = 1.85; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 0.08), matWall(0x2a3648));
+  const door = new THREE.Mesh(new rboxGeo(0.8, 0.9, 0.08, 0.05), matWall(0x2a3648));
   door.position.set(0, 0.45, 0.92); g.add(door);
   const lamp = new THREE.PointLight(0x8ec8ff, 0.3, 6); lamp.position.set(0, 1.2, 1.4); g.add(lamp);
   g.position.set(x, 0, z); if (ry) g.rotation.y = ry;
@@ -654,7 +655,7 @@ const dock = new THREE.Group();
 // Beta 83: Dielenplanken - 7 einzelne Bohlen mit echten Fugen statt einer Platte
 const plankM = new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.9});
 for (let i = 0; i < 7; i++){
-  const plk = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 0.47), plankM);
+  const plk = new THREE.Mesh(new rboxGeo(1.3, 0.14, 0.47, 0.05), plankM);
   plk.position.set(0, 0.35, -1.53 + i * 0.51);
   plk.castShadow = true; plk.receiveShadow = true; dock.add(plk);
 }
@@ -701,7 +702,7 @@ window.__stegDeko = () => 3;
 // Marktbuden (Deko) mit gestreiften Markisen
 function stall(x, z, ry, c1, c2){
   const g = new THREE.Group();
-  const table = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.1, 0.9), matWall(0x8a6a48));
+  const table = new THREE.Mesh(new rboxGeo(1.9, 0.1, 0.9, 0.05), matWall(0x8a6a48));
   table.position.y = 0.75; table.castShadow = true; g.add(table);
   for (const [lx, lz] of [[-0.85,-0.35],[0.85,-0.35],[-0.85,0.35],[0.85,0.35]]){
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.75, 6), matWall(0x6e5238));
@@ -718,7 +719,7 @@ function stall(x, z, ry, c1, c2){
   }
   // Ware auf dem Tisch
   for (let i = 0; i < 4; i++){
-    const crate = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.28),
+    const crate = new THREE.Mesh(new rboxGeo(0.28, 0.2, 0.28, 0.05),
       matWall([0xd97e3f, 0xc23b4a, 0x6bae52, 0xffd60a][i]));
     crate.position.set(-0.6 + i*0.4, 0.92, 0); g.add(crate);
     if (i % 2 === 0){
@@ -756,15 +757,15 @@ stall(-3.6, 0.6, 1.1, 0x3f7f36, 0xf2e8dc);
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.5, 6), matWall(0x6e5238));
     post.position.set(px, 0.75, 0); board.add(post);
   }
-  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.9, 0.08), matWall(0x9a7a52));
+  const panel = new THREE.Mesh(new rboxGeo(1.5, 0.9, 0.08, 0.05), matWall(0x9a7a52));
   panel.position.y = 1.35; panel.castShadow = true; board.add(panel);
   board.position.set(0.4, 0, -0.4); board.rotation.y = 0.35; scene.add(board);
   for (const [bx, bz, br] of [[-1.6, 0.6, 0.9], [1.8, -1.2, -0.5]]){
     const bench = new THREE.Group();
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.08, 0.4), matWall(0x8a6a48));
+    const seat = new THREE.Mesh(new rboxGeo(1.0, 0.08, 0.4, 0.05), matWall(0x8a6a48));
     seat.position.y = 0.4; seat.castShadow = true; bench.add(seat);
     for (const lx of [-0.4, 0.4]){
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.36), matWall(0x6e5238));
+      const leg = new THREE.Mesh(new rboxGeo(0.08, 0.4, 0.36, 0.05), matWall(0x6e5238));
       leg.position.set(lx, 0.2, 0); bench.add(leg);
     }
     bench.position.set(bx, 0, bz); bench.rotation.y = br; scene.add(bench);
@@ -852,7 +853,7 @@ function lampPost(x, z){
   const g = new THREE.Group();
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 1.5, 6), matWall(0x3c3c44));
   post.position.y = 0.75; post.castShadow = true; g.add(post);
-  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.05, 0.05), matWall(0x3c3c44));
+  const arm = new THREE.Mesh(new rboxGeo(0.3, 0.05, 0.05, 0.05), matWall(0x3c3c44));
   arm.position.set(0.14, 1.48, 0); g.add(arm);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8),
     new THREE.MeshStandardMaterial({color: 0xffe6b0, emissive: 0xffc860, emissiveIntensity: 0.8}));
@@ -894,12 +895,12 @@ window.__roofFix = roofFix;
   const benches = [], parasols = [], stools = [];
   function woodBench(x, z, rot){
     const g = new THREE.Group();
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.08, 0.42), matWall(0x8a6a48));
+    const seat = new THREE.Mesh(new rboxGeo(1.15, 0.08, 0.42, 0.05), matWall(0x8a6a48));
     seat.position.y = 0.4; seat.castShadow = true; g.add(seat);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.34, 0.06), matWall(0x8a6a48));
+    const back = new THREE.Mesh(new rboxGeo(1.15, 0.34, 0.06, 0.05), matWall(0x8a6a48));
     back.position.set(0, 0.66, -0.19); back.rotation.x = -0.12; g.add(back);
     for (const lx of [-0.45, 0.45]){
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.36), matWall(0x6e5238));
+      const leg = new THREE.Mesh(new rboxGeo(0.08, 0.4, 0.36, 0.05), matWall(0x6e5238));
       leg.position.set(lx, 0.2, 0); g.add(leg);
     }
     g.position.set(x, 0, z); g.rotation.y = rot; g.castShadow = true; scene.add(g);
@@ -939,10 +940,10 @@ window.__roofFix = roofFix;
   window.__standDeko = () => 3;
   // Picknick-Set am Teich-Weg
   const tbl = new THREE.Group();
-  const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.9), matWall(0x8a6a48));
+  const top = new THREE.Mesh(new rboxGeo(1.5, 0.07, 0.9, 0.05), matWall(0x8a6a48));
   top.position.y = 0.72; top.castShadow = true; tbl.add(top);
   for (const sx of [-0.6, 0.6]){
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.72, 0.75), matWall(0x6e5238));
+    const leg = new THREE.Mesh(new rboxGeo(0.1, 0.72, 0.75, 0.05), matWall(0x6e5238));
     leg.position.set(sx, 0.36, 0); tbl.add(leg);
   }
   tbl.position.set(7.2, 0, 9.6); tbl.rotation.y = 0.5; scene.add(tbl);
@@ -989,12 +990,12 @@ window.__lampions = () => 5;
   const g = window.__mobG; if (!g) return;
   function woodBench60(x, z, rot){
     const b = new THREE.Group();
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.08, 0.42), matWall(0x8a6a48));
+    const seat = new THREE.Mesh(new rboxGeo(1.15, 0.08, 0.42, 0.05), matWall(0x8a6a48));
     seat.position.y = 0.4; seat.castShadow = true; b.add(seat);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.34, 0.06), matWall(0x8a6a48));
+    const back = new THREE.Mesh(new rboxGeo(1.15, 0.34, 0.06, 0.05), matWall(0x8a6a48));
     back.position.set(0, 0.66, -0.19); back.rotation.x = -0.12; b.add(back);
     for (const lx of [-0.45, 0.45]){
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.36), matWall(0x6e5238));
+      const leg = new THREE.Mesh(new rboxGeo(0.08, 0.4, 0.36, 0.05), matWall(0x6e5238));
       leg.position.set(lx, 0.2, 0); b.add(leg);
     }
     b.position.set(x, 0, z); b.rotation.y = rot; b.castShadow = true; scene.add(b);
@@ -1020,10 +1021,10 @@ window.__lampions = () => 5;
   const u60 = new THREE.Group(); u60.position.set(-3.2, 0, 8.6); u60.userData.col = 0x3f7fbf; scene.add(u60); g.parasols.push(u60);
   // Picknick-Tisch 2 mit eigenem Blender-Swap (g.table bleibt unangetastet)
   const tbl60 = new THREE.Group();
-  const top60 = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.9), matWall(0x8a6a48));
+  const top60 = new THREE.Mesh(new rboxGeo(1.5, 0.07, 0.9, 0.05), matWall(0x8a6a48));
   top60.position.y = 0.72; top60.castShadow = true; tbl60.add(top60);
   for (const sx of [-0.6, 0.6]){
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.72, 0.75), matWall(0x6e5238));
+    const leg = new THREE.Mesh(new rboxGeo(0.1, 0.72, 0.75, 0.05), matWall(0x6e5238));
     leg.position.set(sx, 0.36, 0); tbl60.add(leg);
   }
   tbl60.position.set(-3.2, 0, 8.6); tbl60.rotation.y = -0.4; scene.add(tbl60);
@@ -1047,7 +1048,7 @@ function pole(x, z){
   const g = new THREE.Group();
   const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.4, 6), matWall(0x6e5238));
   mast.position.y = 1.2; mast.castShadow = true; g.add(mast);
-  const cross = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.07, 0.07), matWall(0x6e5238));
+  const cross = new THREE.Mesh(new rboxGeo(0.9, 0.07, 0.07, 0.05), matWall(0x6e5238));
   cross.position.y = 2.2; g.add(cross);
   g.position.set(x, 0, z); scene.add(g);
   wirePts.push(new THREE.Vector3(x, 2.2, z));
@@ -1076,7 +1077,7 @@ function fenceLine(x1, z1, x2, z2){
   const n = Math.max(2, Math.round(Math.hypot(x2-x1, z2-z1) / 0.55));
   for (let i = 0; i <= n; i++){
     const t = i / n;
-    const picket = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.5, 0.05), matWall(0xe8e2d2));
+    const picket = new THREE.Mesh(new rboxGeo(0.09, 0.5, 0.05, 0.05), matWall(0xe8e2d2));
     picket.position.set(x1 + (x2-x1)*t, 0.25, z1 + (z2-z1)*t);
     picket.castShadow = true; scene.add(picket);
   }
@@ -1099,14 +1100,14 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   const coop = new THREE.Group();
   const body = new THREE.Mesh(rboxGeo(0.9, 0.55, 0.7, 0.04), woodM);
   body.position.y = 0.35; body.castShadow = true; coop.add(body);
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.06, 0.85), woodD);
+  const roof = new THREE.Mesh(new rboxGeo(1.05, 0.06, 0.85, 0.05), woodD);
   roof.position.y = 0.66; roof.rotation.z = 0.08; roof.castShadow = true; coop.add(roof);
   const door = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.03), woodD);
   door.position.set(0.15, 0.22, 0.36); coop.add(door);
   const ramp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.02, 0.5), woodD);
   ramp.position.set(0.15, 0.09, 0.62); ramp.rotation.x = 0.35; coop.add(ramp);
   for (const s of [-1, 1]){
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.12, 0.06), woodD);
+    const leg = new THREE.Mesh(new rboxGeo(0.06, 0.12, 0.06, 0.05), woodD);
     leg.position.set(s * 0.35, 0.05, 0.2); coop.add(leg);
   }
   coop.position.set(-6.6, 0, -2.9); coop.rotation.y = 0.5; scene.add(coop);
@@ -1169,7 +1170,7 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   for (const [bx, bz] of [[-4.3, -5.75], [-3.4, -5.75]]){
     const bed = new THREE.Mesh(rboxGeo(1.35, 0.26, 0.8, 0.03), woodD);
     bed.position.set(bx, 0.13, bz); bed.castShadow = true; scene.add(bed); vegCount++;
-    const soil = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.06, 0.66), soilM);
+    const soil = new THREE.Mesh(new rboxGeo(1.2, 0.06, 0.66, 0.05), soilM);
     soil.position.set(bx, 0.28, bz); scene.add(soil);
     for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++){
       const plant = new THREE.Mesh(new THREE.SphereGeometry(0.085, 7, 6),
@@ -1516,7 +1517,7 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   const postMat = new THREE.MeshStandardMaterial({color: 0x6f4a30, roughness: 0.95});
   const sx = 11.6, sz = -11.6, dirx = 0.707, dirz = -0.707, step = 0.8;
   for (let i = 0; i < 9; i++) {
-    const plank = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.09, 1.15), deckMat);
+    const plank = new THREE.Mesh(new rboxGeo(0.55, 0.09, 1.15, 0.05), deckMat);
     plank.position.set(sx + dirx * step * i, 0.12, sz + dirz * step * i);
     plank.rotation.y = Math.PI / 4;
     plank.castShadow = true;
@@ -1549,12 +1550,12 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   bar1.position.set(10.9, 0.28, -10.4); bar1.castShadow = true; hg.add(bar1);
   const bar2 = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.5, 10), woodB);
   bar2.position.set(10.5, 0.25, -11.1); bar2.rotation.y = 0.6; bar2.castShadow = true; hg.add(bar2);
-  const crate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), woodD);
+  const crate = new THREE.Mesh(new rboxGeo(0.5, 0.5, 0.5, 0.05), woodD);
   crate.position.set(11.4, 0.25, -9.9); crate.rotation.y = 0.4; crate.castShadow = true; hg.add(crate);
   const boat = new THREE.Group();
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.35, 0.75), new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
+  const hull = new THREE.Mesh(new rboxGeo(1.7, 0.35, 0.75, 0.05), new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
   hull.castShadow = true; boat.add(hull);
-  const rim1 = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.12, 0.1), woodD);
+  const rim1 = new THREE.Mesh(new rboxGeo(1.7, 0.12, 0.1, 0.05), woodD);
   rim1.position.set(0, 0.2, 0.36); boat.add(rim1);
   const rim2 = rim1.clone(); rim2.position.z = -0.36; boat.add(rim2);
   boat.position.set(16.83, -5.15, -15.41); boat.rotation.y = Math.PI / 4;
@@ -1865,7 +1866,7 @@ function upgradeTrees(){
 }
 function proceduralRobot(){
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.68, 0.48),
+  const body = new THREE.Mesh(new rboxGeo(0.55, 0.68, 0.48, 0.05),
     new THREE.MeshStandardMaterial({color: 0xe8c93e, roughness: 0.6}));
   body.position.y = 0.5; body.castShadow = true; g.add(body);
   const eye = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.02),
@@ -2609,17 +2610,17 @@ tick(); setInterval(tick, 30000);
   // --- Neue Gebaeude fuer die restlichen Jobs ---
   function library(x, z, ry){
     const g = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 1.8), matWall(0xc9b48a));
+    const body = new THREE.Mesh(new rboxGeo(2.2, 2.2, 1.8, 0.05), matWall(0xc9b48a));
     body.position.y = 1.1; body.castShadow = true; body.receiveShadow = true; g.add(body);
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.65, 0.3, 4), matWall(0x7a4b3a));
     cap.position.y = 2.35; cap.rotation.y = Math.PI/4; g.add(cap);
     const top = new THREE.Mesh(new THREE.ConeGeometry(1.65, 1.3, 4), matWall(0x7a4b3a));
     top.position.y = 3.15; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
-    const door = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.0, 0.08), matWall(0x5a3c28));
+    const door = new THREE.Mesh(new rboxGeo(0.5, 1.0, 0.08, 0.05), matWall(0x5a3c28));
     door.position.set(0, 0.5, 0.92); g.add(door);
     const cols = [0xc23b4a, 0x3f6fb5, 0x30d158, 0xffd60a, 0xbf5af2, 0xff9f0a];
     cols.forEach((c, i) => {
-      const book = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.42, 0.08),
+      const book = new THREE.Mesh(new rboxGeo(0.16, 0.42, 0.08, 0.05),
         new THREE.MeshStandardMaterial({color: c, roughness: 0.7}));
       book.position.set(-0.85 + i*0.34, 1.45, 0.94); g.add(book);
     });
@@ -2632,13 +2633,13 @@ tick(); setInterval(tick, 30000);
   }
   function kiosk(x, z, ry){
     const g = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.8, 1.4), matWall(0xd8b26a));
+    const body = new THREE.Mesh(new rboxGeo(1.6, 1.8, 1.4, 0.05), matWall(0xd8b26a));
     body.position.y = 0.9; body.castShadow = true; body.receiveShadow = true; g.add(body);
-    const counter = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.1, 0.4), matWall(0x8a6a48));
+    const counter = new THREE.Mesh(new rboxGeo(1.7, 0.1, 0.4, 0.05), matWall(0x8a6a48));
     counter.position.set(0, 1.0, 0.85); g.add(counter);
-    const awn = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.06, 0.9), matWall(0xc23b4a));
+    const awn = new THREE.Mesh(new rboxGeo(1.9, 0.06, 0.9, 0.05), matWall(0xc23b4a));
     awn.position.set(0, 2.0, 0.6); awn.rotation.x = -0.35; awn.castShadow = true; g.add(awn);
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.06, 0.2), matWall(0xf2e8dc));
+    const stripe = new THREE.Mesh(new rboxGeo(1.9, 0.06, 0.2, 0.05), matWall(0xf2e8dc));
     stripe.position.set(0, 2.0, 0.35); stripe.rotation.x = -0.35; g.add(stripe);
     const lamp = new THREE.PointLight(0xffb340, 0.5, 8);
     lamp.position.set(0, 1.4, 1.4); g.add(lamp);
@@ -2751,14 +2752,14 @@ tick(); setInterval(tick, 30000);
   mtower.position.y = 2.1; mtower.castShadow = true; millG.add(mtower);
   const mcap = new THREE.Mesh(new THREE.ConeGeometry(1.25, 1.0, 8), matWall(0x8a4a3a));
   mcap.position.y = 4.7; mcap.castShadow = true; millG.add(mcap);
-  const mdoor = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.9, 0.08), matWall(0x5a3c28));
+  const mdoor = new THREE.Mesh(new rboxGeo(0.55, 0.9, 0.08, 0.05), matWall(0x5a3c28));
   mdoor.position.set(0, 0.45, 1.42); millG.add(mdoor);
   const mhub = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), matWall(0x6e5238));
   mhub.position.set(0, 3.6, 1.15); millG.add(mhub);
   const mblades = new THREE.Group();
   const bladeM = matWall(0xf5efdf);
   for (let i = 0; i < 4; i++){
-    const bl = new THREE.Mesh(new THREE.BoxGeometry(0.34, 2.3, 0.05), bladeM);
+    const bl = new THREE.Mesh(new rboxGeo(0.34, 2.3, 0.05, 0.05), bladeM);
     bl.position.y = 1.55; bl.castShadow = true;
     const arm = new THREE.Group();
     arm.add(bl);
@@ -2790,7 +2791,7 @@ tick(); setInterval(tick, 30000);
 
   // 3) Gemuesegarten mit Zaun
   const garden = new THREE.Group();
-  const soil = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.08, 2.1), matWall(0x6e4f33));
+  const soil = new THREE.Mesh(new rboxGeo(3.0, 0.08, 2.1, 0.05), matWall(0x6e4f33));
   soil.position.y = 0.05; soil.receiveShadow = true; garden.add(soil);
   const vegCols = [0x3e7d3a, 0x77b34c, 0xc977d9, 0xd94f6e];
   for (let r = 0; r < 4; r++){
@@ -2871,7 +2872,7 @@ tick(); setInterval(tick, 30000);
   const bookCols = [0x8a4a3a, 0x3f6fb5, 0x3e7d3a, 0xd9a441, 0x6b4a8a];
   [[-5.9, 9.2, 4], [-5.3, 9.8, 3], [-6.3, 9.6, 3]].forEach(([bx, bz, n], si) => {
     for (let i = 0; i < n; i++){
-      const bk = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.1, 0.34),
+      const bk = new THREE.Mesh(new rboxGeo(0.48, 0.1, 0.34, 0.05),
         new THREE.MeshStandardMaterial({color: bookCols[(si * 3 + i) % bookCols.length]}));
       bk.position.set(bx, 0.61 + 0.05 + i * 0.105, bz);
       bk.rotation.y = (si * 0.7 + i * 0.25) % 0.5 - 0.25;
@@ -2921,7 +2922,7 @@ tick(); setInterval(tick, 30000);
     bar.position.set(p[0], 0.25, p[1]); bar.castShadow = true; scene.add(bar);
   });
   [[3.1, 7.2], [3.55, 7.55], [3.35, 8.0]].forEach((p, i) => {
-    const cr = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), matWall(0x9a7a52));
+    const cr = new THREE.Mesh(new rboxGeo(0.42, 0.42, 0.42, 0.05), matWall(0x9a7a52));
     cr.position.set(p[0], 0.21, p[1]); cr.rotation.y = i * 0.7; cr.castShadow = true; scene.add(cr);
   });
   [[-14.5, 2.5, 1.3], [11.5, -9.5, 1.2], [-3.5, 15.5, 1.3], [15.5, -4.5, 1.2], [-14.5, -6.5, 1.1], [7.5, 14.5, 1.2]]
@@ -2929,7 +2930,7 @@ tick(); setInterval(tick, 30000);
 
   // --- Router-Mast ---
   const router = new THREE.Group();
-  const rbox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), matWall(0x3c3c44));
+  const rbox = new THREE.Mesh(new rboxGeo(0.5, 0.5, 0.5, 0.05), matWall(0x3c3c44));
   rbox.position.y = 0.35; rbox.castShadow = true; router.add(rbox);
   const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.2, 6), matWall(0x22262e));
   ant.position.y = 1.15; router.add(ant);
@@ -3008,9 +3009,9 @@ tick(); setInterval(tick, 30000);
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 2.1, 6), matWall(0x6e5238));
     post.position.set(px, 1.05, 0); post.castShadow = true; notice.add(post);
   }
-  const npanel = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.25, 0.09), matWall(0x7a5c3e));
+  const npanel = new THREE.Mesh(new rboxGeo(2.0, 1.25, 0.09, 0.05), matWall(0x7a5c3e));
   npanel.position.y = 1.6; npanel.castShadow = true; notice.add(npanel);
-  const nroof = new THREE.Mesh(new THREE.BoxGeometry(2.25, 0.08, 0.34), matWall(0x5a3c28));
+  const nroof = new THREE.Mesh(new rboxGeo(2.25, 0.08, 0.34, 0.05), matWall(0x5a3c28));
   nroof.position.set(0, 2.28, 0.03); notice.add(nroof);
   notice.position.set(-2.6, 0, -2.6); notice.rotation.y = 0.55; scene.add(notice);
   const cardGroup = new THREE.Group(); cardGroup.position.set(0, 1.6, 0.07); notice.add(cardGroup);
@@ -3404,13 +3405,13 @@ tick(); setInterval(tick, 30000);
 
   // Wartebank am Platz (Souls auf der Bank bei fehlgeschlagenen Runs)
   const bench = new THREE.Group();
-  const seat = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.09, 0.5), matWall(0x8a6a48));
+  const seat = new THREE.Mesh(new rboxGeo(1.7, 0.09, 0.5, 0.05), matWall(0x8a6a48));
   seat.position.y = 0.42; seat.castShadow = true; bench.add(seat);
   [[-0.7], [0.7]].forEach(([bx]) => {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.44), matWall(0x5a3c28));
+    const leg = new THREE.Mesh(new rboxGeo(0.1, 0.42, 0.44, 0.05), matWall(0x5a3c28));
     leg.position.set(bx, 0.21, 0); bench.add(leg);
   });
-  const back = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.42, 0.07), matWall(0x8a6a48));
+  const back = new THREE.Mesh(new rboxGeo(1.7, 0.42, 0.07, 0.05), matWall(0x8a6a48));
   back.position.set(0, 0.68, -0.24); back.rotation.x = -0.12; bench.add(back);
   bench.position.set(-4.5, 0.61, 3.3);
   bench.rotation.y = Math.atan2(-2.9 - -4.5, 2.4 - 3.3); // Blick zum Lagerfeuer
