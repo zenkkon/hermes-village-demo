@@ -1355,6 +1355,21 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
     barrel(x + 0.55, z - 0.45, 0.6);
   }
   crateGroup(15.3, 3.1); crateGroup(10.8, -10.1);
+  // Stufe 78 / Beta 80: Vogelhaeuser im Wohnviertel
+  function birdhouse(x, z, h, col){
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, h, 6), matWall(0x6e5238));
+    pole.position.set(x, h / 2, z); pole.castShadow = true; scene.add(pole);
+    const box = new THREE.Mesh(rboxGeo(0.22, 0.26, 0.22, 0.03), matWall(col));
+    box.position.set(x, h + 0.13, z); box.castShadow = true; scene.add(box);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.19, 0.15, 4), matWall(0x7a4b3a));
+    roof.position.set(x, h + 0.33, z); roof.rotation.y = Math.PI / 4; roof.castShadow = true; scene.add(roof);
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.045, 8), new THREE.MeshStandardMaterial({color: 0x2b2b2b}));
+    hole.position.set(x, h + 0.14, z - 0.113); hole.rotation.y = Math.PI; scene.add(hole);
+    const perch = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.12, 4), matWall(0x6e5238));
+    perch.rotation.x = Math.PI / 2; perch.position.set(x, h + 0.07, z - 0.17); scene.add(perch);
+  }
+  birdhouse(-7.2, 5.0, 1.1, 0xbfd4e2); birdhouse(-8.4, 3.8, 1.35, 0xe8d5b5); birdhouse(6.4, -6.8, 1.2, 0xc9b287);
+  window.__vogelhaus = () => 3;
   // Heuballen: Wohnviertel-Rand
   hayBale(-8.6, -9.6, 0.4); hayBale(-9.4, -9.1, 1.6); hayBale(-9.0, -10.2, 2.4);
   // Blumentöpfe an Cottage-Türen
@@ -2804,7 +2819,30 @@ tick(); setInterval(tick, 30000);
   fcol.position.y = 0.55; fountain.add(fcol);
   const fbowl = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.22, 0.14, 12), matWall(0x9a8f7a));
   fbowl.position.y = 0.95; fbowl.castShadow = true; fountain.add(fbowl);
+  // Stufe 78 / Beta 80: Brunnen-Verzierung - Steinkranz, Krug, Eimer, Zierband, Strahl
+  for (let i = 0; i < 8; i++){
+    const a = i / 8 * Math.PI * 2 + 0.2;
+    const dst = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08 + (i % 2) * 0.03), rockM2());
+    dst.position.set(Math.cos(a) * 0.95, 0.36, Math.sin(a) * 0.95);
+    dst.rotation.set(i, i * 0.7, 0); dst.castShadow = true; fountain.add(dst);
+  }
+  function rockM2(){ return matWall(0x7c8188); }
+  const jug = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 7), matWall(0xb06a45));
+  jug.scale.set(1, 1.1, 1); jug.position.set(1.2, 0.14, 0.3); jug.rotation.z = 0.35;
+  jug.castShadow = true; fountain.add(jug);
+  const jneck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, 0.09, 8), matWall(0xb06a45));
+  jneck.position.set(1.24, 0.26, 0.3); fountain.add(jneck);
+  const pail = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.2, 10), matWall(0x8a6a48));
+  pail.position.set(-1.15, 0.1, 0.4); pail.castShadow = true; fountain.add(pail);
+  const ph = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.012, 5, 12), matWall(0x6e5238));
+  ph.position.set(-1.15, 0.21, 0.4); ph.rotation.x = Math.PI / 2; fountain.add(ph);
+  const band = new THREE.Mesh(new THREE.TorusGeometry(0.175, 0.022, 6, 14), matWall(0xc9a227));
+  band.rotation.x = Math.PI / 2; band.position.y = 0.88; fountain.add(band);
+  const jet = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.035, 0.24, 6),
+    new THREE.MeshStandardMaterial({color: 0x9fdcf2, roughness: 0.2, transparent: true, opacity: 0.7}));
+  jet.position.y = 1.08; fountain.add(jet);
   fountain.position.set(0, 0.6, 0.6); scene.add(fountain);
+  window.__brunnenDeko = () => 8;
   [[8.3, 4.2], [8.75, 4.65]].forEach(p => {
     const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.5, 10), matWall(0x7a4b3a));
     bar.position.set(p[0], 0.25, p[1]); bar.castShadow = true; scene.add(bar);

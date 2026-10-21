@@ -1297,3 +1297,28 @@ Review danach sauber durchgelaufen.
 vierzehnter Polier-Durchgang (Brunnen-Verzierung + Vogelhaeuser)
 oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite
 Referenzdatei weiterhin nicht angekommen (19:00 geprüft).
+
+## M86 · Stufe 78 / Beta 80 (19:30, Brunnen-Verzierung + Vogelhaeuser)
+
+Vierzehnter Polier-Durchgang:
+
+- Brunnen-Verzierung: 8 Deko-Steine am Beckenrand (Dodecahedron,
+  2 Groessen), Krug mit Hals (gekippt) und Holzeimer mit Buegel
+  neben dem Brunnen, goldenes Zierband am Saeulenkopf, kleiner
+  Wasserstrahl aus der oberen Schale (transparent), alles in der
+  Brunnen-Gruppe, window.__brunnenDeko = 8.
+- Vogelhaeuser: neue birdhouse()-Funktion (Stange, rboxGeo-Haus
+  mit Pyramiden-Dach, dunkles Einloch, Sitzstange), drei Haeuser
+  im Wohnviertel: (-7.2/5.0, 1,1 m, hellblau), (-8.4/3.8, 1,35 m,
+  creme), (6.4/-6.8, 1,2 m, sand), window.__vogelhaus = 3.
+- village.html 1.450.783 → 1.453.594.
+
+Review rv87: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, brunnen 8,
+vogel 3, sitz 2, beide Shots sauber, Brunnen-Deko und Vogelhaeuser
+sichtbar. Einmal 'context deadline exceeded' (Plattform), Review
+danach sauber durchgelaufen.
+
+**Beta-80-Zip: hermes-village-beta80.zip.** Naechster Schritt:
+fuenfzehnter Polier-Durchgang (Markt-Stand-Deko + Wegweiser) oder
+Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
+weiterhin nicht angekommen (19:30 geprüft).
