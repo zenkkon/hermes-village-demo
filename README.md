@@ -1135,3 +1135,24 @@ detail 45, beide Shots sauber (Wiesen + Zaun sichtbar).
 Polier-Runde (Kafig-Variation, kleine Bruecke ueber den Bach) oder
 Fable-5-Testlauf, sobald Konstantin wählt. Zweite Referenzdatei weiterhin
 nicht angekommen (15:30 geprüft).
+
+## M79 · Stufe 71 / Beta 73 (16:00, Bruecken-Patina + Huehnerstall)
+
+Siebte WORLD-Polier-Runde:
+
+- Bruecke: 7 Dielenfugen quer uebers Deck, zwei Stuetzbogen (Torus,
+  halbkreisfaehig unter der Fahrbahn), Laterne an jedem Brueckenende
+  (Pfosten + emissive Kugel, gloeft nachts mit).
+- Hühnerstall (Kaefig-Variation): Stallkoerper mit schiefer Dachplatte,
+  Tuere, Anlauframpe und Stelzen im Westgarten; dahinter Run mit
+  4 Pfosten. 3 Huehner (lumpySphere-Koerper, weiss/weiss/braun) mit
+  Schwanz, Kopf, orangem Schnabel und rotem Kamm.
+- village.html 1.437.644 → 1.441.065.
+
+Review rv80: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, Villagers aktiv,
+detail 45, life 3, beide Shots sauber (Laternen leuchten nachts).
+
+**Beta-73-Zip: hermes-village-beta73.zip.** Naechster Schritt: achter
+Polier-Durchgang (Huehner-Animation im Give-way-Loop, Beerenstraeucher)
+oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
+weiterhin nicht angekommen (16:00 geprüft).
