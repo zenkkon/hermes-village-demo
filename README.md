@@ -955,3 +955,30 @@ Weiterhin Umfeld-Rauschen (bekannt), Szenen selbst sauber.
 
 **Beta-64-Zip: hermes-village-beta64.zip.** Nächster Block: EXTRAS (Wetter-/Jahreszeiten-Modi,
 Tag/Nacht-Verbesserung), danach WORLD (Blocky-Look weiter abbauen).
+## M70 · Stufe 62 (11:40, EXTRAS-Block nach World Prompt Pack)
+
+**Block 4 gebaut.** Wetter gab es schon (Klar/Regen, Regenschauer-System mit Auto-Wechsel);
+dazu kommen jetzt die **Jahreszeiten** und Tag/Nacht-Feinschliff:
+
+- **Jahreszeiten-Menü** in der Topbar neben Klar/Regen: Frühling / Sommer / Herbst / Winter.
+  Alle Übergänge weich (Exponential-Lerp, ~1-2 s im Echtzeit-Tempo).
+- **Frühling**: frisches Hellgrün auf Wiese und Kronen. **Herbst**: ochre Wiese, Laub in
+  Orange/Rost (die schon vorhandenen Herbstbäume setzen sich jetzt durch). **Winter**:
+  Schneedecke über der Insel (Wiese fast weiß, Flecken bleiben), Kristallblau-See, kühles
+  Licht, kronen entsättigt, **Schneefall** (700 Partikel, treiben seitlich, eigene
+  Points-Wolke unabhängig vom Regen).
+- **Tag/Nacht-Feinschliff**: Sonne färbt sich in der Dämmerung warm (golden hour),
+  Lampen flackern nachts dezent (Sinus-Rauschen ±6 %).
+- 97 Laub-/Busch-Materialien registrieren sich jetzt mit Basisfarbe (tintbar ohne
+  Nacht-Verlust); Hook __seasonJump für Tests, __seasonSet/__season für UI und dbg
+  (d.season {name, snow}).
+
+**Review rv72:** Tag Sommer unverändert sauber, **Winter Tag**: Schneedecke + fallender
+Schnee sichtbar, See eisblau; **Winter Nacht**: Schnee mit Lampen-Glow und Sternenhimmel.
+Saison-Klick im UI verifiziert (sommer → winter → herbst), dbg korrekt (snow 0→1),
+0 JS-Fehler. Bekanntes Umfeld-Rauschen: Headless-Browser stürzt bei langen Sessions
+gelegentlich (Szenen selbst sauber, Screenshots je Tag/Nacht vorhanden).
+
+**Beta-65-Zip: hermes-village-beta65.zip.** Nächster Block: WORLD (Blocky-Look weiter
+abbauen: weiche Materialien, Rundungen, organische Formen) — der letzte der 5 Bausteine,
+danach der „Ultimative Prompt" für Fable 5.
