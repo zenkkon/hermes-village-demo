@@ -724,6 +724,18 @@ function stall(x, z, ry, c1, c2){
       }
     }
   }
+  // Stufe 79 / Beta 81: Stand-Deko - Wimpel-Girlande + Korb
+  for (let i = 0; i < 6; i++){
+    const fl = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.13, 3),
+      matWall([0xff5f7a, 0xffd60a, 0x4a90c2, 0xbf5af2, 0x3f7f36, 0xff8a3d][i]));
+    fl.rotation.x = Math.PI;
+    fl.position.set(-0.72 + i * 0.29, 1.72, 0.62);
+    g.add(fl);
+  }
+  const gstring = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1.62, 4), matWall(0x4a4a4a));
+  gstring.rotation.z = Math.PI / 2; gstring.position.set(0, 1.78, 0.62); g.add(gstring);
+  const basket = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.12, 0.2, 8), matWall(0xb08d5e));
+  basket.position.set(1.15, 0.1, 0.35); basket.castShadow = true; g.add(basket);
   g.position.set(x, 0, z); g.rotation.y = ry || 0;
   scene.add(g);
 }
@@ -918,6 +930,7 @@ window.__roofFix = roofFix;
   }
   seatGroup(3.0, -1.9, 0.4, 0x4a90c2); seatGroup(-0.6, -3.6, 1.5, 0xffd60a);
   window.__sitzgruppen = () => 2;
+  window.__standDeko = () => 3;
   // Picknick-Set am Teich-Weg
   const tbl = new THREE.Group();
   const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.9), matWall(0x8a6a48));
@@ -2784,7 +2797,7 @@ tick(); setInterval(tick, 30000);
   const signpost = new THREE.Group();
   const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 1.6, 6), matWall(0x5a3c28));
   sp.position.y = 0.8; sp.castShadow = true; signpost.add(sp);
-  [["Teich", -0.5, 1.25], ["Bibliothek", 0.35, 1.0]].forEach(([txt, ry, sy]) => {
+  [["Teich", -0.5, 1.25], ["Bibliothek", 0.35, 1.0], ["Mühle", -2.6, 1.45], ["Hafen", 2.2, 0.78]].forEach(([txt, ry, sy]) => {
     const board = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.22),
       new THREE.MeshBasicMaterial({map: labelTex(txt), side: THREE.DoubleSide}));
     board.position.set(Math.sin(ry) * 0.38, sy, Math.cos(ry) * 0.38);

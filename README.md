@@ -1322,3 +1322,26 @@ danach sauber durchgelaufen.
 fuenfzehnter Polier-Durchgang (Markt-Stand-Deko + Wegweiser) oder
 Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
 weiterhin nicht angekommen (19:30 geprüft).
+
+## M87 · Stufe 79 / Beta 81 (20:00, Markt-Stand-Deko + Wegweiser)
+
+Fuenfzehnter Polier-Durchgang:
+
+- Markt-Stand-Deko: in stall() eingebaut, gilt fuer alle 3 Buden:
+  Wimpel-Girlande unter der Markise (6 kleine Kegel-Wimpel in 6
+  Farben an gespanntem Seil vorn, y 1,72) plus geflochtener Korb
+  neben dem Tisch, window.__standDeko = 3.
+- Wegweiser erweitert: 2 neue Schilder mit Canvas-Textur,
+  "Muehle" (1,45 m) und "Hafen" (0,78 m) neben den bestehenden
+  "Teich" und "Bibliothek", jetzt 4 Boards am Pfosten.
+- village.html 1.453.594 → 1.454.387.
+
+Review rv88: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, stand 3,
+brunnen 8, vogel 3, beide Shots sauber, Girlanden unter allen 3
+Markisen sichtbar. Einmal 'context deadline exceeded'
+(Plattform), Review danach sauber durchgelaufen.
+
+**Beta-81-Zip: hermes-village-beta81.zip.** Naechster Schritt:
+sechzehnter Polier-Durchgang (Gemuesegarten-Zaun + Kuerbisse) oder
+Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
+weiterhin nicht angekommen (20:00 geprüft).
