@@ -1405,3 +1405,11 @@ Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
 - Lampen-Glow-Pools verstärkt: Opacity 0.45 → 0.6 (+ dusk*0.2), Licht-Intensität nachts 2.55 → 2.85.
 - Review rv92 (Tag 14:00 / Dämmerung 18:40 / Nacht 22:30): 0 echte JS-Fehler (nur bekannter 404 /api/village/stream), pol19 20, pol18 1929, dusk 0.62 @ 18:40, Screenshots gesehen: Birnen leuchten an den Drähten in Dämmerung/Nacht, Glow-Pools sichtbarer, Tag unverändert sauber.
 - Zip: hermes-village-beta85.zip (village.html + village-standalone.html).
+
+## M92 · Stufe 84 / Beta 86 — Block 1 DASHBOARD: Tag/Nacht-Toggle + Dorf-Übersicht-Panel (23:00-Phase)
+- Topbar vollständig nach World-Prompt-Pack: Logo, Suche, Bereichs-Switcher, Wetter + Saison, Live-Uhr, **Tag/Nacht-Toggle (Auto → Tag → Nacht)**, Alerts-Badge (Fehler heute), User-Avatar (KZ).
+- Toggle pinnt die Dorfzeit (Tag = 12:00, Nacht = 22:30); Himmel, Lichter, Lampen, Fenster, Uhrenzeiger und Topbar-Uhr folgen dem Pin; `?time=`-Param bleibt unberührt. `__dbg.dnPin` zeigt den Zustand.
+- Rechtes Detail-Panel: Frosted-Glass-Upgrade (blur 14px, Border, Radius 14) + unter die Topbar gerückt (top 56px). Ohne Auswahl zeigt es jetzt dauerhaft die **Dorf-Übersicht** (Aktive Läufe, Letzter Lauf mit Status-Farbe, Jobs, Wetter, Live-Daten), bei Klick wie bisher Live-Stats des Objekts; Deselect kehrt zur Übersicht zurück.
+- Dateien: feed/village.html + village-standalone.html identisch, 1.462.996 B (vorher 1.460.023). Zip: hermes-village-beta86.zip (652.148 B).
+- Headless-Review rv93 (Playwright/Swiftshader, 1100×640): Toggle-Kette Auto→Tag→Nacht→Auto belegt (Uhr 23:10 → 12:00 · Tag → 22:30 · Nacht → 23:10), Übersicht-Panel sichtbar mit echten Feed-Daten (daily-backup · finished), 0 echte JS-Fehler (nur bekannter 404 /api/village/stream), pol17/18/19 unverändert (53/1932/20). Screenshots: review/rv93_*.png.
+- Nächster Baustein: Block 1 DASHBOARD abgeschlossen; ab Phase 23:30 vertiefen (Alerts interaktiv, Such-Treffer anspringen) oder direkt Block 5 WORLD (Blocky-Look abbauen) je nach Phase.
