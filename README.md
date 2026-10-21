@@ -1251,3 +1251,25 @@ ueber dem Markt, nachts stören sie das Lichtbild nicht.
 zwoelfter Polier-Durchgang (Bootssteg-Deko + Fasskisten-Gruppierung)
 oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
 weiterhin nicht angekommen (18:00 geprüft).
+
+## M84 · Stufe 76 / Beta 78 (18:30, Bootsteg-Deko + Fasskisten-Gruppierung)
+
+Zwoelfter Polier-Durchgang:
+
+- Bootsteg-Deko (am Teich-Steg): Kistenturm (3 Kisten gestapelt,
+  gedreht), Tauknoten (2 übereinanderliegende Tau-Ringe) und eine
+  kleine Laterne am Endpfosten (0,6 m Stange, Papier-Ball 0,10 m),
+ registered in window.__nightWins, glüht nachts. window.__stegDeko.
+- Fasskisten-Gruppierung: neue crateGroup (3er-Kistenstapel +
+  daneben Einzelkiste gedreht + Fass davor), zwei Arrangements:
+  Hafen (15.3/3.1) neben den 3 Einzelfässern, Werkstatt/Hafen-Süd
+  (10.8/-10.1) neben dem vorhandenen Kistenstapel.
+- village.html 1.446.970 → 1.448.983.
+
+Review rv85: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, steg 3,
+banderolen 3, beide Shots sauber; Laterne am Steg glüht nachts.
+
+**Beta-78-Zip: hermes-village-beta78.zip.** Naechster Schritt:
+dreizehnter Polier-Durchgang (Feuerstelle-Mobiliar + Sitz-Gruppen
+am Markt) oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite
+Referenzdatei weiterhin nicht angekommen (18:30 geprüft).

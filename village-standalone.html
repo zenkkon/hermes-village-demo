@@ -672,6 +672,26 @@ for (let i = -1; i <= 1; i += 2){
 dock.position.set(11.4, 0, 9.8); dock.rotation.y = 0.3;
 scene.add(dock);
 
+// Stufe 76 / Beta 78: Bootsteg-Deko - Kistenturm, Tauknoten, Laterne
+const deckM = new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.85});
+const c1d = new THREE.Mesh(rboxGeo(0.34, 0.3, 0.34, 0.04), deckM);
+c1d.position.set(-0.42, 0.57, 0.9); c1d.rotation.y = 0.4; c1d.castShadow = true; dock.add(c1d);
+const c2d = new THREE.Mesh(rboxGeo(0.3, 0.26, 0.3, 0.04), deckM);
+c2d.position.set(-0.44, 0.55, 0.5); c2d.rotation.y = -0.3; c2d.castShadow = true; dock.add(c2d);
+const c3d = new THREE.Mesh(rboxGeo(0.26, 0.22, 0.26, 0.04), deckM);
+c3d.position.set(-0.42, 0.83, 0.72); c3d.rotation.y = 0.2; c3d.castShadow = true; dock.add(c3d);
+const ropeC = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.038, 6, 14), new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1}));
+ropeC.rotation.x = Math.PI / 2; ropeC.position.set(0.3, 0.47, 0.6); ropeC.castShadow = true; dock.add(ropeC);
+const ropeC2 = ropeC.clone(); ropeC2.position.y = 0.505; dock.add(ropeC2);
+const dpole = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.035, 0.6, 6), new THREE.MeshStandardMaterial({color: 0x6e5238, roughness: 0.9}));
+dpole.position.set(0.52, 0.72, 1.4); dpole.castShadow = true; dock.add(dpole);
+const dballM = new THREE.MeshStandardMaterial({color: 0xf5e6c8, emissive: 0xffd27a, emissiveIntensity: 0.25, roughness: 0.65});
+const dball = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), dballM);
+dball.scale.set(1, 1.2, 1); dball.position.set(0.52, 1.1, 1.4); dock.add(dball);
+window.__nightWins = window.__nightWins || [];
+window.__nightWins.push(dballM);
+window.__stegDeko = () => 3;
+
 // Marktbuden (Deko) mit gestreiften Markisen
 function stall(x, z, ry, c1, c2){
   const g = new THREE.Group();
@@ -1312,6 +1332,15 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   barrel(12.4, -9.4, 0.5); barrel(12.9, -10.2, 1.7);
   // Kistenstapel: Markt + Hafen
   crateStack(6.9, -0.9); crateStack(8.3, -0.4); crateStack(11.9, -9.2);
+  // Fasskisten-Gruppierung: Stapel + Einzelkiste + Fass als ein Arrangement
+  function crateGroup(x, z){
+    crateStack(x, z);
+    const c2 = new THREE.Mesh(rboxGeo(0.42, 0.34, 0.42, 0.05), woodM);
+    c2.position.set(x + 0.46, 0.18, z + 0.12); c2.rotation.y = 0.9;
+    c2.castShadow = true; c2.receiveShadow = true; scene.add(c2);
+    barrel(x + 0.55, z - 0.45, 0.6);
+  }
+  crateGroup(15.3, 3.1); crateGroup(10.8, -10.1);
   // Heuballen: Wohnviertel-Rand
   hayBale(-8.6, -9.6, 0.4); hayBale(-9.4, -9.1, 1.6); hayBale(-9.0, -10.2, 2.4);
   // Blumentöpfe an Cottage-Türen
