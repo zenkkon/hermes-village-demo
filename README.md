@@ -1082,3 +1082,20 @@ Dachton-Variation sichtbar, Tagesfenster-Glow dezent, Nachtszene unverändert st
 **Beta-69-Zip: hermes-village-beta69.zip.** Nächster Schritt: vierte Polier-Runde
 (Plaza-Belag-Muster, Markt-Kulisse dichter) oder Fable-5-Testlauf, sobald Konstantin
 wählt. Zweite Referenzdatei weiterhin nicht angekommen (14:00 geprüft).
+## M76 · Stufe 68 / Beta 70 (14:30, Plaza-Belag + Markt-Dichte)
+
+Vierte WORLD-Polier-Runde:
+
+- Plaza-Belag: zwei flache Ringreifen in abgesetzten Tönen (0xbfae90 / 0xd2c8ae)
+  plus 12 radiale Fugensteine am Rand; der Platz liest sich jetzt als gepflastert,
+  nicht als flache Scheibe.
+- Markt-Kulisse dichter: dritte Bude (grün gestreift, Westseite) und Warehaufen
+  (3 Kugeln) auf den Warenkisten jeder Bude.
+- village.html 1.433.242 → 1.434.386.
+
+Review rv77: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, 3 Villagers, beide Shots sauber.
+Dritte Bude und Ware sichtbar, Plaza-Muster dezent, Nachtszene unverändert.
+
+**Beta-70-Zip: hermes-village-beta70.zip.** Nächster Schritt: fünfte Polier-Runde
+(Bootssteg-Patina, Uferkante weicher) oder Fable-5-Testlauf, sobald Konstantin wählt.
+Zweite Referenzdatei weiterhin nicht angekommen (14:30 geprüft).

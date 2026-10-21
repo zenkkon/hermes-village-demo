@@ -649,12 +649,21 @@ function stall(x, z, ry, c1, c2){
     const crate = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.28),
       matWall([0xd97e3f, 0xc23b4a, 0x6bae52, 0xffd60a][i]));
     crate.position.set(-0.6 + i*0.4, 0.92, 0); g.add(crate);
+    if (i % 2 === 0){
+      for (let k = 0; k < 3; k++){
+        const p = new THREE.Mesh(new THREE.SphereGeometry(0.055, 7, 6),
+          matWall([0xff5f7a, 0xffd60a, 0x6bae52, 0xbf5af2][i]));
+        p.position.set(-0.6 + i*0.4 + (k - 1) * 0.09, 1.04 + (k % 2) * 0.04, (k % 2 ? 0.05 : -0.05));
+        g.add(p);
+      }
+    }
   }
   g.position.set(x, 0, z); g.rotation.y = ry || 0;
   scene.add(g);
 }
 stall(-2.2, 2.6, 0.4, 0xc23b4a, 0xf2e8dc);
 stall(4.4, 1.8, -0.6, 0x3f6fb5, 0xf2e8dc);
+stall(-3.6, 0.6, 1.1, 0x3f7f36, 0xf2e8dc);
 
 // Marktplatz: Tafel + Baenke
 (function plaza(){
@@ -2340,6 +2349,20 @@ tick(); setInterval(tick, 30000);
   const plaza = new THREE.Mesh(new THREE.CircleGeometry(2.3, 26), new THREE.MeshStandardMaterial({color: 0xc9bfa6, roughness: 1}));
   plaza.rotation.x = -Math.PI/2; plaza.position.y = 0.615; plaza.receiveShadow = true;
   scene.add(plaza);
+  // Belag-Muster: zwei flache Ringreifen, Tone leicht abgesetzt
+  for (const [rr, col] of [[2.05, 0xbfae90], [1.55, 0xd2c8ae]]){
+    const ring = new THREE.Mesh(new THREE.RingGeometry(rr - 0.07, rr + 0.07, 40),
+      new THREE.MeshStandardMaterial({color: col, roughness: 1}));
+    ring.rotation.x = -Math.PI/2; ring.position.y = 0.618; ring.receiveShadow = true;
+    scene.add(ring);
+  }
+  // radiale Fugensteine am Rand
+  for (let i = 0; i < 12; i++){
+    const a = i / 12 * Math.PI * 2 + 0.13;
+    const st = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.1), new THREE.MeshStandardMaterial({color: 0x9a988f, roughness: 0.95}));
+    st.position.set(Math.cos(a) * 2.18, 0.622, Math.sin(a) * 2.18);
+    st.rotation.y = -a; st.receiveShadow = true; scene.add(st);
+  }
   const petals = [0xd94f6e, 0xf0c948, 0xc977d9, 0xf2f2f2];
   for (let i = 0; i < 26; i++){
     const a = (i*2.399) % (Math.PI*2), r = 3 + (i*7 % 9);
