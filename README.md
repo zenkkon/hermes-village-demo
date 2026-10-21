@@ -925,3 +925,33 @@ Gefühl zeigt der Browser unter der Demo-URL.
 
 **Beta-63-Zip: hermes-village-beta63.zip.** Nächster Block: LIFE (Give-way-Logik, Ausweichen,
 kein Überlappen, endlose Loops).
+## M69 · Stufe 61 (11:30, LIFE-Block nach World Prompt Pack)
+
+**Block 3 gebaut.** Das Dorf lebt jetzt endlos:
+
+- **3 Villagers** (Dauerbewohner, unabhängig vom Feed) laufen in Dauerschleife zwischen 10
+  Wanderpunkten (Plaza, Hafen, Wohnviertel, Werkstatt-Ufer, Markt), Pause am Punkt, dann
+  weiter. Job-Roboter behalten ihre Run-Logik, bekommen aber nach der Arbeit am Gebäude
+  einen Bummel übers Dorf (60 %) oder gehen zurück (40 %) und arbeiten wieder — endloser Loop.
+- **Give-way**: frontal aufeinander zulaufende Figuren weichen konsistent nach rechts aus
+  (rechtshändiger Verkehr), gezählt als Yields in dbg.life.
+- **Ausweichen, kein Überlappen**: Agenten stoßen sich radial ab (Radius 1,5), Gebäude haben
+  Hindernis-Radius (2,1 + Puffer), auch Kira wird nicht überlaufen. Weiche Drehung zum
+  Bewegungsvektor statt hartem Snap.
+- Hooks: __lifeSpeed (Test-Multiplikator, Default 1), __lifeTest (zwei Villager auf
+  Kollisionskurs), __lifeProbe (Positions-/Ziel-Dump), dbg.life {villagers, yields, crowd}.
+
+**Bug gefunden und behoben:** das erste Agenten-Ausweichen schob Figuren aufeinander ZU
+(vorzeichenverkertes Radial-Verschieben), zwei Agenten auf Kollisionskurs überkreuzten sich
+bei 0,005 Abstand. Unit-Sim der Logik: vorher minDist 0,005, nach Fix **0,95 frontal /
+0,80 kreuzend** mit 94/159 Give-way-Ereignissen — kein Durchqueren mehr.
+
+**Review rv71 (Tag 14:00 + Nacht 22:30, finaler Code):** 0 JS-Fehler, 3 Villagers aktiv,
+Beobachtung über mehrere Sample-Fenster: Positionen wandern punktübergreifend, min.
+Paarabstand nie unter 3,08 Einheiten (in-game Tempo; Sim-Werte oben belegen Nähe-Verhalten),
+Zustandsmaschine idle→hold→neues Ziel arbeitet. Headless-FPS ist niedrig (dt-Clamp), deshalb
+Sim-Geschwindigkeits-Hook für Tests. Browser-Crashes bei langen Interaktions-Sessions sind
+Weiterhin Umfeld-Rauschen (bekannt), Szenen selbst sauber.
+
+**Beta-64-Zip: hermes-village-beta64.zip.** Nächster Block: EXTRAS (Wetter-/Jahreszeiten-Modi,
+Tag/Nacht-Verbesserung), danach WORLD (Blocky-Look weiter abbauen).

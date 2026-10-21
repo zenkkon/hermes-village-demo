@@ -1404,6 +1404,7 @@ function spawnRobot(jobName){
   if (j){ b = services.find(s => s.userData.jobs.some(k => j.indexOf(k.toLowerCase()) >= 0)) || studio; }
   const target = new THREE.Vector3(b.position.x + (Math.random()-0.5)*1.2, 0, b.position.z + 2.2 + Math.random()*0.8);
   const rec = {g: null, mixer: null, act: null, cur: "walk", target};
+  rec.home = {x: b.position.x, z: b.position.z};
   rec.g = robotProto ? SkeletonUtils.clone(robotProto.scene) : proceduralRobot();
   if (robotProto){
     const box = new THREE.Box3().setFromObject(rec.g);
@@ -1421,6 +1422,95 @@ function spawnRobot(jobName){
   rec.waveStart = null;
   scene.add(rec.g); robots.push(rec);
 }
+// LIFE (Stufe 61): Give-way, Ausweichen, endlose Loops
+const villagers = [];
+const LIFE = {
+  wander: [
+    {x: 0, z: 2.5}, {x: -3.5, z: 2}, {x: 4.5, z: 1.5}, {x: 5.5, z: -4.5},
+    {x: -4, z: -5}, {x: 10.5, z: -8.5}, {x: -7.5, z: -9}, {x: 14.5, z: 1},
+    {x: 1.5, z: 6.5}, {x: -6, z: 4.5}
+  ],
+  obstacles: []
+};
+BUILDINGS.forEach(bb => LIFE.obstacles.push({x: bb.position.x, z: bb.position.z, r: 2.1}));
+function spawnVillager(){
+  if (!robotProto) return;
+  const g = SkeletonUtils.clone(robotProto.scene);
+  const box = new THREE.Box3().setFromObject(g);
+  const h = Math.max(0.01, box.max.y - box.min.y);
+  g.scale.setScalar(0.82 / h);
+  g.traverse(o => { if (o.isMesh){ o.castShadow = true; } });
+  const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+  g.position.set(w.x, 0, w.z);
+  const rec = {g, mixer: null, act: null, cur: "walk", target: new THREE.Vector3(w.x, 0, w.z), villager: true};
+  rec.mixer = new THREE.AnimationMixer(g);
+  const clips = robotProto.animations;
+  const pick = n => { const c = clips.find(c => c.name === n); return c ? rec.mixer.clipAction(c) : null; };
+  rec.act = {walk: pick("Walking") || pick("Idle"), idle: pick("Idle")};
+  if (rec.act.walk) rec.act.walk.play();
+  scene.add(g); villagers.push(rec);
+}
+function lifeStep(rb, dt, t, crowd){
+  if (!rb.life) rb.life = {mode: "walk", hold: rb.villager ? (1.5 + Math.random()*3) : (7 + Math.random()*9)};
+  const L = rb.life, p = rb.g.position;
+  const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
+  const d = Math.hypot(dx, dz);
+  if (d > 0.2){
+    const bd = d || 1;
+    const bx = dx/bd, bz = dz/bd;
+    let vx = bx, vz = bz, yields = 0;
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z;
+      const od = Math.hypot(ox, oz);
+      if (od > 0.001 && od < 1.5){
+        const push = (1.5 - od) / 1.5;
+        vx -= (ox/od) * push * 1.8; vz -= (oz/od) * push * 1.8;
+        if ((bx*ox + bz*oz) / od > 0.5){ vx += bz * push * 1.4; vz += -bx * push * 1.4; yields++; }
+      }
+    }
+    for (const ob of LIFE.obstacles){
+      const ox = p.x - ob.x, oz = p.z - ob.z, od = Math.hypot(ox, oz);
+      if (od > 0.001 && od < ob.r + 0.9){
+        const push = (ob.r + 0.9 - od) / (ob.r + 0.9);
+        vx += (ox/od) * push * 2.4; vz += (oz/od) * push * 2.4;
+      }
+    }
+    {
+      const ox = p.x - fox.position.x, oz = p.z - fox.position.z, od = Math.hypot(ox, oz);
+      if (od > 0.001 && od < 1.1){ const push = (1.1 - od)/1.1; vx += (ox/od)*push*2.0; vz += (oz/od)*push*2.0; }
+    }
+    if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
+    const vl = Math.hypot(vx, vz) || 1;
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1);
+    p.x += (vx/vl) * Math.min(sp, d);
+    p.z += (vz/vl) * Math.min(sp, d);
+    const want = Math.atan2(vx, vz) + Math.PI;
+    const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
+    rb.g.rotation.y += diff * Math.min(1, dt*8);
+    robotSetAnim(rb, "walk");
+    p.y = Math.abs(Math.sin(t*8))*0.02;
+  } else {
+    robotSetAnim(rb, "idle");
+    p.y = 0;
+    L.hold -= dt;
+    if (L.hold <= 0){
+      if (rb.villager || Math.random() < 0.6){
+        const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        rb.target.set(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8);
+        L.hold = L.vil ? (1.5 + Math.random()*3.5) : (4 + Math.random()*5);
+      } else {
+        rb.target.set(rb.home.x + (Math.random()-0.5)*1.2, 0, rb.home.z + 2.2 + Math.random()*0.8);
+        L.hold = 7 + Math.random()*9;
+      }
+    }
+  }
+  if (rb.mixer) rb.mixer.update(dt);
+}
+window.__spawnRobot = spawnRobot;
+window.__lifeSpeed = 1;
+window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
+window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
 function robotSetAnim(rec, name){
   if (!rec.mixer || !rec.act) return;
   const next = rec.act[name]; if (!next || rec.cur === name) return;
@@ -2023,7 +2113,7 @@ const COTTAGE53_B64 = "Z2xURgIAAADYXAAAUDAAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6I
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}))}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
@@ -3130,7 +3220,9 @@ function loop(){
     s.m.material.opacity = Math.max(0, 0.55 - s.age * 0.35);
     if (s.age > 1.6){ scene.remove(s.m); smoke.splice(i, 1); }
   }
-  // Roboter: Spawn-Welle, dann Weg zum Ziel, dann Arbeit
+  // Roboter + Villagers: LIFE (Stufe 61) - Give-way, Ausweichen, endlose Loops
+  if (robotProto && villagers.length < 3) spawnVillager();
+  const crowd = robots.concat(villagers);
   for (const rb of robots){
     if (rb.cur === "wave" && rb.mixer){
       if (rb.waveStart === null) rb.waveStart = rb.mixer.time;
@@ -3138,20 +3230,11 @@ function loop(){
       if (!rb.act.wave || rb.mixer.time - rb.waveStart > 1.9){ robotSetAnim(rb, "walk"); }
       continue;
     }
-    const dx = rb.target.x - rb.g.position.x, dz = rb.target.z - rb.g.position.z;
-    const d = Math.hypot(dx, dz);
-    if (d > 0.15){
-      const sp = 1.1 * dt;
-      rb.g.position.x += (dx / d) * Math.min(sp, d);
-      rb.g.position.z += (dz / d) * Math.min(sp, d);
-      rb.g.rotation.y = Math.atan2(dx, dz) + Math.PI;
-      robotSetAnim(rb, "walk");
-      rb.g.position.y = Math.abs(Math.sin(t*8))*0.02;
-    } else {
-      robotSetAnim(rb, "idle");
-      rb.g.position.y = 0;
-    }
-    if (rb.mixer) rb.mixer.update(dt);
+    lifeStep(rb, dt, t, crowd);
+  }
+  for (const vb of villagers){ lifeStep(vb, dt, t, crowd); }
+  if ((window.__lifeFrame = (window.__lifeFrame || 0) + 1) % 10 === 0){
+    window.__lifeCrowd = crowd.map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}));
   }
   // Konfetti
   for (let i = confetti.length-1; i >= 0; i--){
