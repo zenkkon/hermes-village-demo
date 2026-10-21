@@ -1,0 +1,72 @@
+{
+  "feed_version": "2",
+  "source": "live",
+  "generated_at": 1791739349.3530073,
+  "profiles": [
+    {
+      "profile_id": "ad-copywriter",
+      "health": "ok",
+      "work_state": "working",
+      "evidence_type": "gateway_heartbeat",
+      "as_of": 1791739329.236772,
+      "source_age_s": 20
+    },
+    {
+      "profile_id": "jarvis",
+      "health": "stale",
+      "work_state": "unknown",
+      "evidence_type": "gateway_heartbeat",
+      "as_of": 1791732149.236772,
+      "source_age_s": 7200
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "run_6b86b273ff34",
+      "job_name": "daily-backup",
+      "state": "finished",
+      "started_at": 1791732149.236772,
+      "duration_s": 100,
+      "evidence_type": "cron_execution"
+    }
+  ],
+  "ticker": {
+    "ticker_health": "ok",
+    "ticker_last_success": 1791739259.236772,
+    "ticker_age_s": 90
+  },
+  "jobs": [
+    {
+      "job_name": "daily-backup",
+      "schedule": "50 4 * * *",
+      "enabled": "yes"
+    }
+  ],
+  "world": {
+    "light": "auto",
+    "festival": null,
+    "motion_pause": false
+  },
+  "load": {
+    "active_leases": 1,
+    "delegations": {
+      "by_state": {
+        "completed": 1,
+        "pending": 1
+      },
+      "by_delivery_state": {
+        "delivered": 1,
+        "waiting": 1
+      },
+      "last_activity": 1791739289.236772
+    },
+    "usage_24h": {
+      "window_h": 24,
+      "sessions": 1,
+      "api_calls": 42,
+      "input_tokens": 1000,
+      "output_tokens": 2000,
+      "estimated_cost_usd": 0.31
+    }
+  }
+}

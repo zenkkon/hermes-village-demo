@@ -1,0 +1,14 @@
+{
+  "feed_version": "1",
+  "source": "synthetic",
+  "generated_at": 1791737917.2337627,
+  "profiles": [],
+  "runs": [],
+  "ticker": {},
+  "world": {
+    "light": "auto",
+    "festival": null,
+    "motion_pause": false
+  },
+  "note": "Synthetischer Selbsttest ohne echte Quellen."
+}
