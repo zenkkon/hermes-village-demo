@@ -1064,3 +1064,21 @@ Weg-Variation sichtbar, Meer reflektiert heller.
 **Beta-68-Zip: hermes-village-beta68.zip.** Nächster Schritt: dritte Polier-Runde
 (Dachvariationen, Fenster-Glow am Tag) oder Fable-5-Testlauf, sobald Konstantin wählt.
 Zweite Referenzdatei weiterhin nicht angekommen (13:30 geprüft).
+## M75 · Stufe 67 / Beta 69 (14:00, Dachvariation + Fenster-Glow am Tag)
+
+Dritte WORLD-Polier-Runde:
+
+- Dachvariation: jedes Cottage hat jetzt ein eigenes Dachmaterial mit deterministischem
+  Ton-Jitter (offsetHSL aus x/z), statt eine Farbe fuer alle; Dächer lesen sich
+  einzeln verlegt statt wie gestanzt.
+- Fenster-Glow am Tag: Basis-Emissive 0.15 → 0.45 + Dämmerungs-Bonus 0.6; Fenster
+  glimmen jetzt auch bei Tag subtil warm, in der Dämmerung spürbar, nachts wie bisher.
+- Fensterfarbe minimal wärmer (0xdcb47e → 0xe0c08a).
+- village.html 1.433.085 → 1.433.242.
+
+Review rv76: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, 3 Villagers, beide Shots sauber.
+Dachton-Variation sichtbar, Tagesfenster-Glow dezent, Nachtszene unverändert stark.
+
+**Beta-69-Zip: hermes-village-beta69.zip.** Nächster Schritt: vierte Polier-Runde
+(Plaza-Belag-Muster, Markt-Kulisse dichter) oder Fable-5-Testlauf, sobald Konstantin
+wählt. Zweite Referenzdatei weiterhin nicht angekommen (14:00 geprüft).

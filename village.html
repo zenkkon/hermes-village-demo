@@ -139,7 +139,7 @@ function updateDayNight(){
   const lampOn = 1 - day;
   nightAmbient.intensity = lampOn * 0.3;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.55; if (l.pool) l.pool.material.opacity = lampOn * 0.45; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
-  (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.15 + lampOn * 2.4; });
+  (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.45 + dusk * 0.6 + lampOn * 2.2; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.25 ? " · Tag" : " · Nacht");
 }
@@ -260,18 +260,19 @@ function lumpySphere(r, seed, squash){
 }
 function winPlane(w, h){
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.06),
-    new THREE.MeshStandardMaterial({color: 0xdcb47e, emissive: 0xffb340, emissiveIntensity: 0.9}));
+    new THREE.MeshStandardMaterial({color: 0xe0c08a, emissive: 0xffb340, emissiveIntensity: 0.9}));
   return m;
 }
 function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   const g = new THREE.Group();
   const body = new THREE.Mesh(rboxGeo(w, h, d, Math.min(w, h, d) * 0.13), matWall(wall));
   body.position.y = h/2; body.castShadow = true; body.receiveShadow = true; g.add(body);
-  // Dach mit Ueberhang, zweiteilig (Kranz + Kegel)
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 4),
-    matWall(roof));
+  // Dach mit Ueberhang, zweiteilig (Kranz + Kegel); Ton pro Haus leicht variiert
+  const roofMat = matWall(roof);
+  roofMat.color.offsetHSL((((x*7 + z*3) % 5) - 2) * 0.008, 0, (((x*3 + z*11) % 7) - 3) * 0.022);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 4), roofMat);
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
-  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 4), matWall(roof));
+  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 4), roofMat);
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
   // Tuer + Fenster vorn und seitlich
   const door = new THREE.Mesh(new THREE.BoxGeometry(w*0.18, h*0.42, 0.08), matWall(0x5a3c28));
