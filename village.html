@@ -29,6 +29,48 @@
   #bubble .who{font:700 10px/1 -apple-system,sans-serif;letter-spacing:.08em;color:#c2601e;text-transform:uppercase}
   #vig{position:fixed;inset:0;pointer-events:none;z-index:4;
     background:radial-gradient(ellipse at center, transparent 58%, rgba(8,10,22,.45) 100%)}
+
+  /* ===== Stufe 59 / Beta 62: World-Pack-Dashboard (Frosted Glass) ===== */
+  .glass{background:rgba(18,20,28,.55);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);
+    border:1px solid rgba(255,255,255,.14);border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+  #dashTop{position:fixed;top:0;left:0;right:0;height:46px;display:flex;align-items:center;gap:10px;
+    padding:0 14px;z-index:6;border-radius:0;border-width:0 0 1px 0}
+  #dashTop .logo{font-size:12px;font-weight:800;letter-spacing:.12em;color:#f0a040;white-space:nowrap}
+  #dashSearch{flex:0 0 170px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.08);color:#ececf1;font-size:12px;padding:0 10px;outline:none}
+  #dashSearch::placeholder{color:#9b9ba6}
+  #dashAreas,#dashWeather{display:flex;gap:4px}
+  #dashAreas button,#dashWeather button{border:1px solid transparent;background:transparent;color:#9b9ba6;
+    font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  #dashAreas button.on{background:rgba(240,160,64,.18);color:#f0a040;border-color:rgba(240,160,64,.4)}
+  #dashWeather button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
+  #dashClock{margin-left:auto;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #dashUser{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#f0a040,#c2601e);
+    color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  #dashKpis{position:fixed;top:56px;left:12px;display:flex;gap:8px;z-index:5}
+  .kpi{width:118px;padding:8px 10px}
+  .kpi .l{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9b9ba6}
+  .kpi .v{font-size:20px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+  .kpi .s{font-size:10px;color:#9b9ba6;margin-top:1px}
+  #dashTracker{position:fixed;bottom:34px;left:12px;padding:9px 12px;z-index:5;max-width:430px}
+  #dashTracker .t{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f0a040}
+  #dashTracker #trName{font-size:11px;color:#9b9ba6;margin-top:2px}
+  #dashTracker .steps{display:flex;gap:14px;margin-top:6px}
+  .step{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;color:#9b9ba6;white-space:nowrap}
+  .step i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+  .step.done i{background:#30d158}.step.done{color:#30d158}
+  .step.act i{background:#0a84ff;box-shadow:0 0 0 3px rgba(10,132,255,.25)}.step.act{color:#0a84ff}
+  .step.err i{background:#ff453a;box-shadow:0 0 0 3px rgba(255,69,58,.25)}.step.err{color:#ff453a}
+  #dashTable{position:fixed;bottom:34px;right:12px;width:300px;z-index:5;overflow:hidden}
+  #dashTable .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.14)}
+  #dashTable .tabs button{flex:1;border:0;background:transparent;color:#9b9ba6;font-size:11px;font-weight:700;
+    padding:7px 0;cursor:pointer;border-bottom:2px solid transparent}
+  #dashTable .tabs button.on{color:#f0a040;border-bottom-color:#f0a040}
+  #dashTable .rows{max-height:150px;overflow:hidden;padding:6px 10px}
+  #dashTable .r{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0}
+  #dashTable .r span:last-child{color:#9b9ba6;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rOK{color:#30d158}.rBad{color:#ff453a}.rRun{color:#0a84ff}
+
 </style>
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
@@ -57,6 +99,7 @@ document.body.appendChild(renderer.domElement);
 
 // Licht: Tag-Nacht nach echter lokaler Uhrzeit
 const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x4a4436, 0.6); scene.add(hemi);
+const nightAmbient = new THREE.AmbientLight(0xffb060, 0); scene.add(nightAmbient);
 const groundDay = new THREE.Color(0x4a4436), groundNight = new THREE.Color(0x1d3340);
 const sun = new THREE.DirectionalLight(0xfff2d8, 1.0);
 sun.castShadow = true;
@@ -66,7 +109,7 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
-const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x0d1024), skyDawn = new THREE.Color(0xe8946a);
+const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
 
@@ -85,14 +128,15 @@ function updateDayNight(){
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
   sun.intensity = 0.25 + day * 1.45;
   moon.position.set(-20, 18, -10);
-  moon.intensity = (1 - day) * 0.32;
+  moon.intensity = (1 - day) * 0.44;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
   if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day));
   pathRibbons.forEach(m => m.material.color.set(pathDay).lerp(pathNight, 1 - day));
-  hemi.intensity = 0.16 + day * 0.69;
+  hemi.intensity = 0.16 + day * 0.62 + (1 - day) * 0.22;
   const lampOn = 1 - day;
-  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.3; if (l.pool) l.pool.material.opacity = lampOn * 0.38; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.7; });
+  nightAmbient.intensity = lampOn * 0.3;
+  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.55; if (l.pool) l.pool.material.opacity = lampOn * 0.45; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
   (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.15 + lampOn * 2.4; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.25 ? " · Tag" : " · Nacht");
@@ -764,6 +808,63 @@ window.__roofFix = roofFix;
   lampPost(3.0, -8.2); lampPost(-0.8, 8.4); lampPost(11.4, 0.4);
   window.__mobiliar = () => ({benches: 3, picnic: true, parasols: 2, lampsNew: 12, stools: 3});
   window.__mobG = {benches, parasols, stools, table: tbl};
+})();
+
+// Stufe 60 / Beta 60: Mobiliar-Vertiefung (2 Baenke, Picknick-Set 2, 4 Laternen) + naechtliche Lichtdichte
+(function mobiliar60(){
+  const g = window.__mobG; if (!g) return;
+  function woodBench60(x, z, rot){
+    const b = new THREE.Group();
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.08, 0.42), matWall(0x8a6a48));
+    seat.position.y = 0.4; seat.castShadow = true; b.add(seat);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.34, 0.06), matWall(0x8a6a48));
+    back.position.set(0, 0.66, -0.19); back.rotation.x = -0.12; b.add(back);
+    for (const lx of [-0.45, 0.45]){
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.36), matWall(0x6e5238));
+      leg.position.set(lx, 0.2, 0); b.add(leg);
+    }
+    b.position.set(x, 0, z); b.rotation.y = rot; b.castShadow = true; scene.add(b);
+    g.benches.push(b);
+  }
+  function parasol60(x, z, col){
+    const u = new THREE.Group();
+    const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 1.5, 6), matWall(0x8a6a48));
+    mast.position.y = 0.75; u.add(mast);
+    const canopy = new THREE.Mesh(new THREE.ConeGeometry(0.95, 0.4, 10),
+      new THREE.MeshStandardMaterial({color: col, roughness: 0.85, side: THREE.DoubleSide}));
+    canopy.position.y = 1.55; canopy.castShadow = true; u.add(canopy);
+    u.position.set(x, 0, z); u.userData.col = col; scene.add(u);
+    g.parasols.push(u);
+  }
+  function stool60(x, z){
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.36, 8), matWall(0x8a6a48));
+    st.position.set(x, 0.18, z); st.castShadow = true; scene.add(st);
+    g.stools.push(st);
+  }
+  woodBench60(-0.8, 3.9, 0.2); woodBench60(9.2, 8.0, -0.9);
+  stool60(-4.0, 9.1); stool60(-2.4, 8.2);
+  const u60 = new THREE.Group(); u60.position.set(-3.2, 0, 8.6); u60.userData.col = 0x3f7fbf; scene.add(u60); g.parasols.push(u60);
+  // Picknick-Tisch 2 mit eigenem Blender-Swap (g.table bleibt unangetastet)
+  const tbl60 = new THREE.Group();
+  const top60 = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.9), matWall(0x8a6a48));
+  top60.position.y = 0.72; top60.castShadow = true; tbl60.add(top60);
+  for (const sx of [-0.6, 0.6]){
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.72, 0.75), matWall(0x6e5238));
+    leg.position.set(sx, 0.36, 0); tbl60.add(leg);
+  }
+  tbl60.position.set(-3.2, 0, 8.6); tbl60.rotation.y = -0.4; scene.add(tbl60);
+  let tries = 0;
+  (function swapTable60(){
+    let ok = false;
+    try {
+      if (tableProto && typeof putProp === 'function' && putProp(tableProto, tbl60)){
+        window.__propSwaps.table++; window.__mob60Done = true; ok = true;
+      }
+    } catch (e) { /* TDZ vor Stufe 29: einfach weiterpollen */ }
+    if (!ok && ++tries < 120) setTimeout(swapTable60, 200);
+  })();
+  lampPost(6.4, -5.8); lampPost(-9.0, 3.4); lampPost(12.4, 4.2); lampPost(4.6, 11.0);
+  window.__mob60Ready = true;
 })();
 
 // Strommasten mit Drähten
@@ -3139,6 +3240,148 @@ window.__pond = () => {
     pondVisible: pond.visible,
     firstHit: hits.length ? (hits[0].object.type + " dist " + hits[0].distance.toFixed(1)) : "none",
     pondInHits: rc.intersectObjects(scene.children, true).some(h => h.object === pond)};
-};</script>
+};
+// ===== Stufe 59 / Beta 62: World-Pack-Dashboard (DASHBOARD-Block: Frosted-Glass-Panels) =====
+(function(){
+  const relTime2 = iso => {
+    if (!iso) return "";
+    const ts = Date.parse(iso); if (isNaN(ts)) return "";
+    const m = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+    if (m < 1) return "gerade eben";
+    if (m < 60) return "vor " + m + " min";
+    return "vor " + Math.floor(m / 60) + " h";
+  };
+  const cls = s => s === "finished" ? "rOK" : (s === "failed" ? "rBad" : (s === "running" ? "rRun" : ""));
+  // statsHud wird von den KPI-Karten ersetzt (Tick-Kette bleibt intakt)
+  const sh = document.getElementById("statsHud"); if (sh) sh.style.display = "none";
+  // Topbar
+  const top = document.createElement("div"); top.id = "dashTop"; top.className = "glass";
+  top.innerHTML =
+    '<span class="logo">HERMES VILLAGE</span>' +
+    '<input id="dashSearch" placeholder="Suche: Haus, Agent, Job…" autocomplete="off">' +
+    '<div id="dashAreas">' +
+      ["Plaza","Hafen","Wohnviertel","Werkstatt"].map(a => '<button data-a="' + a + '">' + a + '</button>').join("") +
+    '</div>' +
+    '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button></div>' +
+    '<span id="dashClock">--:--</span>' +
+    '<span id="dashAlerts" class="badge" style="display:none;color:#ff453a;border-color:rgba(255,69,58,.4)"></span>' +
+    '<span id="dashUser">KZ</span>';
+  document.body.appendChild(top);
+  const hud = document.getElementById("hud");
+  if (hud){ hud.style.position = "static"; top.insertBefore(hud, top.lastChild); }
+  // KPI-Karten
+  const kpis = document.createElement("div"); kpis.id = "dashKpis";
+  kpis.innerHTML =
+    '<div class="kpi glass"><div class="l">Aktive Läufe</div><div class="v" id="kpiRuns">0</div><div class="s">Agenten arbeiten</div></div>' +
+    '<div class="kpi glass"><div class="l">Erfolgsquote</div><div class="v" id="kpiRate">–</div><div class="s">letzte 50 Läufe</div></div>' +
+    '<div class="kpi glass"><div class="l">Services</div><div class="v" id="kpiSvc">0</div><div class="s">Häuser im Dorf</div></div>';
+  document.body.appendChild(kpis);
+  // Lauf-Tracker (6 Schritte, unten links)
+  const tr = document.createElement("div"); tr.id = "dashTracker"; tr.className = "glass";
+  tr.innerHTML = '<div class="t">Lauf-Tracker</div><div id="trName">–</div><div class="steps" id="trSteps">' +
+    ["Eingang","Zugewiesen","Arbeitet","Prüfung","Fertig","Protokolliert"].map(s => '<div class="step"><i></i><span>' + s + '</span></div>').join("") + '</div>';
+  document.body.appendChild(tr);
+  function setTracker(r){
+    const nameEl = document.getElementById("trName");
+    const steps = document.querySelectorAll("#trSteps .step");
+    if (!r){ if (nameEl) nameEl.textContent = "kein aktiver Lauf"; steps.forEach(s => s.className = "step"); return; }
+    if (nameEl) nameEl.textContent = (r.job_name || "Lauf") + " · " + relTime2(r.started_at);
+    const st = (r.state || "").toLowerCase();
+    const map = st === "finished" ? ["done","done","done","done","done","done"]
+      : st === "failed" ? ["done","done","err","","",""]
+      : st === "running" ? ["done","done","act","","",""]
+      : st ? ["act","","","","",""] : [];
+    steps.forEach((s, i) => s.className = "step " + (map[i] || ""));
+  }
+  // Tabbed Live-Tabelle (unten rechts)
+  const tb = document.createElement("div"); tb.id = "dashTable"; tb.className = "glass";
+  tb.innerHTML = '<div class="tabs"><button data-t="agents" class="on">Agenten</button><button data-t="jobs">Jobs</button><button data-t="runs">Läufe</button></div><div class="rows" id="tbRows"></div>';
+  document.body.appendChild(tb);
+  let tab = "agents";
+  tb.querySelector(".tabs").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    tab = b.dataset.t;
+    tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+    renderTable();
+  });
+  function renderTable(){
+    const el = document.getElementById("tbRows"); if (!el) return;
+    let html = "";
+    if (tab === "agents"){
+      html = BUILDINGS.slice(0, 9).map(b => {
+        const soul = (window.__souls || []).find(s => s.b === b);
+        const mode = soul ? soul.mode : "ruht";
+        return '<div class="r"><span>' + (b.userData.name || "Haus") + '</span><span class="' + cls(mode) + '">' + mode + '</span></div>';
+      }).join("") || '<div class="r"><span>keine Agenten geladen</span><span></span></div>';
+    } else if (tab === "jobs"){
+      html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>Job</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
+    } else {
+      html = (feed.runs || []).slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>keine Läufe</span><span></span></div>';
+    }
+    el.innerHTML = html;
+  }
+  // Area-Switcher (Kamera-Flug über __look)
+  const AREAS = {Plaza: [0, 1.5, 0], Hafen: [11.6, 1.5, -11.6], Wohnviertel: [-9, 1.5, -11], Werkstatt: [16.8, 1.5, 1.2]};
+  top.querySelector("#dashAreas").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    top.querySelectorAll("#dashAreas button").forEach(x => x.classList.toggle("on", x === b));
+    const p = AREAS[b.dataset.a]; if (p && window.__look) window.__look(p[0], p[1], p[2]);
+  });
+  // Wetter-Menü (nutzt das bestehende Regensystem)
+  top.querySelector("#dashWeather").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    top.querySelectorAll("#dashWeather button").forEach(x => x.classList.toggle("on", x === b));
+    if (window.__weatherSet) window.__weatherSet(b.dataset.w === "1");
+  });
+  // Suche
+  const inp = top.querySelector("#dashSearch");
+  inp.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    const q = inp.value.trim().toLowerCase(); if (!q) return;
+    let hit = BUILDINGS.find(b => (b.userData.name || "").toLowerCase().indexOf(q) >= 0);
+    if (!hit) hit = BUILDINGS.find(b => (b.userData.jobs || []).some(k => (k || "").toLowerCase().indexOf(q) >= 0));
+    if (hit && window.__look){
+      window.__look(hit.position.x, 1.2, hit.position.z);
+      showCard(hit.userData.name || "Haus", "Service",
+        '<div class="m">' + (hit.userData.role || "Hermes-Agent") + '</div>' +
+        '<div class="row"><span>Jobs</span><span>' + (hit.userData.jobs || []).length + ' konfiguriert</span></div>');
+    }
+  });
+  // Live-Tick (Kette): Uhr, KPIs, Alerts, Tracker, Tabelle
+  let lastTick = 0;
+  const prevTick = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevTick) prevTick(dt, t);
+    const now = performance.now(); if (now - lastTick < 500) return; lastTick = now;
+    const h = new Date();
+    const cEl = document.getElementById("dashClock");
+    if (cEl) cEl.textContent = (h.getHours() < 10 ? "0" : "") + h.getHours() + ":" + (h.getMinutes() < 10 ? "0" : "") + h.getMinutes();
+    const souls = window.__souls || [];
+    const kr = document.getElementById("kpiRuns"); if (kr) kr.textContent = String(souls.filter(s => s.mode === "running").length);
+    const last50 = (feed.runs || []).slice(0, 50);
+    const fin = last50.filter(r => r.state === "finished").length, fl = last50.filter(r => r.state === "failed").length, tot = fin + fl;
+    const rate = document.getElementById("kpiRate"); if (rate) rate.textContent = tot ? Math.round(100 * fin / tot) + "%" : "–";
+    const svc = document.getElementById("kpiSvc"); if (svc) svc.textContent = String(BUILDINGS.length);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const failedToday = (feed.runs || []).filter(r => r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime());
+    const al = document.getElementById("dashAlerts");
+    if (al){ al.style.display = failedToday.length ? "" : "none"; al.textContent = failedToday.length + " Fehler"; }
+    setTracker((feed.runs || [])[0]);
+    renderTable();
+    if (window.__weather){
+      const wb = top.querySelectorAll("#dashWeather button");
+      if (wb.length >= 2) wb[0].classList.toggle("on", !window.__weather());
+    }
+  };
+  const dbgPrev = window.__dbg;
+  window.__dbg = function(){
+    const d = dbgPrev ? dbgPrev() : {};
+    d.dash = true; d.kpis = !!document.getElementById("kpiRuns");
+    d.tracker = document.querySelectorAll("#trSteps .step").length; d.dashTab = tab;
+    return d;
+  };
+})();
+
+</script>
 </body>
 </html>

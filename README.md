@@ -852,3 +852,48 @@ Ausleuchtung im Dorfzentrum (DoF-Unschärfe im Kanzie-Screenshot). Alle OPTIK-GA
 Erdquerschnitt/Bach/Wasserfall/Brücke, Baumvielfalt, Kamera, Mobiliar, nächtliche Lichtdichte)
 damit abgearbeitet; 08:00-Phase: Gesamtabgleich + Abschlussvorschlag an Konstantin.
 Beta-61-Zip: hermes-village-beta61.zip.
+## M66 · Stufe 58 (08:10, Gesamtabgleich gegen Kanzie-Referenz)
+
+**Review-only-Phase (kein Code-Change, kein neues Beta):** Headless-Review rv72 (Tag 14:00,
+Nacht 22:30, Close 18:30) über village-standalone.html, dbg voll sauber: alle Swap-Flags true
+(house/studio/mill/mine/gate/dome/houseSwap), cottages 7, props bench 5 / table 2 / umbrella 3 /
+stool 6, glow 44, nightMood10, terrainTint 5, roofLit 24, pier13, harbor14, shore12, mountains 3,
+clouds 6, wireSoft, **0 echte JS-Fehler** (nur die erwartete file://-CORS-Stream-404).
+**Gesamtabgleich rv72_vergleich.png gegen kanzie-referenz.png:** Alle sieben OPTIK-GAP-Punkte
+abgearbeitet und im Vergleich belegt: Erdquerschnitt-Inselrand, organisch geschwungene Wege,
+Baumvielfalt (runde Kronen, Herbstfarben, Büsche, Felsen, Blumen), Teich/Bach/Wasserfall/Brücke,
+Kamera (Insel füllt Rahmen), Mobiliar (Bänke, 2 Picknick-Sets, Sonnenschirme, Laternennetz),
+Nachtlichtdichte (dunkelblauer Himmel, warmes Flächenlicht, 67 Nacht-Fenster, 44 Glut-Quellen,
+Lichtpools). Restdifferenzen sind kosmetisch und aus Kanzies Post-Processing: Depth-of-Field-
+Unschärfe und minimal dichtere Glut im Dorfzentrum; REA-Regel "eigenständig nachbauen, nie
+kopieren" lässt die DoF-Unschärfe bewusst weg.
+**Fazit: Kanzie-Niveau belegt.** Stufe 58 endet hier; Abschlussvorschlag geht an Konstantin
+(Regel 9), kein endloses Weiterbauen.
+## M67 · Stufe 59 (10:25, DASHBOARD-Block nach World Prompt Pack)
+
+**Neue Richtung ab 09:47:** Konstantin will die 5-Block-Struktur aus dem World Prompt Pack
+(@sanjai.builds, 21 Seiten, 17 Welten) auf village.html umgesetzt haben; echte Blender-GLB
+bleiben, der Blocky-Look muss weg. Block 1 (DASHBOARD) ist gebaut:
+
+- **Frosted-Glass-Topbar** (Höhe 46px, backdrop-blur): Logo "HERMES VILLAGE", Suchfeld (Enter
+  sucht BUILDINGS nach Name/Job, Kameraflug über __look + Service-Karte), Area-Switcher
+  (Plaza/Hafen/Wohnviertel/Werkstatt → __look), Wetter-Menü (Klar/Regen → __weatherSet),
+  Live-Uhr, Alerts-Badge (Fehlläufe heute), User-Avatar KZ; die alten HUD-Badges
+  (Live/Synthetisch, Stand, Tageszeit) wanderten mit in die Topbar.
+- **3 KPI-Karten** (Aktive Läufe, Erfolgsquote letzte 50 Läufe, Services) ersetzen das alte
+  statsHud-Overlay (nur ausgeblendet, Tick-Kette bleibt intakt).
+- **6-Schritt-Lauf-Tracker** unten links (Eingang → Zugewiesen → Arbeitet → Prüfung → Fertig →
+  Protokolliert), Zustand aus dem letzten Lauf (done/act/err-Mapping).
+- **Tabbed Live-Tabelle** unten rechts: Agenten (BUILDINGS + Souls-Modus) / Jobs / Läufe,
+  echte Feed-Daten, keine Lorem-ipsum-Platzhalter.
+
+**Review rv69:** Tag 14:00 + Nacht 22:30 über village-standalone.html (korrektes HH:MM-Format
+für ?time=, einstelliges "14" greift nicht — Tod-Check bestätigt), dbg sauber: dash true,
+kpis true, tracker 6, alle Swap-Flags true, cottages 7, glow 44, **0 echte JS-Fehler** (nur die
+bekannten file://-CORS-Hinweise). DOM-Verifikation über http.server: alle 8 Dashboard-Elemente
+vorhanden, korrekt positioniert, sichtbar, Klicktreffer ok. Canvas-only-Capture zeigt die
+DOM-Overlays nicht (headless-shell hängt bei page.screenshot, __snap-Hook bleibt der Weg);
+die UI-Optik ist im Browser unter der Demo-URL sichtbar.
+
+**Beta-62-Zip: hermes-village-beta62.zip.** Nächster Block: INTERACTION (Drag-Pan, Rechtsklick-
+Rotate, Zoom, Klick → Kamera-Follow + pulsierender Ring + Glas-Panel mit Live-Stats).
