@@ -960,7 +960,7 @@ window.__roofFix = roofFix;
   stool(6.4, 10.2); stool(8.1, 9.1);
   parasol(7.2, 9.6, 0xd94f3d);
   // Brotlaib + Teller als Picknick-Detail
-  const bread = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 10),
+  const bread = new THREE.Mesh(lumpySphere(0.14, 3.3, 1.0),
     new THREE.MeshStandardMaterial({color: 0xd9a15e, roughness: 0.9}));
   bread.scale.set(1.4, 0.7, 1); bread.position.set(7.0, 0.84, 9.5);
   bread.rotation.y = 0.4; bread.castShadow = true; scene.add(bread);
@@ -1183,7 +1183,7 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
     const soil = new THREE.Mesh(new rboxGeo(1.2, 0.06, 0.66, 0.05), soilM);
     soil.position.set(bx, 0.28, bz); scene.add(soil);
     for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++){
-      const plant = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10),
+      const plant = new THREE.Mesh(lumpySphere(0.085, 0.7, 1.0),
         matWall(r % 2 ? 0x4f7f3a : 0x6bae52));
       plant.scale.y = 0.8;
       plant.position.set(bx - 0.45 + c * 0.3, 0.37, bz - 0.16 + r * 0.32);
@@ -1192,7 +1192,7 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   }
   // Kuerbisse zwischen den Beeten
   for (const [px, pz, s] of [[-4.7, -5.45, 1.0], [-2.75, -5.6, 0.8], [-4.05, -6.2, 1.15], [-3.1, -6.15, 0.9]]){
-    const pumpkin = new THREE.Mesh(new THREE.SphereGeometry(0.15 * s, 9, 7), matWall(0xe07b2a));
+    const pumpkin = new THREE.Mesh(lumpySphere(0.15 * s, 1.2, 1.0), matWall(0xe07b2a));
     pumpkin.scale.set(1, 0.72, 1); pumpkin.castShadow = true;
     pumpkin.position.set(px, 0.11 * s, pz); scene.add(pumpkin); vegCount++;
     const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.025, 0.09, 8), matWall(0x3f6b2a));
@@ -1672,6 +1672,7 @@ window.__extraTick = function(dt, t){
   head.rotation.y = Math.sin(t * 0.37) * 0.38;
 };
 
+// Stufe 89 / Beta 91: Block 5 WORLD Pass 3 - organische Formen (Kuerbis, Gemuese, Brot, Krug, Feuertopf via lumpySphere)
 // Rauch (Kamine)
 const smoke = [];
 function puff(pos, fast){
@@ -2818,7 +2819,7 @@ tick(); setInterval(tick, 30000);
   const vegCols = [0x3e7d3a, 0x77b34c, 0xc977d9, 0xd94f6e];
   for (let r = 0; r < 4; r++){
     for (let cI = 0; cI < 5; cI++){
-      const v = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10),
+      const v = new THREE.Mesh(lumpySphere(0.11, 2.1, 1.0),
         new THREE.MeshStandardMaterial({color: vegCols[(r + cI) % vegCols.length]}));
       v.position.set(-1.15 + cI * 0.58, 0.16, -0.68 + r * 0.45);
       v.castShadow = true; garden.add(v);
@@ -2923,7 +2924,7 @@ tick(); setInterval(tick, 30000);
     dst.rotation.set(i, i * 0.7, 0); dst.castShadow = true; fountain.add(dst);
   }
   function rockM2(){ return matWall(0x7c8188); }
-  const jug = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), matWall(0xb06a45));
+  const jug = new THREE.Mesh(lumpySphere(0.12, 4.4, 1.0), matWall(0xb06a45));
   jug.scale.set(1, 1.1, 1); jug.position.set(1.2, 0.14, 0.3); jug.rotation.z = 0.35;
   jug.castShadow = true; fountain.add(jug);
   const jneck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, 0.09, 8), matWall(0xb06a45));
@@ -3309,7 +3310,7 @@ tick(); setInterval(tick, 30000);
     leg3.rotation.set(Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
     leg3.castShadow = true; fire.add(leg3);
   }
-  const pot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), matWall(0x3d3f42));
+  const pot = new THREE.Mesh(lumpySphere(0.15, 5.5, 1.0), matWall(0x3d3f42));
   pot.scale.set(1, 0.75, 1); pot.position.set(0.62, 0.5, 0.6); pot.castShadow = true; fire.add(pot);
   fire.position.set(-2.9, 0.61, 2.4);
   scene.add(fire);

@@ -1438,3 +1438,11 @@ zurueck), Flash-Animation. rv97 (Port 9013): Vorschlaege sichtbar (Backup Mine/H
 __selActive true nach Sprung, Tab "Laeufe" + "keine Fehlerlaeufe" nach Alert-Klick,
 6 Villager verteilt, 0 echte JS-Fehler (nur 2x Feed-404). Screenshots rv97_suche/
 rv97_alert_tab/rv97_nacht angesehen. 1.464.038 -> 1.467.086 B.
+
+## M97 / Beta 91 (01:30-01:44, 22.10.)
+Block 5 WORLD Pass 3 (organische Formen): 6 SphereGeometry -> lumpySphere mit fixen Seeds
+(Kuerbis 0.15*s seed 1.2, Beet-Pflanzen 0.085 seed 0.7, Zaungarten-Gemuese 0.11 seed 2.1,
+Brotlaib 0.14 seed 3.3, Krug am Brunnen 0.12 seed 4.4, Feuertopf 0.15 seed 5.5); Skalierungen
+und Existing-Transforms unveraendert; Rauch/Kugeln/Koepfe bewusst round. rv98 (Port 9014):
+pol17/18/19 = 53/1929/20 unveraendert, life 6 Villager, 0 JS-Fehler. Screenshots
+rv98_tag14/rv98_nacht angesehen. 1.466.992 -> 1.467.051 B.
