@@ -1394,3 +1394,8 @@ persistent statt /tmp).** Naechster Schritt: achtzehnter Polier-Durchgang
 (Daemmerungs-Mood + Farbspreizung) oder Fable-5-Testlauf, sobald
 Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
 (21:00 geprüft).
+## M90 · Stufe 82 / Beta 84 (Polier 18): Dämmerungs-Mood + Farbspreizung
+- Dämmerungsband verbreitert (dusk-Faktor ×2.2), Himmel deutlich wärmer (lerp 0.85), Meer + Gras nehmen warme Dämmerungstönung an, Sonne bleibt in der Dämmerung kräftiger + orange, Lampen gehen schon bei dusk ≥ 0.75 an, Uhrzeiler zeigt jetzt „Dämmerung" als eigenen Zustand.
+- Farbspreizung (Polier 18b): Pro Top-Level-Objekt deterministischer Hue/Sat/Lightness-Jitter (Hue ±0.035/0.045, Sat +6-14 %, Light ±0.045) über alle Materialien (1909-1912 Materialien), Terrain/Meer/Wege ausgenommen, Nachladen per Intervall für GLB-Swaps; Zähler `__dbg.pol18`.
+- Review rv91 (Tag 14:00 / Dämmerung 18:40 / Nacht 22:30): 0 JS-Fehler (nur bekannter 404 /api/village/stream), pol18 1909, dusk 0.62 @ 18:40, alle Swaps intakt (pol17 53, pier13 9, harbor14 6), Screenshots gesehen: Farbspreizung sichtbar (orange/rote Bäume, abwechslungsreiche Dächer), Dämmerungs-Shot warm mit Lampen.
+- Zip: hermes-village-beta84.zip (village.html + village-standalone.html).

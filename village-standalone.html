@@ -121,27 +121,28 @@ function updateDayNight(){
   const hour = timeOverride.length === 2 ? timeOverride[0] + timeOverride[1]/60 : h.getHours() + h.getMinutes()/60;
   const elev = Math.sin((hour - 6) / 12 * Math.PI);      // 6 Uhr bis 18 Uhr Tag
   const day = Math.max(0, Math.min(1, elev));
-  const dusk = Math.max(0, 1 - Math.abs(elev) * 3);       // Daemmerungsanteil
-  const sky = skyNight.clone().lerp(skyDay, day).lerp(skyDawn, dusk * 0.55);
+  const dusk = Math.max(0, 1 - Math.abs(elev) * 2.2);       // Daemmerungsanteil
+  window.__duskVal = dusk;
+  const sky = skyNight.clone().lerp(skyDay, day).lerp(skyDawn, dusk * 0.85);
   scene.background = sky;
   scene.fog = new THREE.Fog(sky.getHex(), 55, 160);
   const ang = (hour - 6) / 12 * Math.PI;
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
-  sun.intensity = 0.25 + day * 1.45;
+  sun.intensity = 0.25 + day * 1.45 + dusk * 0.55;
   sun.color.set(0xfff6ec).lerp(new THREE.Color(0xffab5e), Math.min(1, dusk * 1.1));
   moon.position.set(-20, 18, -10);
   moon.intensity = (1 - day) * 0.44;
-  if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day);
+  if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day).lerp(new THREE.Color(0xd98a5a), dusk * 0.3);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
-  if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day));
+  if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day).lerp(new THREE.Color(0x6f8a3a), dusk * 0.25));
   pathRibbons.forEach(m => m.material.color.set(pathDay).lerp(pathNight, 1 - day));
   hemi.intensity = 0.16 + day * 0.62 + (1 - day) * 0.22;
-  const lampOn = 1 - day;
+  const lampOn = Math.max(1 - day, dusk * 0.75);
   nightAmbient.intensity = lampOn * 0.3;
   worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.55; if (l.pool) l.pool.material.opacity = lampOn * 0.45; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
   (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.45 + dusk * 0.6 + lampOn * 2.2; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
-  document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.25 ? " · Tag" : " · Nacht");
+  document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.35 ? " · Tag" : (dusk > 0.3 ? " · Dämmerung" : " · Nacht"));
 }
 
 // Insel mit Erdschichten-Querschnitt
@@ -4192,6 +4193,45 @@ window.__pond = () => {
       cam: {x: +cc2.x.toFixed(2), y: +cc2.y.toFixed(2), z: +cc2.z.toFixed(2)}, rotY: +rotY.toFixed(2)};
     return d;
   };
+})();
+
+
+// Stufe 82 / Beta 84: achtzehnter Polier-Durchgang (Daemmerungs-Mood + Farbspreizung)
+(function(){
+  window.__pol18 = () => (window.__pol18n || 0);
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    d.pol18 = window.__pol18 ? window.__pol18() : 0;
+    d.dusk = (typeof window.__duskVal === "number") ? Math.round(window.__duskVal * 100) / 100 : null;
+    return d;
+  };
+  function spread(root){
+    let n = 0;
+    root.traverse(o => {
+      if (!o.isMesh || !o.material || !o.material.color) return;
+      if (window.__terrainMats && window.__terrainMats.some(t => t.mat === o.material)) return;
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      let top = null, p = o;
+      while (p && p !== root){ top = p; p = p.parent; }
+      if (!top) return;
+      const name = top.name || top.uuid;
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+      const hue = ((hash % 1000) / 1000) * 0.08 - 0.035;
+      const sat = 0.06 + ((hash >> 10) % 100) / 100 * 0.08;
+      const lit = ((hash >> 20) % 100) / 100 * 0.10 - 0.045;
+      for (const m of mats){
+        if (m.userData.spreadH) continue;
+        m.color.offsetHSL(hue, sat, lit);
+        m.userData.spreadH = 1; n++;
+      }
+    });
+    return n;
+  }
+  try { window.__pol18n = (window.__pol18n || 0) + spread(scene); } catch(e){ window.__spreadErr = String(e); }
+  let tries = 0;
+  const iv = setInterval(() => { try { window.__pol18n = (window.__pol18n || 0) + spread(scene); } catch(e){ window.__spreadErr = String(e); } if (++tries >= 40) clearInterval(iv); }, 500);
 })();
 
 // Stufe 81 / Beta 83: siebzehnter Polier-Durchgang (Bootssteg-Dielenplanken + Haufen-Details)
