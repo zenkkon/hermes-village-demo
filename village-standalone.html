@@ -139,7 +139,7 @@ function updateDayNight(){
   hemi.intensity = 0.16 + day * 0.62 + (1 - day) * 0.22;
   const lampOn = Math.max(1 - day, dusk * 0.75);
   nightAmbient.intensity = lampOn * 0.3;
-  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.55; if (l.pool) l.pool.material.opacity = lampOn * 0.45; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
+  worldLamps.forEach(l => { l.light.intensity = 0.05 + lampOn * 2.85; if (l.pool) l.pool.material.opacity = lampOn * 0.6 + dusk * 0.2; if (l.win) l.win.material.emissiveIntensity = 0.08 + lampOn * 1.9; });
   (window.__nightWins || []).forEach(m => { if (m.emissive) m.emissiveIntensity = 0.45 + dusk * 0.6 + lampOn * 2.2; });
   const mm2 = timeOverride.length === 2 ? Math.round(timeOverride[1]) : h.getMinutes();
   document.getElementById("tod").textContent = (hour < 10 ? "0" : "") + Math.floor(hour) + ":" + (mm2 < 10 ? "0" : "") + mm2 + (day > 0.35 ? " · Tag" : (dusk > 0.3 ? " · Dämmerung" : " · Nacht"));
@@ -1052,6 +1052,16 @@ function sagWire(a, b){
   const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
   const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(12));
   scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color: 0x22262e, transparent: true, opacity: 0.6})));
+  window.__nightWins = window.__nightWins || [];
+  for (let bi = 2; bi <= 10; bi += 2){
+    const bp = curve.getPoint(bi / 12);
+    const bulbM = new THREE.MeshStandardMaterial({color: 0xffe9c0, emissive: 0xffb85c, emissiveIntensity: 0.4, roughness: 0.5});
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.05, 7, 7), bulbM);
+    bulb.position.set(bp.x, bp.y - 0.09, bp.z);
+    scene.add(bulb);
+    window.__nightWins.push(bulbM);
+    window.__pol19n = (window.__pol19n || 0) + 1;
+  }
 }
 for (let i = 0; i < wirePts.length - 1; i++) sagWire(wirePts[i], wirePts[i+1]);
 
@@ -4195,6 +4205,18 @@ window.__pond = () => {
   };
 })();
 
+
+
+// Stufe 83 / Beta 85: neunzehnter Polier-Durchgang (Draht-Gluehbirnen + Glow-Pools)
+(function(){
+  window.__pol19 = () => (window.__pol19n || 0);
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    d.pol19 = window.__pol19 ? window.__pol19() : 0;
+    return d;
+  };
+})();
 
 // Stufe 82 / Beta 84: achtzehnter Polier-Durchgang (Daemmerungs-Mood + Farbspreizung)
 (function(){

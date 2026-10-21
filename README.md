@@ -1399,3 +1399,9 @@ Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
 - Farbspreizung (Polier 18b): Pro Top-Level-Objekt deterministischer Hue/Sat/Lightness-Jitter (Hue ±0.035/0.045, Sat +6-14 %, Light ±0.045) über alle Materialien (1909-1912 Materialien), Terrain/Meer/Wege ausgenommen, Nachladen per Intervall für GLB-Swaps; Zähler `__dbg.pol18`.
 - Review rv91 (Tag 14:00 / Dämmerung 18:40 / Nacht 22:30): 0 JS-Fehler (nur bekannter 404 /api/village/stream), pol18 1909, dusk 0.62 @ 18:40, alle Swaps intakt (pol17 53, pier13 9, harbor14 6), Screenshots gesehen: Farbspreizung sichtbar (orange/rote Bäume, abwechslungsreiche Dächer), Dämmerungs-Shot warm mit Lampen.
 - Zip: hermes-village-beta84.zip (village.html + village-standalone.html).
+## M91 · Stufe 83 / Beta 85 (Polier 19): Draht-Glühbirnen + Glow-Pools (Kanzie-Gap-Check)
+- Kanzie-Gap-Check gegen kanzie-referenz.png: Strommasten + Drähte, Router-Mast, Lampen-Glows, Bäume-Mix vorhanden; fehlend waren warme Glühbirnen an den Drähten und kräftigere Glow-Pools.
+- Glühbirnen an den Stromdrähten: 5 Birnen je Spannfeld (4 Felder, 20 gesamt), warme Emissive-Materialien (0xffb85c) in window.__nightWins registriert, leuchten mit dusk/nightAutomatisch; Zähler `__dbg.pol19` = 20.
+- Lampen-Glow-Pools verstärkt: Opacity 0.45 → 0.6 (+ dusk*0.2), Licht-Intensität nachts 2.55 → 2.85.
+- Review rv92 (Tag 14:00 / Dämmerung 18:40 / Nacht 22:30): 0 echte JS-Fehler (nur bekannter 404 /api/village/stream), pol19 20, pol18 1929, dusk 0.62 @ 18:40, Screenshots gesehen: Birnen leuchten an den Drähten in Dämmerung/Nacht, Glow-Pools sichtbarer, Tag unverändert sauber.
+- Zip: hermes-village-beta85.zip (village.html + village-standalone.html).
