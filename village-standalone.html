@@ -1433,11 +1433,11 @@ for (let i = 0; i < 9; i++){
 const fox = new THREE.Group();
 const fur = new THREE.MeshStandardMaterial({color: 0xd97b3f, roughness: 0.7});
 const cream = new THREE.MeshStandardMaterial({color: 0xf3e6d0, roughness: 0.7});
-const bodyF = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 1.1), fur);
-bodyF.position.y = 0.45; bodyF.castShadow = true; fox.add(bodyF);
-const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.45), fur);
-head.position.set(0, 0.85, -0.6); head.castShadow = true; fox.add(head);
-const snout = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.25), cream);
+const bodyF = new THREE.Mesh(lumpySphere(0.42, 11, 0.8), fur);
+bodyF.scale.set(0.9, 0.75, 1.35); bodyF.position.y = 0.45; bodyF.castShadow = true; fox.add(bodyF);
+const head = new THREE.Mesh(lumpySphere(0.26, 5, 0.9), fur);
+head.scale.set(1.05, 0.95, 0.95); head.position.set(0, 0.85, -0.6); head.castShadow = true; fox.add(head);
+const snout = new THREE.Mesh(rboxGeo(0.22, 0.18, 0.25, 0.06), cream);
 snout.position.set(0, 0.78, -0.9); fox.add(snout);
 const earGeo = new THREE.ConeGeometry(0.09, 0.28, 4);
 const e1 = new THREE.Mesh(earGeo, fur); e1.position.set(-0.16, 1.16, -0.6); fox.add(e1);
@@ -1447,6 +1447,15 @@ tail.position.set(0, 0.55, 0.8); tail.rotation.x = Math.PI/2.6; fox.add(tail);
 fox.position.set(2, 0, -1);
 fox.userData = {name: "Kira", role: "Copy Studio"};
 scene.add(fox);
+// Kira-Patina: Brust, Schwanzspitze, Nase, Augen
+const chestF = new THREE.Mesh(lumpySphere(0.24, 3, 0.75), cream);
+chestF.scale.set(0.9, 1.0, 0.8); chestF.position.set(0, 0.42, -0.38); fox.add(chestF);
+const tailTip = new THREE.Mesh(lumpySphere(0.15, 8, 0.85), cream);
+tailTip.position.set(0, 0.7, 1.17); fox.add(tailTip);
+const noseF = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), new THREE.MeshStandardMaterial({color: 0x2b2b2b, roughness: 0.6}));
+noseF.position.set(0, 0.78, -1.03); fox.add(noseF);
+const eyeF = new THREE.MeshStandardMaterial({color: 0x1d1d1f, roughness: 0.4});
+[-0.15, 0.15].forEach(x => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.048, 6, 5), eyeF); e.position.set(x, 0.93, -0.71); fox.add(e); });
 
 // Rauch (Kamine)
 const smoke = [];
@@ -2603,7 +2612,7 @@ tick(); setInterval(tick, 30000);
   // 4) Voegel ueber dem Dorf
   window.__birds = [];
   const birdM = matWall(0x3c3c44);
-  for (let i = 0; i < 3; i++){
+  for (let i = 0; i < 8; i++){
     const bg = new THREE.Group();
     const body = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.5, 5), birdM);
     body.rotation.x = Math.PI / 2; bg.add(body);
@@ -2614,7 +2623,7 @@ tick(); setInterval(tick, 30000);
     bg.add(wl); bg.add(wr);
     scene.add(bg);
     bg.scale.setScalar(0.6);
-    window.__birds.push({g: bg, wl, wr, r: 4.5 + i * 1.1, h: 8.6 + i * 0.8, sp: 0.35 + i * 0.12, ph: i * 2.1});
+    window.__birds.push({g: bg, wl, wr, r: 5.5 + (i % 5) * 1.5, h: 7.2 + (i % 4) * 0.85, sp: 0.18 + (i % 4) * 0.05, ph: i * 2.1});
   }
 
   // 5) Gluehwuermchen (nur nachts sichtbar)

@@ -1182,3 +1182,25 @@ bestaetigt.
 Polier-Durchgang (Fuchs Kira patinieren, Vogel-Schwarm am Himmel) oder
 Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
 weiterhin nicht angekommen (16:30 geprüft).
+
+## M81 · Stufe 73 / Beta 75 (17:00, Kira-Patina + Vogel-Schwarm erweitert)
+
+Neunter WORLD/LIFE-Polier-Durchgang:
+
+- Kira (Fuchs) neu modelliert statt blockig: Koerper und Kopf jetzt
+  lumpySphere (rund, lumpy), Schnauze gerundet (rboxGeo), dazu
+  Patina: cremefarbene Brust, weisse Schwanzspitze, dunkle Nase,
+  zwei Augen. Sieht jetzt nach Charme-Figur statt nach Box-Stack aus.
+- Vogel-Schwarm: Bestehender 3-Vogel-Schwarm auf 8 Voegel erweitert
+  (Radius 5,5-11,5, Hoehe 7,2-9,8, individuelle Geschwindigkeit,
+  Fluegelschlag im Tick). Doppelter Schwarm-Block aus der ersten
+  Patch-Variante wieder entfernt, damit nur ein animierter Schwarm
+  uebrig bleibt (window.__birds = 8).
+- village.html 1.442.868 → 1.443.663.
+
+Review rv82: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, detail 45,
+birds 8, beide Shots sauber, keine toten Objekte am Ursprung.
+
+**Beta-75-Zip: hermes-village-beta75.zip.** Naechster Schritt: zehnter
+Polier-Durchgang (Fable-5-Testlauf, sobald Konstantin waehlt).
+Zweite Referenzdatei weiterhin nicht angekommen (17:00 geprüft).
