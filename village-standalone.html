@@ -904,6 +904,20 @@ window.__roofFix = roofFix;
   }
   // Baenke entlang der Wege
   woodBench(-2.1, -4.6, 2.6); woodBench(4.6, 2.9, -1.1); woodBench(-5.2, -6.6, 0.7);
+  // Stufe 77 / Beta 79: Sitz-Gruppen am Markt (Tisch + 3 Hocker + Schirm)
+  function seatGroup(x, z, rot, col){
+    const tLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.48, 8), matWall(0x6e5238));
+    tLeg.position.set(x, 0.24, z); tLeg.castShadow = true; scene.add(tLeg);
+    const tTop = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.06, 12), matWall(0x8a6a48));
+    tTop.position.set(x, 0.52, z); tTop.castShadow = true; tTop.receiveShadow = true; scene.add(tTop);
+    for (let i = 0; i < 3; i++){
+      const a = rot + i * Math.PI * 2 / 3;
+      stool(x + Math.cos(a) * 0.68, z + Math.sin(a) * 0.68);
+    }
+    parasol(x, z, col);
+  }
+  seatGroup(3.0, -1.9, 0.4, 0x4a90c2); seatGroup(-0.6, -3.6, 1.5, 0xffd60a);
+  window.__sitzgruppen = () => 2;
   // Picknick-Set am Teich-Weg
   const tbl = new THREE.Group();
   const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.9), matWall(0x8a6a48));
@@ -3133,8 +3147,29 @@ tick(); setInterval(tick, 30000);
     st.position.set(Math.cos(a) * 0.62, 0.07, Math.sin(a) * 0.62);
     fire.add(st);
   }
+  // Stufe 77 / Beta 79: Feuerstellen-Mobiliar - Kaminholz + Kessel-Dreibein
+  for (let r = 0; r < 2; r++){
+    const n = 3 - r;
+    for (let i = 0; i < n; i++){
+      const lg = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.52, 6), logM);
+      lg.rotation.z = Math.PI / 2;
+      lg.position.set(-0.85, 0.07 + r * 0.1, -0.55 + (i - (n - 1) / 2) * 0.12);
+      lg.castShadow = true; fire.add(lg);
+    }
+  }
+  const triM = matWall(0x6e5238);
+  for (let i = 0; i < 3; i++){
+    const a = i / 3 * Math.PI * 2;
+    const leg3 = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.85, 5), triM);
+    leg3.position.set(0.62 + Math.cos(a) * 0.2, 0.36, 0.6 + Math.sin(a) * 0.2);
+    leg3.rotation.set(Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
+    leg3.castShadow = true; fire.add(leg3);
+  }
+  const pot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), matWall(0x3d3f42));
+  pot.scale.set(1, 0.75, 1); pot.position.set(0.62, 0.5, 0.6); pot.castShadow = true; fire.add(pot);
   fire.position.set(-2.9, 0.61, 2.4);
   scene.add(fire);
+  window.__feuerMob = () => 5;
   const fireSmoke = [];
   function firePuff(){
     const s = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random()*0.05, 6, 5),

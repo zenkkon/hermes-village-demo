@@ -1273,3 +1273,27 @@ banderolen 3, beide Shots sauber; Laterne am Steg glüht nachts.
 dreizehnter Polier-Durchgang (Feuerstelle-Mobiliar + Sitz-Gruppen
 am Markt) oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite
 Referenzdatei weiterhin nicht angekommen (18:30 geprüft).
+
+## M85 · Stufe 77 / Beta 79 (19:00, Feuerstellen-Mobiliar + Sitz-Gruppen am Markt)
+
+Dreizehnter Polier-Durchgang:
+
+- Feuerstellen-Mobiliar: Kaminholz-Stapel (5 Scheite in 2 Reihen)
+  und Kessel-Dreibein (3 Schraegen + hängender Kessel) neben der
+  Lagerfeuer-Gruppe, alles in der Feuer-Gruppe (lokale Koordinaten),
+  window.__feuerMob = 5.
+- Sitz-Gruppen am Markt: neue seatGroup (Runder Tisch 0,84 m auf
+  Fuß + 3 Hocker aus der bestehenden stool()-Funktion + Schirm),
+  zwei Arrangements: (3.0/-1.9, blauer Schirm 0x4a90c2) und
+  (-0.6/-3.6, gelber Schirm 0xffd60a), window.__sitzgruppen = 2.
+- village.html 1.448.983 → 1.450.783.
+
+Review rv86: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, feuer 5,
+sitz 2, steg 3, beide Shots sauber, keine Überlappungen mit
+Wegen sichtbar. Einmal 'context deadline exceeded' (Plattform),
+Review danach sauber durchgelaufen.
+
+**Beta-79-Zip: hermes-village-beta79.zip.** Naechster Schritt:
+vierzehnter Polier-Durchgang (Brunnen-Verzierung + Vogelhaeuser)
+oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite
+Referenzdatei weiterhin nicht angekommen (19:00 geprüft).
