@@ -165,7 +165,7 @@ layers.forEach(L => {
   m.receiveShadow = true; scene.add(m);
 });
 const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
-  new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.25, metalness: 0.15}));
+  new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.08, metalness: 0.35, envMapIntensity: 1.2}));
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
 window.__seaMat = water.material;
 scene.add(water);
@@ -478,7 +478,7 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
   const P0 = [14.5, 8.5], P1 = [15.7, 10.1], P2 = [17.55, 10.3];
   const q = t => { const u = 1 - t;
     return [u*u*P0[0] + 2*u*t*P1[0] + t*t*P2[0], u*u*P0[1] + 2*u*t*P1[1] + t*t*P2[1]]; };
-  const wMat = new THREE.MeshStandardMaterial({color: 0x4a90c2, transparent: true, opacity: 0.92, roughness: 0.1, metalness: 0.1});
+  const wMat = new THREE.MeshStandardMaterial({color: 0x4a90c2, transparent: true, opacity: 0.92, roughness: 0.06, metalness: 0.3, envMapIntensity: 1.2});
   const bankMat = new THREE.MeshStandardMaterial({color: 0x6b4f33, roughness: 1});
   const n = 14;
   let prev = null, segs = 0;
@@ -2291,7 +2291,9 @@ tick(); setInterval(tick, 30000);
       const pt = qPoint(p0, p1, p2, t);
       if (prev){
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
-        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, segL + 0.14), pathMat);
+        const pm = pathMat.clone();
+        pm.color.offsetHSL(0, (i * 37 % 5 - 2) * 0.008, (i * 53 % 7 - 3) * 0.012);
+        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, segL + 0.14), pm);
         seg.position.set((pt[0]+prev[0])/2, 0.615 + (i % 2) * 0.002, (pt[1]+prev[1])/2);
         seg.rotation.y = Math.atan2(pt[0]-prev[0], pt[1]-prev[1]);
         seg.receiveShadow = true;

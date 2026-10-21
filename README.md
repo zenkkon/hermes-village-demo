@@ -1047,3 +1047,20 @@ wegfrei, Nachtlampen unverändert.
 **Beta-67-Zip: hermes-village-beta67.zip.** Nächster Schritt: zweite Polier-Runde
 (Weg-Textur, Wasserglanz, Dachvariationen) oder Fable-5-Testlauf, sobald Konstantin
 wählt. Zweite Referenzdatei weiterhin nicht angekommen (13:00 geprüft).
+## M74 · Stufe 66 / Beta 68 (13:30, Weg-Textur + Wasserglanz)
+
+Zweite WORLD-Polier-Runde:
+
+- Weg-Variation: jedes Pfadsegment bekommt eine leichte Tonvariation (offsetHSL,
+  deterministisch pro Segment) statt einer flachen Farbe; die Wege lesen sich jetzt
+  wie verlegt, nicht wie ein Band.
+- Wasserglanz: Meer roughness 0.25→0.08, metalness 0.15→0.35, envMapIntensity 1.2;
+  Teichwasser (wMat) im gleichen Zug. Sichtbarer Sonnenglanz auf der Wasseroberfläche.
+- village.html 1.432.926 → 1.433.085.
+
+Review rv75: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, __detailCount 45, 3 Villagers.
+Weg-Variation sichtbar, Meer reflektiert heller.
+
+**Beta-68-Zip: hermes-village-beta68.zip.** Nächster Schritt: dritte Polier-Runde
+(Dachvariationen, Fenster-Glow am Tag) oder Fable-5-Testlauf, sobald Konstantin wählt.
+Zweite Referenzdatei weiterhin nicht angekommen (13:30 geprüft).
