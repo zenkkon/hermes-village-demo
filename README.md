@@ -1204,3 +1204,26 @@ birds 8, beide Shots sauber, keine toten Objekte am Ursprung.
 **Beta-75-Zip: hermes-village-beta75.zip.** Naechster Schritt: zehnter
 Polier-Durchgang (Fable-5-Testlauf, sobald Konstantin waehlt).
 Zweite Referenzdatei weiterhin nicht angekommen (17:00 geprüft).
+
+## M82 · Stufe 74 / Beta 76 (17:30, Kira-Leben + Lampion-Route)
+
+Zehnter WORLD/LIFE-Polier-Durchgang:
+
+- Kira lebt: Der Fuchs wippt jetzt mit dem Schwanz (z-Kurve 0.26,
+  x-Hub 0.1) und dreht den Kopf, als wuerde er sich umsehen
+  (sin 0.37). Alles in der __extraTick-Kette.
+- Lampion-Route: 5 Papierlampions (Holzpfahl 1,05, Papierkugel
+  0xf5e6c8, Kappe, Aufhaenger) markieren jetzt den Weg vom Markt zum
+  Westgarten (-3.6/-4.8/-6.0/-7.1/-8.3, z -0.7 bis -1.1). Kugeln in
+  window.__nightWins, gluehen nachts warm (gleiche Mechanik wie die
+  Fensterlichter).
+- village.html 1.443.663 → 1.445.095.
+
+Review rv83: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, detail 45,
+birds 8, nightWins 72, beide Shots sauber; Lampions leuchten nachts
+auf der West-Route.
+
+**Beta-76-Zip: hermes-village-beta76.zip.** Naechster Schritt: elfter
+Polier-Durchgang (Wiese-Belebung + Wegbanderolen) oder Fable-5-Testlauf,
+sobald Konstantin waehlt. Zweite Referenzdatei weiterhin nicht
+angekommen (17:30 geprüft).

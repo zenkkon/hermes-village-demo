@@ -911,6 +911,26 @@ window.__roofFix = roofFix;
   window.__mobG = {benches, parasols, stools, table: tbl};
 })();
 
+// Stufe 74 / Beta 76: Lampion-Route Westgarten (Papierlampions, gluehen nachts)
+function lampionPost(x, z){
+  const g = new THREE.Group();
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.05, 6), matWall(0x6b4f34));
+  pole.position.y = 0.52; pole.castShadow = true; g.add(pole);
+  const ballM = new THREE.MeshStandardMaterial({color: 0xf5e6c8, emissive: 0xffd27a, emissiveIntensity: 0.25, roughness: 0.65});
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), ballM);
+  ball.scale.set(1, 1.15, 1); ball.position.y = 1.1; g.add(ball);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 8), matWall(0x3c3c44));
+  cap.position.y = 1.26; g.add(cap);
+  const string = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.02), matWall(0x3c3c44));
+  string.position.y = 1.19; g.add(string);
+  g.position.set(x, 0, z); scene.add(g);
+  window.__nightWins = window.__nightWins || [];
+  window.__nightWins.push(ballM);
+}
+lampionPost(-3.6, -1.0); lampionPost(-4.8, -0.7); lampionPost(-6.0, -0.9);
+lampionPost(-7.1, -1.1); lampionPost(-8.3, -1.0);
+window.__lampions = () => 5;
+
 // Stufe 60 / Beta 60: Mobiliar-Vertiefung (2 Baenke, Picknick-Set 2, 4 Laternen) + naechtliche Lichtdichte
 (function mobiliar60(){
   const g = window.__mobG; if (!g) return;
@@ -1456,6 +1476,14 @@ const noseF = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), new THREE.Mes
 noseF.position.set(0, 0.78, -1.03); fox.add(noseF);
 const eyeF = new THREE.MeshStandardMaterial({color: 0x1d1d1f, roughness: 0.4});
 [-0.15, 0.15].forEach(x => { const e = new THREE.Mesh(new THREE.SphereGeometry(0.048, 6, 5), eyeF); e.position.set(x, 0.93, -0.71); fox.add(e); });
+// Kira lebt: Schwanz wippt, Kopf schaut sich um
+const prevK = window.__extraTick;
+window.__extraTick = function(dt, t){
+  if (prevK) prevK(dt, t);
+  tail.rotation.z = Math.sin(t * 1.7) * 0.26;
+  tail.rotation.x = Math.PI / 2.6 + Math.sin(t * 0.9) * 0.1;
+  head.rotation.y = Math.sin(t * 0.37) * 0.38;
+};
 
 // Rauch (Kamine)
 const smoke = [];
