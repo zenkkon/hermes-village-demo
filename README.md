@@ -1345,3 +1345,26 @@ Markisen sichtbar. Einmal 'context deadline exceeded'
 sechzehnter Polier-Durchgang (Gemuesegarten-Zaun + Kuerbisse) oder
 Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
 weiterhin nicht angekommen (20:00 geprüft).
+
+## M88 · Stufe 80 / Beta 82 (20:30, Gemuesegarten-Zaun + Kuerbisse)
+
+Sechzehnter Polier-Durchgang:
+
+- Neuer Gemuesegarten suedlich des Westgartens (x -4.9..-2.9,
+  z -5.2..-6.4): Zaun aus drei fenceLine-Zuegen (West/Sued/Ost,
+  Nordseite offen zum bestehenden Gartenzaun), 2 Hochbeete
+  (1,35 x 0,8 m, rboxGeo-Holzrahmen, dunkle Erde, je 8 Pflanz-
+  kugeln in 2 Reihen, zwei Gruentoen), 4 Kuerbisse (geflachte
+  orange Kugeln, skalierter Stiel), window.__gemuese = 22.
+- Kein neuer __extraTick (statische Deko), LIFE-Kette unberuehrt.
+- village.html 1.454.387 → 1.456.070.
+
+Review rv89: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, gemuese 22,
+stand 3, beide Shots sauber, Garten mit Zaun/Beeten/Kuerbissen
+sichtbar, keine Weg- oder Hennen-Überlappungen. Einmal 'context
+deadline exceeded' (Plattform), Review danach sauber.
+
+**Beta-82-Zip: hermes-village-beta82.zip.** Naechster Schritt:
+siebzehnter Polier-Durchgang (Haufen-Details + Dielenplanken am
+Bootssteg) oder Fable-5-Testlauf, sobald Konstantin waehlt.
+Zweite Referenzdatei weiterhin nicht angekommen (20:30 geprüft).
