@@ -1442,16 +1442,8 @@ function confettiBurst(pos){
 
 // Kamera-Steuerung
 let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.78, dist = 33;
-let camC = null; window.__look = (x,y,z)=>{ camC = (x==null ? null : {x, y, z}); };
-addEventListener("pointerdown", e => { down = true; mx = e.clientX; my = e.clientY; });
-addEventListener("pointerup", () => down = false);
-addEventListener("pointermove", e => {
-  if (!down) return;
-  rotY += (e.clientX - mx) * 0.005; rotX += (e.clientY - my) * 0.005;
-  rotX = Math.max(0.12, Math.min(1.25, rotX));
-  mx = e.clientX; my = e.clientY;
-});
-addEventListener("wheel", e => { dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02)); }, {passive:true});
+let camC = null; // __look (Glide + Follow) kommt im INTERACTION-Block
+// Pointer-Steuerung kommt im INTERACTION-Block (Stufe 60): Links-Ziehen = Pan, Rechts-Ziehen = Rotate
 
 // Klick: Gebaeude-Karte oder Kira-Panel
 const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
@@ -1462,45 +1454,8 @@ function showCard(title, tag, rows){
   p.innerHTML = '<div class="tag">' + tag + '</div><h3>' + title + '</h3>' + rows;
   p.style.display = "block";
 }
-addEventListener("click", e => {
-  if (e.target.closest("#panel") || e.target.closest("#toggle")) return;
-  ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
-  ray.setFromCamera(ndc, camera);
-  const foxHit = ray.intersectObject(fox, true)[0];
-  if (foxHit){
-    const pr = window.__profile;
-    showCard(fox.userData.name, fox.userData.role,
-      pr ? '<div class="row"><span>Profil</span><span>' + pr.profile_id + '</span></div>' +
-      '<div class="row"><span>Zustand</span><span class="' + pr.health + '">' + pr.health + " / " + pr.work_state + '</span></div>' +
-      '<div class="row"><span>Evidenz</span><span>' + pr.evidence_type + '</span></div>'
-      : '<div class="m">Keine Profil-Evidenz im Feed.</div>');
-    return;
-  }
-  for (const b of BUILDINGS){
-    if (ray.intersectObject(b, true)[0]){
-      const u = b.userData;
-      const matched = feed.jobs.filter(j => u.jobs.some(k => j.job_name.toLowerCase().indexOf(k.toLowerCase()) >= 0));
-      const names = matched.map(j => j.job_name);
-      const rel = feed.runs.filter(r => names.some(n => r.job_name === n)).slice(0, 4);
-      let rows = '<div class="m">' + u.role + '</div>';
-      rows += '<div class="row"><span>Jobs</span><span>' + matched.length + ' aktiv konfiguriert</span></div>';
-      if (window.__souls){
-        const s = window.__souls.find(x => x.b === b);
-        if (s){
-          const lbl = {idle: "ruht", running: "arbeitet", finished: "fertig", failed: "Fehler"};
-          rows += '<div class="row"><span>Soul</span><span>' + lbl[s.mode] + '</span></div>';
-        }
-      }
-      rel.forEach(r => {
-        rows += '<div class="row"><span>' + r.job_name + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>';
-      });
-      if (!rel.length) rows += '<div class="m">Keine belegten Läufe für dieses Haus.</div>';
-      showCard(u.name, "Service", rows);
-      return;
-    }
-  }
-  document.getElementById("panel").style.display = "none";
-});
+// Klick-Auswahl kommt im INTERACTION-Block (Stufe 60): Ring, Label, Live-Panel, Follow
+
 
 // Qualitaets-Umschalter
 let soft = true;
@@ -1601,7 +1556,7 @@ function connectStream(){
 }
 window.__dbgStream = () => streamState;
 window.__cam = (y, x, d) => { if (y != null) rotY = y; if (x != null) rotX = x; if (d) dist = d; };
-window.__snap = () => { try { renderer.render(scene, camera); return renderer.domElement.toDataURL('image/png'); } catch(e) { return 'SNAP_ERR ' + e; } };
+window.__snap = () => { renderer.render(scene, camera); return document.querySelector("canvas").toDataURL("image/png"); };
 
 // Stufe 36 / Feinschliff 5: Fassadenfarben (Kanzie-Palette) + 3 Dorfhaeuschen
 (function facadeFix(){
@@ -2068,6 +2023,7 @@ const COTTAGE53_B64 = "Z2xURgIAAADYXAAAUDAAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6I
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
+window.__snap = () => { try { renderer.render(scene, camera); return renderer.domElement.toDataURL('image/png'); } catch(e) { return 'SNAP_ERR ' + e; } };
 window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
@@ -3378,6 +3334,174 @@ window.__pond = () => {
     const d = dbgPrev ? dbgPrev() : {};
     d.dash = true; d.kpis = !!document.getElementById("kpiRuns");
     d.tracker = document.querySelectorAll("#trSteps .step").length; d.dashTab = tab;
+    return d;
+  };
+})();
+
+
+// ===== Stufe 60 / Beta 63: INTERACTION-Block (Drag-Pan, Right-Drag-Rotate, Zoom/Pinch, Klick → Glide + Follow + Ring + Label + Live-Panel) =====
+(function(){
+  const css = document.createElement("style");
+  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap}';
+  document.head.appendChild(css);
+
+  const DEF = {x:0, y:0.5, z:0};
+  let glide = null, follow = null, sel = null;
+  const cur = () => camC || DEF;
+
+  // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
+  window.__look = (x, y, z) => {
+    if (x == null){ follow = null; glide = null; camC = null; return; }
+    follow = null;
+    const c = cur();
+    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: 900};
+  };
+
+  // Pointer: Linkes Ziehen = Pan, rechtes Ziehen = Rotate, Rad/Pinch = Zoom
+  let dragMode = null, px = 0, py = 0, moved = 0;
+  const pointers = new Map(); let pinchD0 = 0, pinchDist0 = 0;
+  const UI = "#panel,#toggle,#dashTop,#dashKpis,#dashTracker,#dashTable,#hint";
+  addEventListener("pointerdown", e => {
+    if (e.target.closest && e.target.closest(UI)) return;
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pointers.size === 2){
+      const ps = [...pointers.values()];
+      pinchD0 = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
+      pinchDist0 = dist; dragMode = "pinch"; return;
+    }
+    dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
+    px = e.clientX; py = e.clientY; moved = 0; follow = null;
+  });
+  addEventListener("pointermove", e => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (dragMode === "pinch" && pointers.size === 2){
+      const ps = [...pointers.values()];
+      const d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
+      if (pinchD0 > 0) dist = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d)));
+      return;
+    }
+    if (!dragMode) return;
+    const dx = e.clientX - px, dy = e.clientY - py;
+    px = e.clientX; py = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
+    if (dragMode === "rotate"){
+      rotY += dx * 0.005; rotX += dy * 0.005;
+      rotX = Math.max(0.12, Math.min(1.25, rotX));
+      return;
+    }
+    // Pan: Ziel auf dem Boden verschieben (Inhalt folgt der Maus)
+    const k = dist * 0.002, c = cur();
+    const cy = Math.cos(rotY), sy = Math.sin(rotY);
+    c.x += (-dx * cy - dy * sy) * k;
+    c.z += ( dx * sy - dy * cy) * k;
+    camC = c;
+  });
+  const endPtr = e => {
+    pointers.delete(e.pointerId);
+    if (pointers.size === 0) dragMode = null;
+    else if (pointers.size === 1 && dragMode === "pinch"){ dragMode = "pan"; const p = [...pointers.values()][0]; px = p.x; py = p.y; moved = 99; }
+  };
+  addEventListener("pointerup", endPtr);
+  addEventListener("pointercancel", endPtr);
+  addEventListener("wheel", e => { dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02)); }, {passive:true});
+  addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
+
+  // Live-Rows für das Auswahl-Panel (Fuchs = Kira, Häuser = Service)
+  function buildRows(obj){
+    if (obj === fox){
+      const pr = window.__profile;
+      return pr ? '<div class="row"><span>Profil</span><span>' + pr.profile_id + '</span></div>' +
+        '<div class="row"><span>Zustand</span><span class="' + pr.health + '">' + pr.health + " / " + pr.work_state + '</span></div>' +
+        '<div class="row"><span>Evidenz</span><span>' + pr.evidence_type + '</span></div>'
+        : '<div class="m">Keine Profil-Evidenz im Feed.</div>';
+    }
+    const u = obj.userData;
+    const matched = feed.jobs.filter(j => (u.jobs || []).some(k => j.job_name.toLowerCase().indexOf(k.toLowerCase()) >= 0));
+    const names = matched.map(j => j.job_name);
+    const rel = feed.runs.filter(r => names.some(n => r.job_name === n)).slice(0, 4);
+    let rows = '<div class="m">' + (u.role || "Hermes-Agent") + '</div>';
+    rows += '<div class="row"><span>Jobs</span><span>' + matched.length + ' aktiv konfiguriert</span></div>';
+    if (window.__souls){
+      const s = window.__souls.find(x => x.b === obj);
+      if (s){
+        const lbl = {idle: "ruht", running: "arbeitet", finished: "fertig", failed: "Fehler"};
+        rows += '<div class="row"><span>Soul</span><span class="' + (s.mode === "failed" ? "failed" : (s.mode === "finished" ? "ok" : (s.mode === "running" ? "run" : ""))) + '">' + (lbl[s.mode] || s.mode) + '</span></div>';
+      }
+    }
+    rel.forEach(r => rows += '<div class="row"><span>' + r.job_name + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>');
+    if (!rel.length) rows += '<div class="m">Keine belegten Läufe für dieses Haus.</div>';
+    return rows;
+  }
+  function objName(obj){ return obj === fox ? (fox.userData.name || "Kira") : (obj.userData.name || "Haus"); }
+  function refreshPanel(){
+    if (!sel) return;
+    showCard(objName(sel.obj), sel.obj === fox ? (fox.userData.role || "Fox") : "Service", buildRows(sel.obj));
+  }
+  function select(obj){
+    if (sel && sel.obj === obj){ refreshPanel(); return; }
+    deselect();
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.72, 40),
+      new THREE.MeshBasicMaterial({color: 0xf0a040, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false}));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.06;
+    scene.add(ring);
+    const label = document.createElement("div"); label.id = "selLabel"; label.className = "glass";
+    label.textContent = objName(obj);
+    document.body.appendChild(label);
+    sel = {obj, ring, label};
+    follow = {obj};
+    refreshPanel();
+  }
+  function deselect(){
+    if (!sel) return;
+    scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
+    sel = null; follow = null;
+  }
+  addEventListener("click", e => {
+    if (e.target.closest && e.target.closest(UI)) return;
+    if (moved > 6) return;
+    ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+    ray.setFromCamera(ndc, camera);
+    if (ray.intersectObject(fox, true)[0]){ select(fox); return; }
+    for (const b of BUILDINGS){ if (ray.intersectObject(b, true)[0]){ select(b); return; } }
+    deselect();
+    document.getElementById("panel").style.display = "none";
+  });
+
+  // Tick-Kette: Glide, Follow, Ring-Puls, Label-Projektion, Live-Panel
+  let lastPanel = 0;
+  const pt = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (pt) pt(dt, t);
+    if (glide){
+      const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
+      const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2, z: glide.fz + (glide.tz - glide.fz) * e2};
+      if (p >= 1) glide = null;
+    } else if (follow && follow.obj){
+      const o = follow.obj.position, c = cur();
+      const ny = (o.y || 0) + 0.5;
+      camC = {x: c.x + (o.x - c.x) * 0.1, y: c.y + (ny - c.y) * 0.1, z: c.z + (o.z - c.z) * 0.1};
+    }
+    if (sel){
+      const s = 1 + 0.14 * Math.sin(t * 5);
+      sel.ring.scale.set(s, s, 1);
+      sel.ring.material.opacity = 0.55 + 0.3 * Math.sin(t * 5 + 1);
+      sel.ring.position.x = sel.obj.position.x; sel.ring.position.z = sel.obj.position.z;
+      const v = sel.obj.position.clone(); v.y = sel.obj === fox ? 1.9 : 2.6;
+      v.project(camera);
+      sel.label.style.left = ((v.x*0.5+0.5) * innerWidth) + "px";
+      sel.label.style.top = ((-v.y*0.5+0.5) * innerHeight) + "px";
+      sel.label.style.display = (v.z < 1) ? "block" : "none";
+      if (t - lastPanel > 0.7){ lastPanel = t; refreshPanel(); }
+    }
+  };
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    const cc2 = cur();
+    d.inter = {pan: true, rotate: "right", pinch: true, follow: !!(follow && follow.obj),
+      sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode,
+      cam: {x: +cc2.x.toFixed(2), y: +cc2.y.toFixed(2), z: +cc2.z.toFixed(2)}, rotY: +rotY.toFixed(2)};
     return d;
   };
 })();

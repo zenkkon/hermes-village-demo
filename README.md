@@ -897,3 +897,31 @@ die UI-Optik ist im Browser unter der Demo-URL sichtbar.
 
 **Beta-62-Zip: hermes-village-beta62.zip.** Nächster Block: INTERACTION (Drag-Pan, Rechtsklick-
 Rotate, Zoom, Klick → Kamera-Follow + pulsierender Ring + Glas-Panel mit Live-Stats).
+## M68 · Stufe 60 (10:55, INTERACTION-Block nach World Prompt Pack)
+
+**Block 2 gebaut.** Die alte Pointer-Steuerung (Linksdrehen, Rad-Zoom) und der alte
+Klick-Handler wurden ersetzt durch das Pack-Schema:
+
+- **Linkes Ziehen = Pan** (Ziel wandert auf dem Boden mit, skaliert mit Zoom), **rechtes
+  Ziehen = Rotate** (wie bisher, kontextmenü unterdrückt), **Rad = Zoom**, **2-Finger-Pinch =
+  Zoom** (Touch, touch-action none), Ein-Finger-Touch = Pan.
+- **__look fliegt jetzt weich** (easeInOut, 900 ms) statt zu springen; der Area-Switcher aus
+  Stufe 59 profitiert direkt davon.
+- **Klick auf Kira/Haus**: Auswahl mit pulsierendem orangenem Ring am Boden, schwebendem
+  Glas-Label (Projektion pro Frame) und Glas-Panel mit **Live-Stats** (Rows bauen sich alle
+  0,7 s neu: Soul-Modus, Jobs, letzte Läufe, bei Kira Profil-Evidenz). Kamera folgt dem
+  Objekt weich (Lerp 0,1 pro Frame); jede Pan-/Rotate-Bewegung oder __look gibt das Follow
+  frei. Klick ins Leere deselektiert.
+- dbg: inter {pan, rotate:"right", pinch, follow, sel, glide, drag, cam, rotY}.
+
+**Review rv70 (Tag 14:00 + Nacht 22:30):** 0 echte JS-Fehler, Szenen unverändert sauber
+(nachts Lampen/Fenster/Sterne wie bisher). **Funktionstests:** Klick auf Copy Studio → sel +
+follow true; __look(Hafen) → Follow freigegeben, Glide nach 1,2 s abgeschlossen; Leere-Klick →
+deselektiert; Pan verschiebt Kameraziel korrekt (60 px Drag → ~4 Welt-Einheiten bei dist 33);
+Right-Drag ändert rotY um +0,29; Pinch ohne Crash. **Wichtig:** Echte Maus-Drag-Events über
+CDP killen den Renderer in dieser Headless-Umgebung (auch Beta 61 ohne neuen Code — altbekanntes
+Umfeld-Problem); die Logik ist deshalb per synthetischen PointerEvents geprüft, das echte
+Gefühl zeigt der Browser unter der Demo-URL.
+
+**Beta-63-Zip: hermes-village-beta63.zip.** Nächster Block: LIFE (Give-way-Logik, Ausweichen,
+kein Überlappen, endlose Loops).
