@@ -986,8 +986,13 @@ function fenceLine(x1, z1, x2, z2){
   rail.rotation.y = Math.atan2(z2-z1, x2-x1) * -1 + Math.PI/2;
   rail.rotation.y = Math.atan2(x2-x1, z2-z1);
   scene.add(rail);
+  const rail2 = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1, z2-z1), 0.06, 0.04), matWall(0xd8d0bd));
+  rail2.position.set((x1+x2)/2, 0.16, (z1+z2)/2);
+  rail2.rotation.y = Math.atan2(x2-x1, z2-z1);
+  scene.add(rail2);
 }
 fenceLine(-7.6, -1.2, -3.4, -1.0); fenceLine(-7.8, -1.1, -7.9, -4.6); fenceLine(-7.9, -4.7, -3.6, -4.8);
+fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(-7.9, -6.2, -5.4, -6.35);
 
 // Berge am hinteren Inselrand
 function mountain(x, z, h, r){
@@ -1083,6 +1088,25 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
     }
   });
   window.__flora = () => ({autumn: true, rocks: 12, bushes: 8, roundExtra: 8, patches: 3});
+})();
+
+// Stufe 70 / Beta 72: Wildblumenwiese - Wiesen-Kissen mit dichten Wildblumen
+(function meadow(){
+  const meadM = matWall(0x7db457);
+  const cols = [0xff5f7a, 0xffd60a, 0xf2f2f7, 0xbf5af2, 0xff9f0a];
+  [[-11.5, -0.5], [2.5, 10.8], [14.5, -3.0]].forEach((c, ci) => {
+    const pad = new THREE.Mesh(lumpySphere(1.4 + (ci % 2) * 0.3, ci * 7 + 3, 0.12), meadM);
+    pad.scale.y = 0.35; pad.position.set(c[0], 0.615, c[1]); pad.receiveShadow = true; scene.add(pad);
+    for (let k = 0; k < 14; k++){
+      const ang = k * 1.13 + ci, rr = 0.3 + (k % 5) * 0.26;
+      const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.15 + (k % 3) * 0.05, 4), matWall(0x3f7f36));
+      stem.position.set(fx, 0.7, fz); scene.add(stem);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.06 + (k % 2) * 0.02, 6, 5),
+        new THREE.MeshStandardMaterial({color: cols[(ci + k) % 5], roughness: 0.7}));
+      head.position.set(fx, 0.8, fz); head.castShadow = true; scene.add(head);
+    }
+  });
 })();
 
 // Stufe 65 / Beta 67: Detaildichte - Props, Grass-Bueschel, Blumentoepfe

@@ -1117,3 +1117,21 @@ beide Shots sauber (Sandbaenke sichtbar, Nachtszene unverändert).
 **Beta-71-Zip: hermes-village-beta71.zip.** Nächster Schritt: sechste Polier-Runde
 (Umgebungsvielfalt: Wildblumenwiese, Zaun-Segmente) oder Fable-5-Testlauf, sobald
 Konstantin wählt. Zweite Referenzdatei weiterhin nicht angekommen (15:00 geprüft).
+## M78 · Stufe 70 / Beta 72 (15:30, Wildblumenwiese + Zaun-Segmente)
+
+Sechste WORLD-Polier-Runde:
+
+- Wildblumenwiese: 3 Wiesen-Kissen (lumpySphere, 0x7db457, flach gequetscht)
+  in freien Zonen (West, Sued-Ost, Nord-Ost), je 14 Wildblaeten mit Stiel
+  in 5 Farben; liest sich als bluehende Wiese statt als Gruenfleck.
+- Zaun: fenceLine hat jetzt zwei Querlatten; Westgarten rechte Seite
+  geschlossen, Sued-Extension mit zwei neuen Segmenten (L-Form).
+- village.html 1.436.228 → 1.437.644.
+
+Review rv79: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, Villagers aktiv,
+detail 45, beide Shots sauber (Wiesen + Zaun sichtbar).
+
+**Beta-72-Zip: hermes-village-beta72.zip.** Nächster Schritt: siebte
+Polier-Runde (Kafig-Variation, kleine Bruecke ueber den Bach) oder
+Fable-5-Testlauf, sobald Konstantin wählt. Zweite Referenzdatei weiterhin
+nicht angekommen (15:30 geprüft).
