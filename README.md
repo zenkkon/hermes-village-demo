@@ -982,3 +982,50 @@ gelegentlich (Szenen selbst sauber, Screenshots je Tag/Nacht vorhanden).
 **Beta-65-Zip: hermes-village-beta65.zip.** Nächster Block: WORLD (Blocky-Look weiter
 abbauen: weiche Materialien, Rundungen, organische Formen) — der letzte der 5 Bausteine,
 danach der „Ultimative Prompt" für Fable 5.
+## M71 · Stufe 63 (12:20, WORLD-Block nach World Prompt Pack)
+
+**Block 5 gebaut — alle 5 Bausteine stehen jetzt in village.html.** Der Blocky-Look ist
+weiter abgebaut, neue Helfer im Code:
+
+- **rboxGeo(w,h,d,r)**: abgerundete Boxen (gerundeter Grundriss + Gefase oben/unten,
+  geweldete Vertices für weiche Normalen). Eingesetzt an allen Cottage-Körpern und
+  -Kaminen sowie den drei Shimeria-Haus-Etagen — die harten 90°-Kanten sind weg.
+- **lumpySphere(r, seed, squash)**: organisch gedellte Kugeln mit deterministischem Seed.
+  Felsen sind jetzt glatte Kiesel statt Icosahedron-Kanten, runde Baumkronen und Büsche
+  haben weiche, unregelmäßige Silhouetten (Büsche leicht gestaucht).
+- **Berge glatt**: die drei Hintergrund-Wasserberge (Cylinder 7→20 Segmente, kein
+  flatShading, Schnee glatt) und die drei Insel-Berge (Cone 7→20/14 Segmente) sind
+  jetzt geschlossene, weiche Kegel statt 7-Kant-Prismen.
+- Nadelbaum-Kronen: 8→14 Segmente, glatt.
+
+**Review rv73** (Tag 14:00, Nacht 22:30, Winter, Abend 18:46 gegen kanzie-referenz.png):
+0 JS-Fehler, alle GLB-Swaps live (dbg: house/mill/studio/media/mine/gate + Props),
+LIFE unverändert (3 Villagers). Der Look ist deutlich weicher als vor dem Block —
+Kantige Berge und Kantenfelsen sind weg, Häuser haben Rundungen. Ehrlicher Befund
+gegen die Referenz: die reiche Detaildichte von Kanzie (Deko-Props, Pfadtextur,
+Reflexionen) ist noch nicht da; das ist der Hebel für die nächsten Phasen bzw. den
+ultimativen Fable-5-Prompt.
+
+**Beta-66-Zip: hermes-village-beta66.zip.** Nächster Schritt: „Ultimativer Prompt" für
+Fable 5 (5-Block-Struktur, Hermes Village zugeschnitten, eine Datei) — Deliverable,
+kein Baustein mehr.
+## M72 · Stufe 64 (12:30, Deliverable: Ultimativer Fable-5-Prompt)
+
+Alle 5 Blöcke stehen seit Beta 66. Jetzt das angekündigte Deliverable:
+**ultimative-prompt-fable5.md** (im Repo-Root) — ein Copy-paste-Prompt für Fable 5,
+mit dem Konstantin das Dorf von Null neu bauen lassen kann:
+
+- Feste 5-Block-Struktur aus dem World Prompt Pack: WORLD / LIFE / INTERACTION /
+  DASHBOARD / EXTRAS.
+- Auf Hermes Village zugeschnitten: Insel, 5 Bezirke (Plaza, Hafen, Wohnviertel,
+  Werkstatt, Markt), Shimeria Media Haus, Windmühle, Leuchtturm-Detail, Kira der Fuchs,
+  Hermes-Dashboard-Daten (Copy Studio, Media, Mine, Gate), 6-Schritt-Prozess-Tracker.
+- Look-Leitplanken gegen den Blocky-Look: gerundete Volumen, Bevel-Boxen, organische
+  Kronen/Felsen, glatte Kegel, warmes Toy-Clay, Akzent #F0A040.
+- Quality-Bar: eine Datei, three.js CDN, 0 Konsolen-Fehler, 60 fps, __dbg/__snap-Hooks,
+  ?time-Override, mobile Touch.
+
+Village.html selbst ist in dieser Phase unverändert (kein neuer Code); deshalb kein
+neues Beta-Zip — Beta 66 bleibt der aktuelle Stand. Nächste Phase: erster Fable-5-
+Testlauf des Prompts bzw. weitere Look-Verfeinerung (Detaildichte), sobald Konstantin
+wählt. Zweite Referenzdatei weiterhin nicht angekommen (12:31 geprüft).
