@@ -1099,3 +1099,21 @@ Dritte Bude und Ware sichtbar, Plaza-Muster dezent, Nachtszene unverändert.
 **Beta-70-Zip: hermes-village-beta70.zip.** Nächster Schritt: fünfte Polier-Runde
 (Bootssteg-Patina, Uferkante weicher) oder Fable-5-Testlauf, sobald Konstantin wählt.
 Zweite Referenzdatei weiterhin nicht angekommen (14:30 geprüft).
+## M77 · Stufe 69 / Beta 71 (15:00, Steg-Patina + weiche Uferkante)
+
+Fuenfte WORLD-Polier-Runde:
+
+- Steg-Patina: 6 dunkle Fugenlamellen quer uebers Deck, zwei abgesetzte
+  Dielenstreifen in hellerem Ton, Anlegepfahl mit Tauring am Pier-Ende;
+  der Steg liest sich jetzt als bewirtschaftete Anlegestelle, nicht als Planke.
+- Weichere Uferkante: 5 flache Sandbaenke (lumpySphere, 0xd9c89a, stark gequetscht)
+  um den Teich plus 3 Kiesel-Cluster mit je 4 Kugeln; die Wasserkante wirkt
+  ausgewaschen statt hart abgeschnitten.
+- village.html 1.434.386 → 1.436.228.
+
+Review rv78: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, 3 Villagers, detail 45,
+beide Shots sauber (Sandbaenke sichtbar, Nachtszene unverändert).
+
+**Beta-71-Zip: hermes-village-beta71.zip.** Nächster Schritt: sechste Polier-Runde
+(Umgebungsvielfalt: Wildblumenwiese, Zaun-Segmente) oder Fable-5-Testlauf, sobald
+Konstantin wählt. Zweite Referenzdatei weiterhin nicht angekommen (15:00 geprüft).

@@ -554,6 +554,20 @@ pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.a
     const st = new THREE.Mesh(new THREE.DodecahedronGeometry(0.15 + (i % 3) * 0.05), shoreM[i % 3]);
     st.position.set(p[0], 0.09, p[1]); st.rotation.y = i * 1.7; st.castShadow = true; scene.add(st);
   });
+  // Sandbaenke: flache, weiche Kissen in Sandton am Ufer
+  const sandM = matWall(0xd9c89a);
+  [[10.6, 8.9], [13.2, 5.6], [9.2, 6.0], [15.6, 7.8], [12.1, 11.3]].forEach((p, i) => {
+    const s = new THREE.Mesh(lumpySphere(0.5 + (i % 2) * 0.18, p[0] * 3 + p[1], 0.35), sandM);
+    s.scale.y = 0.22; s.position.set(p[0], 0.615, p[1]); s.receiveShadow = true; scene.add(s);
+  });
+  // Kiesel-Cluster: 4 kleine Kugeln je Cluster, versetzt
+  [[10.0, 7.2], [14.4, 6.4], [11.0, 10.8]].forEach((p, i) => {
+    for (let k = 0; k < 4; k++){
+      const peb = new THREE.Mesh(lumpySphere(0.07 + (k % 2) * 0.03, p[0] + k * 7 + i, 0.4), shoreM[k % 3]);
+      peb.position.set(p[0] + (k % 2) * 0.14 - 0.07, 0.05, p[1] + (k > 1 ? 0.12 : -0.05));
+      peb.castShadow = true; scene.add(peb);
+    }
+  });
   // Schilf am Ufer
   const reedM = [0x3d7a3f, 0x4d8a4a];
   [[9.0,6.5],[11.6,10.2],[16.1,5.6]].forEach((p, ci) => {
@@ -617,6 +631,22 @@ const dock = new THREE.Group();
 const planks = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 3.6),
   new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.9}));
 planks.position.y = 0.35; planks.castShadow = true; planks.receiveShadow = true; dock.add(planks);
+// Patina: dunkle Fugenlamellen quer, zwei abgesetzte Dielenstreifen
+const seamM = new THREE.MeshStandardMaterial({color: 0x6b4f34, roughness: 0.95});
+for (let i = 0; i < 6; i++){
+  const seam = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.02, 0.05), seamM);
+  seam.position.set(0, 0.425, -1.5 + i * 0.6); dock.add(seam);
+}
+const stripM = new THREE.MeshStandardMaterial({color: 0x93724e, roughness: 0.9});
+for (const zz of [-1.05, 0.75]){
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.02, 0.34), stripM);
+  strip.position.set(0, 0.421, zz); dock.add(strip);
+}
+// Anlegepfahl + Tauring
+const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.35, 8), new THREE.MeshStandardMaterial({color: 0x5a4430, roughness: 0.9}));
+bollard.position.set(0.45, 0.55, -1.5); bollard.castShadow = true; dock.add(bollard);
+const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 6, 12), new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1}));
+rope.rotation.x = Math.PI / 2; rope.position.set(0.45, 0.74, -1.5); dock.add(rope);
 for (let i = -1; i <= 1; i += 2){
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.2, 6),
     new THREE.MeshStandardMaterial({color: 0x6e5238, roughness: 0.9}));
