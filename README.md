@@ -1156,3 +1156,29 @@ detail 45, life 3, beide Shots sauber (Laternen leuchten nachts).
 Polier-Durchgang (Huehner-Animation im Give-way-Loop, Beerenstraeucher)
 oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
 weiterhin nicht angekommen (16:00 geprüft).
+
+## M80 · Stufe 72 / Beta 74 (16:30, Huehner-Animation + Beerenstraeucher)
+
+Achter WORLD/LIFE-Polier-Durchgang:
+
+- Huehner leben: 3 Huehner wandern jetzt im Auslauf (0,2 u/s, neue
+  Ziele im Run), drehen sich in Laufrichtung, picken zyklisch
+  (Koerper nickt, sin-Kurve) und wippen beim Gehen. Hens landen in
+  window.__hens, Tick haengt in der __extraTick-Kette.
+- Tick-Ketten-Bug gefixt: Der "Laufende Details"-Block (Uhr/Wasserrad/
+  Lore) ueberschrieb window.__extraTick ohne den Vorgaenger zu rufen,
+  alle frueheren Ticks (Wasserfall-Ripples, Huehner) waren dadurch tot.
+  Jetzt wird prev gerufen; Bewegung verifiziert (Positionen aendern
+  sich, peck-Rotation -0.16 sichtbar).
+- Beerenstraeucher: 3 neue Busche mit 6 Beeren je (rot 0xd4483a /
+  lila 0x7a3f9d) bei (-12.8, 1.2), (2.2, -5.2), (9.8, 4.2).
+- village.html 1.441.065 → 1.442.868.
+
+Review rv81: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, Villagers aktiv,
+detail 45, life 3, beide Shots sauber; Huhn-Bewegung im Live-Test
+bestaetigt.
+
+**Beta-74-Zip: hermes-village-beta74.zip.** Naechster Schritt: neunter
+Polier-Durchgang (Fuchs Kira patinieren, Vogel-Schwarm am Himmel) oder
+Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
+weiterhin nicht angekommen (16:30 geprüft).
