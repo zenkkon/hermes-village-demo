@@ -1368,3 +1368,29 @@ deadline exceeded' (Plattform), Review danach sauber.
 siebzehnter Polier-Durchgang (Haufen-Details + Dielenplanken am
 Bootssteg) oder Fable-5-Testlauf, sobald Konstantin waehlt.
 Zweite Referenzdatei weiterhin nicht angekommen (20:30 geprüft).
+
+## M89 · Stufe 81 / Beta 83 (21.10.2026 ~21:30, Phase 21:00, siebzehnter Polier-Durchgang)
+
+- Boootssteg-Dielenplanken: die Einteiler-Platte am Bootssteg (Teich)
+  ist jetzt 7 einzelne Bohlen (1.3 x 0.14 x 0.47) mit echten Fugen
+  dazwischen; die alten Fugenlamellen entfallen, die zwei abgesetzten
+  Dielenstreifen bleiben.
+- Haufen-Details: Heuballen bekommen 2 Balengurte (Torus, gequetscht
+  auf die lumpy-Form), Kistenstapel bekommen Deckelsprossen (2 leichte
+  Leisten je Kiste), neu ein Kaminholz-Haufen (3 + 2 Scheite) neben
+  der Feuerstelle. window.__pol17 zaehlt 53 Elemente.
+- village.html 1.456.070 → 1.457.438 (identisch in village-standalone.html).
+
+Review rv90: Tag 14:00 + Nacht 22:30, 0 echte JS-Fehler (nur der
+bekannte 404 auf /api/village/stream, Polling-Fallback), pol17 53,
+pier13 9, harbor14 6, alle Swaps intakt. Weitshots rv90_tag14/nacht
+sowie Nahaufnahmen rv90_steg_zoom/haufen_zoom angesehen: Szene intakt,
+Bohlenfugen sichtbar, keine Überlappungen. (Hinweis: /tmp wurde zwischen
+den Phasen gewischt, Beta-80-82-Zips nicht mehr da; rv90-Zooms brauchten
+zwei Anläufe wegen Kamera-LookAt-Zentrum.)
+
+**Beta-83-Zip: hermes-village-beta83.zip (im Repo-Root, diesmal
+persistent statt /tmp).** Naechster Schritt: achtzehnter Polier-Durchgang
+(Daemmerungs-Mood + Farbspreizung) oder Fable-5-Testlauf, sobald
+Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
+(21:00 geprüft).

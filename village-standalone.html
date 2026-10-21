@@ -644,15 +644,14 @@ boathouse.children[0].name = "bh_body"; boathouse.children[1].name = "bh_roof";
 
 // Steg (am Teich)
 const dock = new THREE.Group();
-const planks = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 3.6),
-  new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.9}));
-planks.position.y = 0.35; planks.castShadow = true; planks.receiveShadow = true; dock.add(planks);
-// Patina: dunkle Fugenlamellen quer, zwei abgesetzte Dielenstreifen
-const seamM = new THREE.MeshStandardMaterial({color: 0x6b4f34, roughness: 0.95});
-for (let i = 0; i < 6; i++){
-  const seam = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.02, 0.05), seamM);
-  seam.position.set(0, 0.425, -1.5 + i * 0.6); dock.add(seam);
+// Beta 83: Dielenplanken - 7 einzelne Bohlen mit echten Fugen statt einer Platte
+const plankM = new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.9});
+for (let i = 0; i < 7; i++){
+  const plk = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 0.47), plankM);
+  plk.position.set(0, 0.35, -1.53 + i * 0.51);
+  plk.castShadow = true; plk.receiveShadow = true; dock.add(plk);
 }
+// Patina: zwei abgesetzte Dielenstreifen
 const stripM = new THREE.MeshStandardMaterial({color: 0x93724e, roughness: 0.9});
 for (const zz of [-1.05, 0.75]){
   const strip = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.02, 0.34), stripM);
@@ -1366,12 +1365,23 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
       const c = new THREE.Mesh(rboxGeo(0.42, 0.34, 0.42, 0.05), i % 2 ? woodM : woodD);
       c.position.set(x + (i % 2) * 0.05, 0.18 + (i === 2 ? 0.36 : 0), z + (i - 1) * 0.08);
       c.rotation.y = i * 0.5; c.castShadow = true; c.receiveShadow = true; scene.add(c);
+      for (const sz of [-0.12, 0.12]){
+        const slat = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.012, 0.05), woodD);
+        slat.position.set(c.position.x, c.position.y + 0.176, c.position.z + sz);
+        slat.rotation.y = c.rotation.y; scene.add(slat);
+        window.__pol17n = (window.__pol17n || 0) + 1;
+      }
     }
   }
   function hayBale(x, z, ry){
     const b = new THREE.Mesh(lumpySphere(0.4, x + z, 0.55), matWall(0xd9b45a));
     b.position.set(x, 0.2, z); b.rotation.y = ry || 0;
     b.castShadow = true; b.receiveShadow = true; scene.add(b);
+    for (const dz of [-0.14, 0.14]){
+      const strap = new THREE.Mesh(new THREE.TorusGeometry(0.415, 0.013, 6, 18), matWall(0x8f6f3a));
+      strap.scale.set(1, 0.6, 1); strap.position.set(x, 0.2, z + dz);
+      scene.add(strap); window.__pol17n = (window.__pol17n || 0) + 1;
+    }
   }
   function potFlower(x, z, col){
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.09, 0.16, 10), matWall(0xb06a45));
@@ -3240,6 +3250,16 @@ tick(); setInterval(tick, 30000);
       lg.castShadow = true; fire.add(lg);
     }
   }
+  // Kaminholz-Haufen neben dem Feuer (Beta 83)
+  for (let r = 0; r < 2; r++){
+    const n = 3 - r;
+    for (let i = 0; i < n; i++){
+      const wl = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.46, 6), logM);
+      wl.rotation.z = Math.PI / 2;
+      wl.position.set(-1.22, 0.055 + r * 0.095, -0.5 + (i - (n - 1) / 2) * 0.105);
+      wl.castShadow = true; fire.add(wl); window.__pol17n = (window.__pol17n || 0) + 1;
+    }
+  }
   const triM = matWall(0x6e5238);
   for (let i = 0; i < 3; i++){
     const a = i / 3 * Math.PI * 2;
@@ -4174,6 +4194,16 @@ window.__pond = () => {
   };
 })();
 
+// Stufe 81 / Beta 83: siebzehnter Polier-Durchgang (Bootssteg-Dielenplanken + Haufen-Details)
+(function(){
+  window.__pol17 = () => (window.__pol17n || 0) + 12; // + 7 Bootssteg-Planken + 5 Kaminholz-Scheite
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    d.pol17 = window.__pol17 ? window.__pol17() : 0;
+    return d;
+  };
+})();
 </script>
 </body>
 </html>
