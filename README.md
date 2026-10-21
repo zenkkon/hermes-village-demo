@@ -1227,3 +1227,27 @@ auf der West-Route.
 Polier-Durchgang (Wiese-Belebung + Wegbanderolen) oder Fable-5-Testlauf,
 sobald Konstantin waehlt. Zweite Referenzdatei weiterhin nicht
 angekommen (17:30 geprüft).
+
+## M83 · Stufe 75 / Beta 77 (18:00, Wiese-Belebung + Wegbanderolen)
+
+Elfter LIFE/WORLD-Polier-Durchgang:
+
+- Wiese-Belebung: Alle 42 Wildblumen (3 Kissen à 14) wiegen sich
+  jetzt im Wind: Kopf swayed horizontal (+-0,035) und neigt sich
+  mit (rotation.z bis 0,21), jede mit eigener Phase. window.__flw,
+  Tick in der Kette (prevM).
+- Wegbanderolen: 3 Wimpelketten zwischen den Laternenpfosten
+  ueber dem Markt (-4.2/1.6→3.4/4.2, -2.6/-1.4→5.2/-0.6,
+  2.6/-3.4→5.8/-1.4): je 7 Wimpel in 4 Farben (rosa/gelb/blau/lila)
+  an einem durchhängenden Seil, Einzelne Wimpel wippen im Wind
+  (rotation.z sin 0.18). window.__pennants, window.__banderolen.
+- village.html 1.445.095 → 1.446.970.
+
+Review rv84: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, detail 45,
+birds 8, nightWins 72, beide Shots sauber; Banderolen lesbar
+ueber dem Markt, nachts stören sie das Lichtbild nicht.
+
+**Beta-77-Zip: hermes-village-beta77.zip.** Naechster Schritt:
+zwoelfter Polier-Durchgang (Bootssteg-Deko + Fasskisten-Gruppierung)
+oder Fable-5-Testlauf, sobald Konstantin waehlt. Zweite Referenzdatei
+weiterhin nicht angekommen (18:00 geprüft).

@@ -1220,8 +1220,54 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.06 + (k % 2) * 0.02, 6, 5),
         new THREE.MeshStandardMaterial({color: cols[(ci + k) % 5], roughness: 0.7}));
       head.position.set(fx, 0.8, fz); head.castShadow = true; scene.add(head);
+      (window.__flw = window.__flw || []).push({m: head, bx: fx, ph: ang, tilt: 0.5 + (k % 3) * 0.2});
     }
   });
+  const prevM = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevM) prevM(dt, t);
+    (window.__flw || []).forEach(f => {
+      const w = Math.sin(t * 1.3 + f.ph) * 0.035;
+      f.m.position.x = f.bx + w;
+      f.m.rotation.z = w * f.tilt * 6;
+    });
+  };
+})();
+
+// Stufe 75 / Beta 77: Wegbanderolen - Wimpelketten zwischen den Laternen
+(function banderoles(){
+  const colsB = [0xff5f7a, 0xffd60a, 0x4a90c2, 0xbf5af2];
+  const flagM = colsB.map(c => new THREE.MeshStandardMaterial({color: c, roughness: 0.8, side: THREE.DoubleSide}));
+  window.__pennants = [];
+  function banderole(x1, z1, x2, z2){
+    const dx = x2 - x1, dz = z2 - z1, len = Math.hypot(dx, dz);
+    const n = 7, sag = 0.28;
+    for (let i = 0; i < n; i++){
+      const f = (i + 0.5) / n;
+      const px = x1 + dx * f, pz = z1 + dz * f;
+      const py = 1.48 - Math.sin(Math.PI * f) * sag;
+      const p = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.2, 4), flagM[i % 4]);
+      p.rotation.x = Math.PI;
+      p.position.set(px, py - 0.1, pz);
+      p.castShadow = true; scene.add(p);
+      window.__pennants.push({m: p, ph: i * 0.9 + len});
+    }
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, len, 4), matWall(0x4a4a4a));
+    rope.rotation.z = Math.PI / 2; rope.rotation.y = Math.atan2(dz, dx);
+    rope.position.set((x1 + x2) / 2, 1.48 - sag * 0.42, (z1 + z2) / 2);
+    scene.add(rope);
+  }
+  banderole(-4.2, 1.6, 3.4, 4.2);
+  banderole(-2.6, -1.4, 5.2, -0.6);
+  banderole(2.6, -3.4, 5.8, -1.4);
+  const prevBd = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevBd) prevBd(dt, t);
+    (window.__pennants || []).forEach(p => {
+      p.m.rotation.z = Math.sin(t * 1.8 + p.ph) * 0.18;
+    });
+  };
+  window.__banderolen = () => 3;
 })();
 
 // Stufe 65 / Beta 67: Detaildichte - Props, Grass-Bueschel, Blumentoepfe
