@@ -1029,3 +1029,21 @@ Village.html selbst ist in dieser Phase unverändert (kein neuer Code); deshalb 
 neues Beta-Zip — Beta 66 bleibt der aktuelle Stand. Nächste Phase: erster Fable-5-
 Testlauf des Prompts bzw. weitere Look-Verfeinerung (Detaildichte), sobald Konstantin
 wählt. Zweite Referenzdatei weiterhin nicht angekommen (12:31 geprüft).
+## M73 · Stufe 65 / Beta 67 (13:00, Detaildichte-Boost)
+
+Erste WORLD-Polier-Runde 2 (Detaildichte gegen den Kanzie-Gap):
+
+- Props: 5 Fässer (Werkstatt + Hafen, Torus-Ringe), 3 Kistenstapel (Markt + Hafen,
+  rbox mit Bevel), 3 Heuballen (lumpySphere, Wohnviertel-Rand), 6 Blumentöpfe an
+  Cottage-Türen (4 Blütenfarben).
+- 35 Grass-Büschel (lumpySphere, flach) verstreut in den bereits verifizierten
+  wegfreien Zonen; tuftMat ist in __foliageMats registriert, färbt sich im Winter mit.
+- village.html 1.429.721 → 1.432.926; __detailCount = 45 als dbg-Marker.
+
+Review rv74: Tag 14:00 + Nacht 22:30, 0 JS-Fehler, __detailCount 45, 3 Villagers,
+GLB-Swaps live (bench 5 / table 2 / umbrella 3 / stool 6). Props und Büschel sitzen
+wegfrei, Nachtlampen unverändert.
+
+**Beta-67-Zip: hermes-village-beta67.zip.** Nächster Schritt: zweite Polier-Runde
+(Weg-Textur, Wasserglanz, Dachvariationen) oder Fable-5-Testlauf, sobald Konstantin
+wählt. Zweite Referenzdatei weiterhin nicht angekommen (13:00 geprüft).

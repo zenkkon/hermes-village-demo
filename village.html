@@ -1044,6 +1044,65 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   });
   window.__flora = () => ({autumn: true, rocks: 12, bushes: 8, roundExtra: 8, patches: 3});
 })();
+
+// Stufe 65 / Beta 67: Detaildichte - Props, Grass-Bueschel, Blumentoepfe
+(function detail(){
+  const woodM = matWall(0x8a6a48), woodD = matWall(0x6e5238), metalM = matWall(0x5a6068);
+  function barrel(x, z, ry){
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 0.52, 14), woodM);
+    for (const yy of [0.15, -0.15]){
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.252, 0.024, 6, 14), metalM);
+      ring.rotation.x = Math.PI / 2; ring.position.y = yy; b.add(ring);
+    }
+    b.position.set(x, 0.26, z); b.rotation.y = ry || 0;
+    b.castShadow = true; b.receiveShadow = true; scene.add(b);
+  }
+  function crateStack(x, z){
+    for (let i = 0; i < 3; i++){
+      const c = new THREE.Mesh(rboxGeo(0.42, 0.34, 0.42, 0.05), i % 2 ? woodM : woodD);
+      c.position.set(x + (i % 2) * 0.05, 0.18 + (i === 2 ? 0.36 : 0), z + (i - 1) * 0.08);
+      c.rotation.y = i * 0.5; c.castShadow = true; c.receiveShadow = true; scene.add(c);
+    }
+  }
+  function hayBale(x, z, ry){
+    const b = new THREE.Mesh(lumpySphere(0.4, x + z, 0.55), matWall(0xd9b45a));
+    b.position.set(x, 0.2, z); b.rotation.y = ry || 0;
+    b.castShadow = true; b.receiveShadow = true; scene.add(b);
+  }
+  function potFlower(x, z, col){
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.09, 0.16, 10), matWall(0xb06a45));
+    pot.position.set(x, 0.08, z); pot.castShadow = true; scene.add(pot);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 6),
+      new THREE.MeshStandardMaterial({color: col, roughness: 0.8}));
+    head.position.set(x, 0.2, z); scene.add(head);
+  }
+  const tuftMat = new THREE.MeshStandardMaterial({color: 0x5da84e, roughness: 1});
+  (window.__foliageMats = window.__foliageMats || []).push({mat: tuftMat, base: new THREE.Color(0x5da84e)});
+  function tuft(x, z, s){
+    const t = new THREE.Mesh(lumpySphere(0.09 * s, x * 7 + z, 0.45), tuftMat);
+    t.position.set(x, 0.02, z); scene.add(t);
+  }
+  // Fässer: Werkstatt + Hafen
+  barrel(15.9, 2.2, 0.3); barrel(16.4, 1.7, 1.2); barrel(16.2, 2.5, 2.1);
+  barrel(12.4, -9.4, 0.5); barrel(12.9, -10.2, 1.7);
+  // Kistenstapel: Markt + Hafen
+  crateStack(6.9, -0.9); crateStack(8.3, -0.4); crateStack(11.9, -9.2);
+  // Heuballen: Wohnviertel-Rand
+  hayBale(-8.6, -9.6, 0.4); hayBale(-9.4, -9.1, 1.6); hayBale(-9.0, -10.2, 2.4);
+  // Blumentöpfe an Cottage-Türen
+  const pcols = [0xff5f7a, 0xffd60a, 0xbf5af2, 0xff8a3d];
+  [[-5.2, -1.8], [-7.2, -1.0], [-6.9, -3.6], [-3.6, -4.2], [4.5, 3.0], [-1.6, 4.0]]
+    .forEach((p, i) => potFlower(p[0], p[1], pcols[i % 4]));
+  // Grass-Büschel verstreut (wegfreie Zonen, 35 Stück)
+  [[-9.8, 1.6], [-11.2, -0.4], [-6.4, 5.2], [-4.2, 6.6], [-2.4, 8.8], [-12.4, 4.2],
+   [2.6, 6.2], [4.4, 8.4], [7.4, 7.8], [9.8, 6.6], [11.6, 3.2], [13.4, -0.8],
+   [12.6, -3.6], [10.4, -6.4], [8.2, -8.6], [5.4, -9.8], [2.2, -9.4], [-0.8, -9.0],
+   [-3.4, -8.2], [-5.6, -6.6], [1.2, -5.4], [3.8, -3.6], [6.2, 1.8], [-1.4, -1.4],
+   [-3.8, 0.8], [-14.2, -4.6], [14.8, 8.2], [15.6, 4.4], [-15.6, -11.2], [13.8, 12.2],
+   [-11.8, 12.6], [0.6, 12.8], [16.2, -3.0], [-16.4, 6.8], [9.2, 11.4]]
+    .forEach((p, i) => tuft(p[0], p[1], 0.8 + (i % 4) * 0.2));
+  window.__detailCount = 45;
+})();
 // Stufe 23 (M31): Flora-Dichte 2 - zweite Welle Baeume/Buesche/Felsen/Blumenflecken
 (function flora2(){
   const greens2 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
