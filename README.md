@@ -1428,3 +1428,13 @@ Konstantin waehlt. Zweite Referenzdatei weiterhin nicht angekommen
 - Phase 00:30: LIFE ausgebaut — Villager-Kappe 3 -> 6; Head-on-Ausweichen ausgeloest frueher (dot 0.5 -> 0.35, beidseitige Rechts-Regel bleibt); Idle-Separation (stehende Figuren driften bei < 0.85 Abstand sanft auseinander statt zu ueberlappen); Spawn-Stacking behoben (zufaelliger Offset auf Startposition + Startziel, statt alle auf denselben Wanderpunkt); neue Probe `__lifeSpread()` (n, curD, minD, yields) + Abstandsmessung alle 5 Frames.
 - Review rv96b (standalone, Tag 14:00 + Nacht 22:30, Screenshots geprueft): 0 echte JS-Fehler (nur 2x 404 /api/village/stream). LIFE-Beweis: erzwungene Kopf-an-Kopf-Begegnung via __lifeTest -> 5 yields, min pairweise Distanz 0.877 (keine Ueberlappung), 6 Villager verteilt, keine Doppelpositionen mehr. Hinweis: Headless rendert ~1 fps, Proben brauchen 30+s Wartezeit.
 - Zip hermes-village-beta89.zip (nur feed/village.html + village-standalone.html). Naechster Baustein: DASHBOARD-Nachbesserung (Alerts interaktiv, Suche springt zu Treffern) oder Block 5 WORLD Pass 3 (organische Formen).
+
+## M96 / Beta 90 (01:00-01:14, 22.10.)
+Block 1 DASHBOARD Nachbesserung: Suche mit Live-Treffern (#dashSuggest, bis 6 Treffer aus
+BUILDINGS, Tag Haus/Job, Klick oder Enter springt via __look + __selBuilding = echtes
+select() mit Ring/Follow/Panel), Esc/Blur schliesst. Alerts interaktiv: Klick auf
+#dashAlerts schaltet Live-Tabelle auf Tab Laeufe und filtert failedOnly (Tab-Klick setzt
+zurueck), Flash-Animation. rv97 (Port 9013): Vorschlaege sichtbar (Backup Mine/Haus),
+__selActive true nach Sprung, Tab "Laeufe" + "keine Fehlerlaeufe" nach Alert-Klick,
+6 Villager verteilt, 0 echte JS-Fehler (nur 2x Feed-404). Screenshots rv97_suche/
+rv97_alert_tab/rv97_nacht angesehen. 1.464.038 -> 1.467.086 B.
