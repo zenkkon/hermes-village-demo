@@ -329,7 +329,7 @@ function lumpySphere(r, seed, squash){
   return g;
 }
 function winPlane(w, h){
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.06),
+  const m = new THREE.Mesh(new rboxGeo(w, h, 0.06, Math.min(w, h, 0.06) * 0.22),
     new THREE.MeshStandardMaterial({color: 0xe0c08a, emissive: 0xffb340, emissiveIntensity: 0.9}));
   return m;
 }
@@ -345,7 +345,7 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 8), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
   // Tuer + Fenster vorn und seitlich
-  const door = new THREE.Mesh(new THREE.BoxGeometry(w*0.18, h*0.42, 0.08), matWall(0x5a3c28));
+  const door = new THREE.Mesh(new rboxGeo(w*0.18, h*0.42, 0.08, 0.024), matWall(0x5a3c28));
   door.position.set(0, h*0.21, d/2 + 0.04); g.add(door);
   const winA = winPlane(w*0.22, h*0.3); winA.position.set(w*0.28, h*0.55, d/2 + 0.05); g.add(winA);
   const winB = winA.clone(); winB.position.x = -w*0.28; g.add(winB);
@@ -407,7 +407,7 @@ function mineBuild(x, z){
     rail.position.set(off, 0.05, 3.3); g.add(rail);
   }
   for (let i = 0; i < 4; i++){
-    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.04, 0.14), matWall(0x6e5238));
+    const tie = new THREE.Mesh(new rboxGeo(0.8, 0.04, 0.14, 0.013), matWall(0x6e5238));
     tie.position.set(0, 0.03, 2.1 + i*0.8); g.add(tie);
   }
   // Lore
@@ -432,7 +432,7 @@ function hotel(x, z){
   for (let f = 0; f < floors; f++){
     const body = new THREE.Mesh(rboxGeo(w, fh, d, 0.1), wallM);
     body.position.y = f*fh + fh/2; body.castShadow = true; body.receiveShadow = true; body.name = "mh_body"; g.add(body);
-    const trim = new THREE.Mesh(new THREE.BoxGeometry(w + 0.16, 0.1, d + 0.16), matWall(0xf2e8dc));
+    const trim = new THREE.Mesh(new rboxGeo(w + 0.16, 0.1, d + 0.16, 0.03), matWall(0xf2e8dc));
     trim.position.y = f*fh + fh; trim.name = "mh_trim"; g.add(trim);
     for (const wx of [-1.1, 0, 1.1]){
       const win = winPlane(0.5, 0.62); win.position.set(wx, f*fh + fh*0.55, d/2 + 0.05); g.add(win);
@@ -775,7 +775,7 @@ function stall(x, z, ry, c1, c2){
     pole.position.set(px, 0.95, pz); g.add(pole);
   }
   for (let i = 0; i < 6; i++){
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.04, 1.15),
+    const stripe = new THREE.Mesh(new rboxGeo(0.34, 0.04, 1.15, 0.013),
       matWall(i % 2 ? c2 : c1));
     stripe.position.set(-0.85 + i*0.34, 1.92, 0.12); stripe.rotation.x = 0.28; stripe.castShadow = true; g.add(stripe);
   }
@@ -1143,12 +1143,12 @@ function fenceLine(x1, z1, x2, z2){
     picket.position.set(x1 + (x2-x1)*t, 0.25, z1 + (z2-z1)*t);
     picket.castShadow = true; scene.add(picket);
   }
-  const rail = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1, z2-z1), 0.06, 0.04), matWall(0xd8d0bd));
+  const rail = new THREE.Mesh(new rboxGeo(Math.hypot(x2-x1, z2-z1), 0.06, 0.04, 0.013), matWall(0xd8d0bd));
   rail.position.set((x1+x2)/2, 0.34, (z1+z2)/2);
   rail.rotation.y = Math.atan2(z2-z1, x2-x1) * -1 + Math.PI/2;
   rail.rotation.y = Math.atan2(x2-x1, z2-z1);
   scene.add(rail);
-  const rail2 = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1, z2-z1), 0.06, 0.04), matWall(0xd8d0bd));
+  const rail2 = new THREE.Mesh(new rboxGeo(Math.hypot(x2-x1, z2-z1), 0.06, 0.04, 0.013), matWall(0xd8d0bd));
   rail2.position.set((x1+x2)/2, 0.16, (z1+z2)/2);
   rail2.rotation.y = Math.atan2(x2-x1, z2-z1);
   scene.add(rail2);
@@ -2898,7 +2898,7 @@ tick(); setInterval(tick, 30000);
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
         const pm = pathMat.clone();
         pm.color.offsetHSL(0, (i * 37 % 5 - 2) * 0.008, (i * 53 % 7 - 3) * 0.012);
-        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, segL + 0.14), pm);
+        const seg = new THREE.Mesh(new rboxGeo(0.95, 0.04, segL + 0.14, 0.013), pm);
         seg.position.set((pt[0]+prev[0])/2, 0.615 + (i % 2) * 0.002, (pt[1]+prev[1])/2);
         seg.rotation.y = Math.atan2(pt[0]-prev[0], pt[1]-prev[1]);
         seg.receiveShadow = true;
@@ -2907,7 +2907,7 @@ tick(); setInterval(tick, 30000);
           const tx = (pt[0]-prev[0])/segL, tz = (pt[1]-prev[1])/segL;
           const side = ((seed*7 + i*13) % 2) ? 1 : -1;
           const off = 0.55 + ((seed*11 + i*29) % 10) * 0.02;
-          const s = new THREE.Mesh(new THREE.BoxGeometry(0.1 + (i*37 % 7)*0.012, 0.05, 0.09 + (i*53 % 5)*0.014), stoneMat);
+          const s = new THREE.Mesh(new rboxGeo(0.1 + (i*37 % 7)*0.012, 0.05, 0.09 + (i*53 % 5)*0.014, 0.015), stoneMat);
           s.position.set(pt[0] - tz*side*off, 0.628, pt[1] + tx*side*off);
           s.rotation.y = (i*0.7 + seed) % 3.14;
           scene.add(s);
@@ -3059,7 +3059,7 @@ tick(); setInterval(tick, 30000);
     p.position.set(px, 0.28, pz); p.castShadow = true; garden.add(p);
   }
   for (const rz of [-1.1, 1.1]){
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.05, 0.04), fenceM);
+    const rail = new THREE.Mesh(new rboxGeo(3.2, 0.05, 0.04, 0.013), fenceM);
     rail.position.set(0, 0.42, rz); garden.add(rail);
   }
   garden.position.set(-10, 0.61, -0.4);
