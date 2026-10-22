@@ -1512,3 +1512,13 @@ Block 2 INTERACTION Pass 3 (Follow-Kamera-Feinschliff + Label-Animation):
 - Review rv105 (Port 9025/9026, ?time=14:00 + ?time=22:30): Suche "Haus" + Enter -> inter sel="Shimeria Media Haus", glide laeuft, danach follow=true, cam auf dem Haus (x -10.5), Label opacity 1 sichtbar, 0 JS-Fehler. Screenshots rv105_sel/tag14/nacht geprueft.
 - village.html 1.472.779 -> 1.473.769 B. Zip beta98 (659.524 B).
 - Naechster Baustein: Block 1 DASHBOARD Pass 4 (Detail-Panel-Live-Stats) oder finaler Headless-Look-Vergleich gegen kanzie-referenz.png.
+
+## M105 / Beta 99 (05:30-05:44, 22.10.)
+Block 1 DASHBOARD Pass 4 (Detail-Panel-Live-Stats):
+- Dorf-Übersicht-Panel neu: Erfolgsquote (letzte 50 Läufe), Services (BUILDINGS.length) und Saison (aus #dashSeason button.on) ergänzt.
+- Auswahl-Panel: Zeile "Läufe heute" (Runs des Hauses seit 00:00) und relative Zeit je belegtem Lauf ("12m", grau, inline).
+- Overview-Panel refresh jetzt im Tick (alle 0,7 s, wenn keine Auswahl aktiv); dbg.panelLive=true.
+- Fix während Review: stray-Klammer im neuen rel.forEach (Syntaxfehler, das komplette Skript starb beim ersten rv-Lauf) - korrigiert.
+- Review rv106 (Port 9028, 14:00 + 22:30): Übersicht zeigt Erfolgsquote/Services/Saison, Auswahl-Panel "Läufe heute", Follow-Kamera + Label ok, Villager 6 auf Wegen, 0 JS-Fehler. Screenshots rv106_sel/tag14/nacht geprüft.
+- village.html 1.473.769 -> 1.475.346 B. Zip beta99.
+- Naechster Baustein: finaler Headless-Look-Vergleich gegen kanzie-referenz.png (Kanzie-Abnahme) oder Block 2 INTERACTION Nachzieh-Feinschliff, falls der Vergleich Lücken zeigt.

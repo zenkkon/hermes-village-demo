@@ -4248,11 +4248,16 @@ window.__pond = () => {
     const runs = feed.runs || [], jobs = feed.jobs || [];
     const act = runs.filter(r => r.state === "running").length;
     const last = runs[0];
+    const l50 = runs.slice(0, 50), fin = l50.filter(r => r.state === "finished").length, fl = l50.filter(r => r.state === "failed").length, tot = fin + fl;
+    const sb = document.querySelector("#dashSeason button.on");
     pnl.innerHTML = '<div class="tag">Dorf-Übersicht</div><h3>Hermes Village</h3>' +
       '<div class="row"><span>Aktive Läufe</span><span>' + act + '</span></div>' +
       '<div class="row"><span>Letzter Lauf</span><span>' + (last ? (last.job_name || "Lauf") : "—") + '</span></div>' +
       '<div class="row"><span>Status</span>' + (last ? '<span class="' + cls(last.state || "") + '">' + (last.state || "—") + '</span>' : '<span>—</span>') + '</div>' +
       '<div class="row"><span>Jobs</span><span>' + jobs.length + '</span></div>' +
+      '<div class="row"><span>Erfolgsquote</span><span>' + (tot ? Math.round(100 * fin / tot) + '%' : '–') + '</span></div>' +
+      '<div class="row"><span>Services</span><span>' + BUILDINGS.length + '</span></div>' +
+      '<div class="row"><span>Saison</span><span>' + (sb ? sb.textContent : "Sommer") + '</span></div>' +
       '<div class="row"><span>Wetter</span><span>' + (window.__weather && window.__weather() ? "Regen" : "Klar") + '</span></div>';
     pnl.style.display = "block";
   };
@@ -4351,6 +4356,9 @@ window.__pond = () => {
     const rel = feed.runs.filter(r => names.some(n => r.job_name === n)).slice(0, 4);
     let rows = '<div class="m">' + (u.role || "Hermes-Agent") + '</div>';
     rows += '<div class="row"><span>Jobs</span><span>' + matched.length + ' aktiv konfiguriert</span></div>';
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    const todayRuns = feed.runs.filter(r => names.some(n => r.job_name === n) && (r.started_at || 0) * 1000 >= today0.getTime());
+    rows += '<div class="row"><span>Läufe heute</span><span>' + todayRuns.length + '</span></div>';
     if (window.__souls){
       const s = window.__souls.find(x => x.b === obj);
       if (s){
@@ -4358,7 +4366,11 @@ window.__pond = () => {
         rows += '<div class="row"><span>Soul</span><span class="' + (s.mode === "failed" ? "failed" : (s.mode === "finished" ? "ok" : (s.mode === "running" ? "run" : ""))) + '">' + (lbl[s.mode] || s.mode) + '</span></div>';
       }
     }
-    rel.forEach(r => rows += '<div class="row"><span>' + r.job_name + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>');
+    const nowMs = Date.now();
+    rel.forEach(r => {
+      const ago = r.started_at ? Math.max(1, Math.round((nowMs - r.started_at * 1000) / 60000)) + "m" : "";
+      rows += '<div class="row"><span>' + r.job_name + (ago ? ' <span style="color:#9b9ba6;font-size:10px">' + ago + '</span>' : '') + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>';
+    });
     if (!rel.length) rows += '<div class="m">Keine belegten Läufe für dieses Haus.</div>';
     return rows;
   }
@@ -4444,6 +4456,22 @@ window.__pond = () => {
 })();
 
 
+
+// Stufe 96 / Beta 99: Block 1 DASHBOARD Pass 4 - Detail-Panel lebt: Overview-Panel refresh im Tick
+(function(){
+  let lastOv = 0;
+  const pt = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (pt) pt(dt, t);
+    if (t - lastOv > 0.7){ lastOv = t; if (window.__panelOverview && !(window.__selActive && window.__selActive())) window.__panelOverview(); }
+  };
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    d.panelLive = true;
+    return d;
+  };
+})();
 
 // Stufe 83 / Beta 85: neunzehnter Polier-Durchgang (Draht-Gluehbirnen + Glow-Pools)
 (function(){
