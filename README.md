@@ -1571,3 +1571,17 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review rv114 (Port 9043/9044): Gewitter-Button aktiviert, storm=true, Regen faellt; Blitz: flash sofort true, nach ~1 s false (rv114_flash.png, Himmel aufgehellt); nach Klar: 5 Pfuetzen gespawnt (rv114_puddles.png); Tag+Nacht sauber, 0 JS-Fehler.
 - village.html 1.481.342 -> 1.484.590 B. Zip beta104.
 - Naechster Baustein: DASHBOARD Pass 6 (Suche mit Kategorie-Chips + Hover-Highlight) oder WORLD Pass 7 (weitere Kanzie-Gap-Optik), je nach naechster Abnahme.
+
+## M110-M111 (22.10.2026) - Beta 104 + 105
+
+**Beta 104 (M110, Block 4 EXTRAS Pass 3 - Gewitter):** Wetter-Menue erweitert: Klar/Regen/Gewitter. Gewitter = dunklerer Himmel (stormTint 0x39414d), harter Regen (fall 22, staerkerer Winddrift), Blitz alle ~12 s (Himmel/Fog-Lerp + Sonnen- und Hemisphaeren-Boost, 0,32 s), Auto-Zyklus haelt Gewitter mindestens 3 Min. Nach Regen spawnen 4-8 Pfuetzen (abgeflachte Scheiben an Weg-Nodes, Gebaeude-Aussparung), verblassen in ~40 s. Dorf-Uebersicht zeigt Klar/Regen/Gewitter. Debug-Hooks: __weatherForce(v), __weatherFlash(). Review: Blitz an/aus getestet, 5 Pfuetzen nach Regen, Tag+Nacht sauber, 0 JS-Fehler.
+
+**Beta 105 (M111, Block 1 DASHBOARD Pass 6 - Suche mit Kategorie-Chips + Hover-Highlight):** Such-Dropdown erhaelt Chip-Zeile Alle/Haeuser/Jobs (aktiver Chip blau, Filter live; leere Auswahl zeigt "keine Treffer in ..."). Hover auf einem Treffer: erster Row hervorgehoben + blauer Puls-Ring (RingGeometry 1.4-1.75, opacity 0.5) unter dem zugehoerigen Haus in der 3D-Szene, pulsiert im extraTick, verschwindet bei mouseleave/Dropdown-Zu. Debug: __dbg().search = {chip, hl}. Review: Chip-Filter verifiziert (Jobs -> nur Job-Treffer, Haeuser -> nur Haeuser), Ring an/aus verifiziert (dbg .search.hl), Tag+Nacht-Screenshots sauber, keine JS-Fehler in zwei Headless-Laufen (Workspace-RAM-Kills haben Teilausgaben abgeschnitten, Funktionsnachweise doppelt bestaetigt). 1.487.231 B.
+
+## M112 (22.10.2026) - Beta 106
+
+**Beta 106 (M112, Block 5 WORLD Pass 7 - Kanzie-Rest-Luecken):** Drei Nachzieher aus OPTIK-GAP: (1) Kamera naeher: dist 30 -> 27, rotX 0.74 -> 0.72 (Insel fuellt den Rahmen wie bei Kanzie). (2) Rahmung: Vignette staerker (Start 58/52% -> 50%, Rand-Alpha .45/.5 -> .62, beide #vig-Regeln konsistent). (3) Rim-Kontrast: kuehles Gegenlicht (DirectionalLight 0xbfd8ff, pos -14/10/-18), Intensitaet an Tag/Nacht gekoppelt (0.1 + Tag*0.22 + Daemmerung*0.12) fuer Kanten-Glanz an Gebaeuden. village.html 1.487.231 -> 1.487.560 B. Review: Tag 14:00 + Nacht 22:30 per CDP-Screenshot angesehen (rv116_tag14/nacht.png): Kamera naeher, Vignette sichtbar, Nacht warm und sauber, kein Layout-Bruch; pageerror-Listener in vier Headless-Laufen stumm (keine JS-Fehler beobachtet). Workspace-RAM-Kills (OOM-Budget 3072 MiB) haben dbg-Ausgabe und Teillauefe abgeschnitten; Screenshots sind der Funktionsnachweis dieser Phase. Naechster Baustein: LIFE Pass 5 (Idle-Gruppen-Verfeinerung) oder DASHBOARD Pass 7.
+
+## M113 / Beta 107 (22.10.2026, Phase 10:00)
+- Block 3 LIFE Pass 5: Chat-Sprechblasen ueber sprechenden Villagern (DOM, Kanzie-Stil: weisse Blase mit "...", projiziert ueber dem Kopf, sanftes Bobbing) + Idle-Schau-umher (sanftes Schwenken der Blickrichtung im Stand).
+- Review: Bubble-Nachweis erzwungen (Chat-Paar bei der Plaza) - 2 Blasen sichtbar im Screenshot, DOM-Layer 2 Kinder, dbg.lifeBubbles=2; organische Seeks im Soak bestaetigt (4 bzw. 2); Tag- und Nacht-Screenshots sauber, 0 JS-Fehler (nur bekannter Feed-404).

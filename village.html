@@ -2090,6 +2090,9 @@ function lifeStep(rb, dt, t, crowd){
   } else {
     robotSetAnim(rb, "idle");
     p.y = 0;
+    // Stufe 99 / Beta 107: Block 3 LIFE Pass 5 - Idle-Schau-umher (sanftes Schwenken)
+    if (rb.wob == null) rb.wob = Math.random() * 10;
+    rb.g.rotation.y += Math.sin(t * 0.7 + rb.wob) * 0.45 * dt;
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const sx = p.x - o.g.position.x, sz = p.z - o.g.position.z, sd = Math.hypot(sx, sz);
@@ -2734,6 +2737,40 @@ window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: 
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
+// Stufe 99 / Beta 107: Block 3 LIFE Pass 5 - Chat-Sprechblasen (DOM, Kanzie-Stil)
+(function(){
+  let layer = document.getElementById("chatBubbles");
+  if (!layer){
+    layer = document.createElement("div");
+    layer.id = "chatBubbles";
+    layer.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden;";
+    document.body.appendChild(layer);
+  }
+  const bub = [];
+  window.__lifeBubbles = bub;
+  const V = new THREE.Vector3();
+  const prevHT = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevHT) prevHT(dt, t);
+    const talking = villagers.filter(v => v.life && v.life.chat && v.g);
+    while (bub.length > talking.length){ const d = bub.pop(); d.remove(); }
+    while (bub.length < talking.length){
+      const d = document.createElement("div");
+      d.style.cssText = "position:absolute;transform:translate(-50%,-100%);background:#fffdf6;border:1px solid rgba(60,50,40,.28);border-radius:10px;padding:3px 9px 4px;font:bold 11px/1.25 Arial,sans-serif;color:#8a7f6e;box-shadow:0 3px 10px rgba(20,30,40,.2);white-space:nowrap;";
+      d.textContent = "…";
+      layer.appendChild(d); bub.push(d);
+    }
+    talking.forEach((v, i) => {
+      const d = bub[i];
+      V.set(v.g.position.x, 2.3 + Math.sin(t * 3 + i * 1.7) * 0.06, v.g.position.z).project(camera);
+      d.style.left = ((V.x * 0.5 + 0.5) * innerWidth) + "px";
+      d.style.top = ((-V.y * 0.5 + 0.5) * innerHeight) + "px";
+      d.style.opacity = "0.94";
+    });
+  };
+  const dbgPrevB = window.__dbg;
+  window.__dbg = function(){ const d = dbgPrevB ? dbgPrevB() : {}; d.lifeBubbles = window.__lifeBubbles.length; return d; };
+})();
 tick(); setInterval(tick, 30000);
 
 // ===== Stufe 05: Draehte mit Pulsen, Notice Board, Kueken, Feuerwerk, Details =====
