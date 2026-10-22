@@ -164,13 +164,14 @@ function updateDayNight(){
 
 // Stufe 85 / Beta 87: WORLD-Block - Blocky-Sweep, 60 BoxGeometry -> rboxGeo (Clay-Rundungen)
 // Stufe 86 / Beta 88: WORLD-Block Pass 2 - Segment-Bump (29 Kugeln, 32 Zylinder, 2 Kegel glatter)
+// Stufe 95 / Beta 97: Block 5 WORLD Pass 5 - Farbharmonie Erdschichten + glattere Inselform
 // Insel mit Erdschichten-Querschnitt
 const layers = [
-  {r: 20.5, y: 0.0, h: 1.2, c: 0x6fb048},
-  {r: 20.9, y: -0.7, h: 0.7, c: 0x6fb048},
-  {r: 19.8, y: -1.4, h: 1.6, c: 0x8a6242},
-  {r: 19.0, y: -3.0, h: 1.4, c: 0xa8845c},
-  {r: 18.0, y: -4.4, h: 1.4, c: 0x6e655c},
+  {r: 20.5, y: 0.0, h: 1.2, c: 0x67ab4b},
+  {r: 20.9, y: -0.7, h: 0.7, c: 0x67ab4b},
+  {r: 19.8, y: -1.4, h: 1.6, c: 0x8a6649},
+  {r: 19.0, y: -3.0, h: 1.4, c: 0xa8876a},
+  {r: 18.0, y: -4.4, h: 1.4, c: 0x6f6961},
 ];
 const worldLamps = [];
 const BUILDINGS = [];
@@ -179,7 +180,7 @@ layers.forEach(L => {
   const tm = new THREE.MeshStandardMaterial({color: L.c, roughness: 0.95});
   window.__terrainMats.push({mat: tm, day: L.c});
   const m = new THREE.Mesh(
-    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 44),
+    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 56),
     tm);
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);

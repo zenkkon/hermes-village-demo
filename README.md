@@ -1494,3 +1494,12 @@ meldet season + winterSleet. Review rv103 (Port 9021): herbst-Regen steigt (w 0.
 nach 8s Ramp), winter auto target 0, manuell winterSleet=true, life 6 Villager auf
 Routen (pathNodes 85/edges 101), 0 JS-Fehler. Screenshots rv103_regen/rv103_winter/
 rv103_tag14 angesehen. 1.471.790 -> 1.472.686 B.
+
+## M103 / Beta 97 (04:30-04:45, 22.10.)
+Block 5 WORLD Pass 5 (Farbharmonie + Inselform): Erdschichten entsaettigt und
+waermer abgestimmt (Gras 0x6fb048 -> 0x67ab4b, Erde 0x8a6242 -> 0x8a6649,
+Sand 0xa8845c -> 0xa8876a, Fels 0x6e655c -> 0x6f6961, Deckmat 1528 unveraendert);
+CylinderGeometry 44 -> 56 Radialsegmente fuer glattere Inselform. Review rv104
+(Port 9022): terrainTint=5, pathNodes=85, 0 JS-Fehler, Tag/Nacht intakt.
+Screenshots rv104_tag14/rv104_nacht angesehen (weicheres Grasgruen sichtbar).
+1.472.686 -> 1.472.779 B.
