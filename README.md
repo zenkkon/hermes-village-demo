@@ -1472,3 +1472,14 @@ Kleinteile (Beeren 0.35 -> 0.55, Blueten/Konfetti 0.5 -> 0.65); Wasser/Glas/Lamp
 bewusst glaenzend. Review rv101 (Port 9019): pol17/18/19 = 53/1929/20, life 6 Villager,
 0 JS-Fehler, Saison/Tag-Nacht intakt. Screenshots rv101_tag14/rv101_nacht angesehen.
 1.469.177 -> 1.469.281 B.
+
+## M101 / Beta 95 (03:30-03:45, 22.10.)
+Block 3 LIFE Pass 2 (Villager-Wegnetz): layPath schneidet jetzt Kurvenstationen mit
+(jede 4.) in LIFE.chains; daraus baut Stufe 05b ein Weg-Netz (85 Nodes, 101 Edges):
+Kettenkanten + Plaza-Knoten an Kettenenden nahe Platz + Verbinder-Kopplung der
+Kettenenden an naechstgelegene Netz-Nodes (<=3.4u). Villager bekommen bei neuem Ziel
+eine BFS-Route (lifeRoute) und laufen Wegpunkt fuer Wegpunkt entlang der Pfade statt
+durchs Gras; Endstueck bleibt der reale Zielpunkt. Robots unveraendert.
+Review rv102 (Port 9020): pathNodes=85/pathEdges=101, Villager-Route aktiv (Probe),
+0 JS-Fehler, Tag/Nacht intakt. Screenshots rv102_tag14/rv102_nacht angesehen.
+1.469.281 -> 1.471.790 B.

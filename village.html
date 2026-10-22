@@ -1927,7 +1927,7 @@ const LIFE = {
     {x: -4, z: -5}, {x: 10.5, z: -8.5}, {x: -7.5, z: -9}, {x: 14.5, z: 1},
     {x: 1.5, z: 6.5}, {x: -6, z: 4.5}
   ],
-  obstacles: []
+  obstacles: [], chains: [], chainEnds: [], nodes: [], edges: []
 };
 BUILDINGS.forEach(bb => LIFE.obstacles.push({x: bb.position.x, z: bb.position.z, r: 2.1}));
 function spawnVillager(){
@@ -1948,12 +1948,47 @@ function spawnVillager(){
   if (rec.act.walk) rec.act.walk.play();
   scene.add(g); villagers.push(rec);
 }
+function lifeNearestNode(x, z){
+  let best = -1, bd = 1e9;
+  for (let i = 0; i < LIFE.nodes.length; i++){
+    const n = LIFE.nodes[i], d = Math.hypot(n.x - x, n.z - z);
+    if (d < bd){ bd = d; best = i; }
+  }
+  return best;
+}
+function lifeRoute(fx, fz, tx, tz){
+  if (!LIFE.nodes || LIFE.nodes.length < 2) return [];
+  const a = lifeNearestNode(fx, fz), b = lifeNearestNode(tx, tz);
+  if (a < 0 || b < 0 || a === b) return [];
+  const prev = {}, q = [a], seen = new Set([a]);
+  while (q.length){
+    const cur = q.shift();
+    if (cur === b) break;
+    for (const [u, v] of LIFE.edges){
+      const nxt = (u === cur) ? v : ((v === cur) ? u : -1);
+      if (nxt < 0 || seen.has(nxt)) continue;
+      seen.add(nxt); prev[nxt] = cur; q.push(nxt);
+    }
+  }
+  if (!seen.has(b)) return [];
+  const path = [];
+  for (let c = b; c !== undefined; c = prev[c]) path.push(c);
+  path.reverse();
+  if (path.length && path[0] === a) path.shift();
+  return path.map(i => LIFE.nodes[i]);
+}
+// Stufe 93 / Beta 95: Block 3 LIFE Pass 2 - Villager laufen entlang des Weg-Netzes
 function lifeStep(rb, dt, t, crowd){
   if (!rb.life) rb.life = {mode: "walk", hold: rb.villager ? (1.5 + Math.random()*3) : (7 + Math.random()*9)};
   const L = rb.life, p = rb.g.position;
   const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
   const d = Math.hypot(dx, dz);
   if (d > 0.2){
+    if (rb.villager && rb.route && rb.route.length){
+      const nxt = rb.route[0];
+      if (Math.hypot(nxt.x - p.x, nxt.z - p.z) < 0.55) rb.route.shift();
+      if (rb.route.length) rb.target.set(rb.route[0].x, 0, rb.route[0].z);
+    }
     const bd = d || 1;
     const bx = dx/bd, bz = dz/bd;
     let vx = bx, vz = bz, yields = 0;
@@ -2004,6 +2039,7 @@ function lifeStep(rb, dt, t, crowd){
     if (L.hold <= 0){
       if (rb.villager || Math.random() < 0.6){
         const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
         rb.target.set(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8);
         L.hold = L.vil ? (1.5 + Math.random()*3.5) : (4 + Math.random()*5);
       } else {
@@ -2621,7 +2657,7 @@ const COTTAGE53_B64 = "Z2xURgIAAADYXAAAUDAAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6I
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}))}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), pathNodes: LIFE.nodes.length, pathEdges: LIFE.edges.length, crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}))}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
@@ -2687,9 +2723,11 @@ tick(); setInterval(tick, 30000);
   function layPath(p0, p1, p2, seed){
     const n = Math.max(10, Math.round(Math.hypot(p2[0]-p0[0], p2[1]-p0[1]) * 3.2));
     let prev = null;
+    const chain = []; LIFE.chains.push(chain);
     for (let i = 0; i <= n; i++){
       const t = i / n;
       const pt = qPoint(p0, p1, p2, t);
+      if (i % 4 === 0) chain.push({x: pt[0], z: pt[1]});
       if (prev){
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
         const pm = pathMat.clone();
@@ -2736,6 +2774,28 @@ tick(); setInterval(tick, 30000);
     const dxa = qb[0]-qa[0], dza = qb[1]-qa[1], Lq = Math.hypot(dxa, dza) || 1;
     const side = (k % 4 === 0) ? 1 : -1;
     layPath(qa, [mxq - (dza/Lq)*0.8*side, mzq + (dxa/Lq)*0.8*side], qb, k + 31);
+  }
+  // Stufe 93 / Beta 95: Weg-Netz aus den Kurven fuer Villager-Routen
+  for (const ch of LIFE.chains){
+    const start = LIFE.nodes.length;
+    for (const ptN of ch) LIFE.nodes.push({x: ptN.x, z: ptN.z});
+    for (let i = start + 1; i < LIFE.nodes.length; i++) LIFE.edges.push([i - 1, i]);
+    LIFE.chainEnds.push([start, LIFE.nodes.length - 1]);
+  }
+  LIFE.plazaNode = LIFE.nodes.length; LIFE.nodes.push({x: 0, z: 0});
+  for (const [a, b] of LIFE.chainEnds){
+    const nb = LIFE.nodes[b];
+    if (Math.hypot(nb.x, nb.z) < 4) LIFE.edges.push([b, LIFE.plazaNode]);
+    for (const c of [a, b]){
+      const pp = LIFE.nodes[c];
+      let best = -1, bd = 3.4;
+      for (let i = 0; i < LIFE.nodes.length; i++){
+        if (i >= a && i <= b) continue;
+        const q = LIFE.nodes[i], dd = Math.hypot(pp.x - q.x, pp.z - q.z);
+        if (dd < bd){ bd = dd; best = i; }
+      }
+      if (best >= 0) LIFE.edges.push([c, best]);
+    }
   }
   const plaza = new THREE.Mesh(new THREE.CircleGeometry(2.3, 26), new THREE.MeshStandardMaterial({color: 0xc9bfa6, roughness: 1}));
   plaza.rotation.x = -Math.PI/2; plaza.position.y = 0.615; plaza.receiveShadow = true;
