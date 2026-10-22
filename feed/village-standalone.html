@@ -340,9 +340,10 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   // Dach mit Ueberhang, zweiteilig (Kranz + Kegel); Ton pro Haus leicht variiert
   const roofMat = matWall(roof);
   roofMat.color.offsetHSL((((x*7 + z*3) % 5) - 2) * 0.008, 0, (((x*3 + z*11) % 7) - 3) * 0.022);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 8), roofMat);
+  // Stufe 114 / Beta 118: Block 5 WORLD Pass 10 - Silhouetten weicher (mehr Segmente)
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 16), roofMat);
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
-  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 8), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 16), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
   // Tuer + Fenster vorn und seitlich
   const door = new THREE.Mesh(new rboxGeo(w*0.18, h*0.42, 0.08, 0.024), matWall(0x5a3c28));
@@ -441,7 +442,7 @@ function hotel(x, z){
     const winS = winPlane(0.5, 0.62); winS.position.set(w/2 + 0.05, f*fh + fh*0.55, 0); winS.rotation.y = Math.PI/2; g.add(winS);
   }
   // Flaches Walmdach
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 8), matWall(0x6a4fa3));
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 16), matWall(0x6a4fa3));
   roof.position.y = floors*fh + 0.5; roof.rotation.y = Math.PI/4; roof.castShadow = true; roof.name = "mh_roof"; g.add(roof);
   // Leuchtschild
   const cv = document.createElement("canvas"); cv.width = 512; cv.height = 96;
@@ -465,7 +466,7 @@ const media = hotel(-10.5, 3.5); window.__mhSwap = media;
 // 5) Cron Gatehouse: Uhrturm mit gehender Uhr
 function clockTower(x, z){
   const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 10), matWall(0x9aa0ac));
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 18), matWall(0x9aa0ac));
   base.position.y = 2.8; base.castShadow = true; base.receiveShadow = true; g.add(base); base.name = "gt_base";
   const face = new THREE.Mesh(new THREE.CircleGeometry(0.78, 24),
     new THREE.MeshStandardMaterial({color: 0xfff6e6, emissive: 0xffe9b0, emissiveIntensity: 0.15}));
@@ -477,7 +478,7 @@ function clockTower(x, z){
   hourH.geometry.translate(0, 0.17, 0); hourH.position.set(0, 4.9, 1.27); g.add(hourH);
   const minH = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.03), handM);
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
-  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 8), matWall(0x3f6fb5));
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
   const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12),
     new THREE.MeshStandardMaterial({color: 0xffd60a, emissive: 0xffd60a, emissiveIntensity: 0.6}));
