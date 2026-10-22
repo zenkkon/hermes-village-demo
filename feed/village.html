@@ -207,6 +207,22 @@ layers.forEach(L => {
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);
 });
+// Stufe 110 / Beta 110: WORLD Pass 8 - Grasfarb-Patches (weiche Tonabstufungen)
+(function grassPatches(){
+  const gCols = [0x3e8f3e, 0x58a34a, 0x2f7a37, 0x63b054];
+  const spots = [
+    [-9.5, 3.5, 2.6], [6.5, 5.5, 2.2], [-5.5, -8.5, 2.4], [11.5, -7.5, 2.0],
+    [-14.5, 6.5, 2.1], [2.5, 9.5, 1.9], [14.5, 3.5, 1.8], [-11.5, -6.5, 2.2],
+    [8.5, 11.5, 1.7], [-2.5, -13.5, 2.0]
+  ];
+  window.__p8 = {patches: 0};
+  spots.forEach((p, i) => {
+    const m = new THREE.Mesh(new THREE.CircleGeometry(p[2], 16),
+      new THREE.MeshStandardMaterial({color: gCols[i % 4], roughness: 1, transparent: true, opacity: 0.22, depthWrite: false}));
+    m.rotation.x = -Math.PI / 2; m.position.set(p[0], 0.012 + i * 0.0005, p[1]);
+    m.renderOrder = 1; scene.add(m); window.__p8.patches++;
+  });
+})();
 const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
   new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.08, metalness: 0.35, envMapIntensity: 1.2}));
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
@@ -289,6 +305,16 @@ function rboxGeo(w, h, d, r){
   g.translate(0, -(h - 2 * r) / 2, 0);
   return weldGeo(g);
 }
+function lumpyCone(g, seed, amt){
+  const pa = g.attributes.position;
+  for (let i = 0; i < pa.count; i++){
+    const X = pa.getX(i), Z = pa.getZ(i);
+    const f = 1 + amt * Math.sin(X * 2.2 + seed * 1.3) * Math.cos(Z * 1.8 - seed * 0.7);
+    pa.setXYZ(i, X * f, pa.getY(i), Z * f);
+  }
+  g.computeVertexNormals();
+  return g;
+}
 // Organische Kugel: deterministische Delle + Stauchung (Felsen, Kronen)
 function lumpySphere(r, seed, squash){
   const g = new THREE.SphereGeometry(r, 12, 9);
@@ -313,9 +339,9 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   // Dach mit Ueberhang, zweiteilig (Kranz + Kegel); Ton pro Haus leicht variiert
   const roofMat = matWall(roof);
   roofMat.color.offsetHSL((((x*7 + z*3) % 5) - 2) * 0.008, 0, (((x*3 + z*11) % 7) - 3) * 0.022);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 4), roofMat);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 8), roofMat);
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
-  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 4), roofMat);
+  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 8), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
   // Tuer + Fenster vorn und seitlich
   const door = new THREE.Mesh(new THREE.BoxGeometry(w*0.18, h*0.42, 0.08), matWall(0x5a3c28));
@@ -414,7 +440,7 @@ function hotel(x, z){
     const winS = winPlane(0.5, 0.62); winS.position.set(w/2 + 0.05, f*fh + fh*0.55, 0); winS.rotation.y = Math.PI/2; g.add(winS);
   }
   // Flaches Walmdach
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 4), matWall(0x6a4fa3));
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 8), matWall(0x6a4fa3));
   roof.position.y = floors*fh + 0.5; roof.rotation.y = Math.PI/4; roof.castShadow = true; roof.name = "mh_roof"; g.add(roof);
   // Leuchtschild
   const cv = document.createElement("canvas"); cv.width = 512; cv.height = 96;
@@ -1246,9 +1272,9 @@ function tree(x, z, s, leaf){
   trunk.position.y = 0.35*s; trunk.castShadow = true; g.add(trunk);
   const m1 = new THREE.MeshStandardMaterial({color: leaf, roughness: 0.9});
   (window.__foliageMats = window.__foliageMats || []).push({mat: m1, base: new THREE.Color(leaf)});
-  const crown = new THREE.Mesh(new THREE.ConeGeometry(0.55*s, 1.0*s, 14), m1);
+  const crown = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(0.55*s, 1.0*s, 14), x * 3.1 + z, 0.10), m1);
   crown.position.y = 1.0*s; crown.castShadow = true; g.add(crown);
-  const crown2 = new THREE.Mesh(new THREE.ConeGeometry(0.38*s, 0.8*s, 12), m1);
+  const crown2 = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(0.38*s, 0.8*s, 12), x * 1.7 + z * 2.3, 0.12), m1); (window.__p8 = window.__p8 || {}); (() => { const pa = crown.geometry.attributes.position; let lo = 1e9, hi = -1e9; for (let i = 0; i < pa.count; i++){ const X = pa.getX(i); if (X < lo) lo = X; if (X > hi) hi = X; } window.__p8.crownSpread = +(hi - lo).toFixed(3); window.__p8.crownJit = true; })();
   crown2.position.y = 1.55*s; crown2.castShadow = true; g.add(crown2);
   g.position.set(x, 0, z);
   g.rotation.y = (x * 13 + z * 7) % 6;
