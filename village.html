@@ -29,7 +29,7 @@
     transform:translate(-50%,-120%);pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
   #bubble .who{font:700 10px/1 -apple-system,sans-serif;letter-spacing:.08em;color:#c2601e;text-transform:uppercase}
   #vig{position:fixed;inset:0;pointer-events:none;z-index:4;
-    background:radial-gradient(ellipse at center, transparent 58%, rgba(8,10,22,.45) 100%)}
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(8,10,22,.62) 100%)}
 
   /* ===== Stufe 59 / Beta 62: World-Pack-Dashboard (Frosted Glass) ===== */
   .glass{background:rgba(18,20,28,.55);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);
@@ -74,7 +74,7 @@
   #dashUser{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#f0a040,#c2601e);
     color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
   #dashKpis{position:fixed;top:56px;left:12px;display:flex;gap:8px;z-index:5}
-#vig{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center, rgba(0,0,0,0) 52%, rgba(3,7,14,.5) 100%)}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(3,7,14,.62) 100%)}
   .kpi{width:118px;padding:8px 10px}
   .kpi .l{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9b9ba6}
   .kpi .l svg{width:11px;height:11px;vertical-align:-1px;margin-right:4px}
@@ -138,6 +138,8 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
+// Stufe 99 / Beta 106: WORLD Pass 7 Rim-Kontrast (Kanzie-Gap: Kantenglanz) - kuehles Gegenlicht
+const rimL = new THREE.DirectionalLight(0xbfd8ff, 0.25); rimL.position.set(-14, 10, -18); scene.add(rimL);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
@@ -162,6 +164,7 @@ function updateDayNight(){
   sun.color.set(0xfff6ec).lerp(new THREE.Color(0xffab5e), Math.min(1, dusk * 1.1));
   moon.position.set(-20, 18, -10);
   moon.intensity = (1 - day) * 0.44;
+  rimL.intensity = 0.1 + day * 0.22 + dusk * 0.12;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day).lerp(new THREE.Color(0xd98a5a), dusk * 0.3);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
   if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day).lerp(new THREE.Color(0x6f8a3a), dusk * 0.25));
@@ -2145,7 +2148,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.74, dist = 30;
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand)
 let camC = null; // __look (Glide + Follow) kommt im INTERACTION-Block
 // Pointer-Steuerung kommt im INTERACTION-Block (Stufe 60): Links-Ziehen = Pan, Rechts-Ziehen = Rotate
 
