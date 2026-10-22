@@ -2091,11 +2091,33 @@ function lifeStep(rb, dt, t, crowd){
         if (od < 0.55){ vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; }
       }
     }
+    // Stufe 111 / Beta 111: Block 3 LIFE Pass 6 - Head-on-Erkennung via Ist-Geschwindigkeit,
+    // beide lenken gleichsinnig lateral -> sie passieren sich statt zu blockieren
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z, od = Math.hypot(ox, oz);
+      if (od > 0.01 && od < 2.2){
+        const ovx = o.pvx || 0, ovz = o.pvz || 0;
+        if (bx * ovx + bz * ovz < -0.25 && (bx * ox + bz * oz) / od > 0.4){
+          window.__lifeStat && (window.__lifeStat.headOn = (window.__lifeStat.headOn || 0) + 1);
+          const s = (2.2 - od) / 2.2;
+          vx += -bz * s * 1.5; vz += bx * s * 1.5;
+        }
+      }
+    }
     for (const ob of LIFE.obstacles){
       const ox = p.x - ob.x, oz = p.z - ob.z, od = Math.hypot(ox, oz);
       if (od > 0.001 && od < ob.r + 0.9){
         const push = (ob.r + 0.9 - od) / (ob.r + 0.9);
         vx += (ox/od) * push * 2.4; vz += (oz/od) * push * 2.4;
+      }
+    }
+    // Stufe 111: Lookahead - 1.4 vor der Laufrichtung pruefen, tangential ausweichen
+    for (const ob of LIFE.obstacles){
+      const ax = p.x + bx * 1.4 - ob.x, az = p.z + bz * 1.4 - ob.z, ad = Math.hypot(ax, az);
+      if (ad > 0.001 && ad < ob.r + 0.7){
+        const push = (ob.r + 0.7 - ad) / (ob.r + 0.7);
+        vx += (-az / ad) * push * 1.1; vz += (ax / ad) * push * 1.1;
       }
     }
     {
@@ -2106,8 +2128,10 @@ function lifeStep(rb, dt, t, crowd){
     window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
     const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1);
+    const px0 = p.x, pz0 = p.z;
     p.x += (vx/vl) * Math.min(sp, d);
     p.z += (vz/vl) * Math.min(sp, d);
+    rb.pvx = (p.x - px0) / Math.max(dt, 1e-4); rb.pvz = (p.z - pz0) / Math.max(dt, 1e-4);
     const want = Math.atan2(vx, vz) + Math.PI;
     const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
     rb.g.rotation.y += diff * Math.min(1, dt*8);
@@ -2160,8 +2184,8 @@ function lifeStep(rb, dt, t, crowd){
 window.__spawnRobot = spawnRobot;
 window.__lifeSpeed = 1;
 window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
-window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0});
-window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
+window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0});
+window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].route = []; villagers[1].route = []; villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
 function robotSetAnim(rec, name){
   if (!rec.mixer || !rec.act) return;
   const next = rec.act[name]; if (!next || rec.cur === name) return;
