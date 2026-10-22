@@ -4268,20 +4268,21 @@ window.__pond = () => {
 })();
 
 
+// Stufe 96 / Beta 98: Block 2 INTERACTION Pass 3 - Kamera gleitet bei Auswahl erst hin (Hoehenbogen), dann Follow; Label schwebt und blendet ein
 // ===== Stufe 60 / Beta 63: INTERACTION-Block (Drag-Pan, Right-Drag-Rotate, Zoom/Pinch, Klick → Glide + Follow + Ring + Label + Live-Panel) =====
 (function(){
   const css = document.createElement("style");
-  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap}';
+  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .28s ease;animation:sellBob 2.6s ease-in-out infinite}@keyframes sellBob{0%,100%{margin-top:0}50%{margin-top:-5px}}#selLabel::after{content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:6px;border-radius:50%;background:#f0a040;transform:translateX(-50%);box-shadow:0 0 8px rgba(240,160,64,.7)}';
   document.head.appendChild(css);
 
   const DEF = {x:0, y:0.5, z:0};
-  let glide = null, follow = null, sel = null;
+  let glide = null, follow = null, followPending = null, sel = null;
   const cur = () => camC || DEF;
 
   // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
   window.__look = (x, y, z) => {
-    if (x == null){ follow = null; glide = null; camC = null; return; }
-    follow = null;
+    if (x == null){ follow = null; followPending = null; glide = null; camC = null; return; }
+    follow = null; followPending = null;
     const c = cur();
     glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: 900};
   };
@@ -4299,7 +4300,7 @@ window.__pond = () => {
       pinchDist0 = dist; dragMode = "pinch"; return;
     }
     dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
-    px = e.clientX; py = e.clientY; moved = 0; follow = null;
+    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null;
   });
   addEventListener("pointermove", e => {
     if (!pointers.has(e.pointerId)) return;
@@ -4377,7 +4378,10 @@ window.__pond = () => {
     label.textContent = objName(obj);
     document.body.appendChild(label);
     sel = {obj, ring, label};
-    follow = {obj};
+    const c0 = cur();
+    glide = {fx: c0.x, fy: c0.y, fz: c0.z, tx: obj.position.x, ty: (obj.position.y || 0) + 0.5, tz: obj.position.z, t0: performance.now(), dur: 900};
+    followPending = obj;
+    requestAnimationFrame(() => { label.style.opacity = 1; });
     refreshPanel();
   }
   window.__selActive = () => !!sel;
@@ -4406,12 +4410,14 @@ window.__pond = () => {
     if (glide){
       const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
       const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2, z: glide.fz + (glide.tz - glide.fz) * e2};
-      if (p >= 1) glide = null;
+      const arc = Math.sin(p * Math.PI) * 0.5;
+      camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
+      if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
     } else if (follow && follow.obj){
       const o = follow.obj.position, c = cur();
       const ny = (o.y || 0) + 0.5;
-      camC = {x: c.x + (o.x - c.x) * 0.1, y: c.y + (ny - c.y) * 0.1, z: c.z + (o.z - c.z) * 0.1};
+      const f = 1 - Math.pow(0.005, Math.min(dt, 0.1));
+      camC = {x: c.x + (o.x - c.x) * f, y: c.y + (ny - c.y) * f, z: c.z + (o.z - c.z) * f};
     }
     if (sel){
       const s = 1 + 0.14 * Math.sin(t * 5);

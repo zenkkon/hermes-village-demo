@@ -1503,3 +1503,12 @@ CylinderGeometry 44 -> 56 Radialsegmente fuer glattere Inselform. Review rv104
 (Port 9022): terrainTint=5, pathNodes=85, 0 JS-Fehler, Tag/Nacht intakt.
 Screenshots rv104_tag14/rv104_nacht angesehen (weicheres Grasgruen sichtbar).
 1.472.686 -> 1.472.779 B.
+
+## M104 / Beta 98 (05:00-05:24, 22.10.)
+Block 2 INTERACTION Pass 3 (Follow-Kamera-Feinschliff + Label-Animation):
+- Auswahl per Suche/Klick: Kamera gleitet jetzt zuerst mit easeInOut + leichtem Hoehenbogen (arc = sin(p*pi)*0.5) zum Objekt, danach koppelte sich das Follow (followPending) mit frame-rate-unabhaengigem Damping (1 - 0.005^dt, capped dt 0.1) statt fixem 0.1-Lerp.
+- Label #selLabel: schwebt (sellBob keyframes, margin-top 0..-5px), blendet beim Auswaehlen ein (opacity transition .28s, rAF-Trigger), Ankerpunkt als leuchtender oranger Punkt (::after, glow).
+- Pointerdown, __look(null) und __look(x) loesen jetzt auch followPending.
+- Review rv105 (Port 9025/9026, ?time=14:00 + ?time=22:30): Suche "Haus" + Enter -> inter sel="Shimeria Media Haus", glide laeuft, danach follow=true, cam auf dem Haus (x -10.5), Label opacity 1 sichtbar, 0 JS-Fehler. Screenshots rv105_sel/tag14/nacht geprueft.
+- village.html 1.472.779 -> 1.473.769 B. Zip beta98 (659.524 B).
+- Naechster Baustein: Block 1 DASHBOARD Pass 4 (Detail-Panel-Live-Stats) oder finaler Headless-Look-Vergleich gegen kanzie-referenz.png.
