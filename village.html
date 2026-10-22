@@ -40,6 +40,11 @@
   #dashSearch{flex:0 0 170px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
     background:rgba(255,255,255,.08);color:#ececf1;font-size:12px;padding:0 10px;outline:none}
   #dashSearch::placeholder{color:#9b9ba6}
+  /* Stufe 99 / Beta 105: Block 1 DASHBOARD Pass 6 - Kategorie-Chips + Hover-Highlight */
+  #dashSuggest .chips{display:flex;gap:4px;padding:5px 6px 7px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:2px}
+  #dashSuggest .chips button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#9b9ba6;border-radius:6px;font-size:10px;padding:2px 9px;cursor:pointer}
+  #dashSuggest .chips button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
+  #dashSuggest .s.hov{background:rgba(255,255,255,.08)}
   #dashSuggest{position:fixed;z-index:9;min-width:220px;max-height:214px;overflow:hidden;border-radius:10px;
     background:rgba(18,20,28,.78);backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.14);
     padding:4px;font-size:12px;color:#e8e8ee}
@@ -4266,24 +4271,44 @@ window.__pond = () => {
     top.querySelectorAll("#dashSeason button").forEach(x => x.classList.toggle("on", x === b));
     if (window.__seasonSet) window.__seasonSet(b.dataset.s);
   });
+  // Stufe 99 / Beta 105: Block 1 DASHBOARD Pass 6 - Suche mit Kategorie-Chips + Hover-Highlight (Ring pulsiert)
   // Suche: Live-Treffer, Klick/Enter springt hin und waehlt aus (Beta 90)
   const inp = top.querySelector("#dashSearch");
   const vig = document.createElement('div'); vig.id = 'vig'; document.body.appendChild(vig);
   const sug = document.createElement("div"); sug.id = "dashSuggest"; sug.style.display = "none";
   document.body.appendChild(sug);
-  function searchHits(q){
+  let sugChip = "alle";
+  function searchHits(q, chip){
     q = q.toLowerCase(); if (!q) return [];
+    chip = chip || sugChip;
     const hits = [];
     for (const b of BUILDINGS){
       const n = (b.userData.name || "").toLowerCase();
       const js = (b.userData.jobs || []).map(k => (k || "").toLowerCase());
-      if (n.indexOf(q) >= 0) hits.push({b, tag: "Haus"});
-      else if (js.some(k => k.indexOf(q) >= 0)) hits.push({b, tag: "Job"});
+      let tag = null;
+      if (n.indexOf(q) >= 0) tag = "Haus";
+      else if (js.some(k => k.indexOf(q) >= 0)) tag = "Job";
+      if (!tag) continue;
+      if (chip === "haeuser" && tag !== "Haus") continue;
+      if (chip === "jobs" && tag !== "Job") continue;
+      hits.push({b, tag});
       if (hits.length >= 6) break;
     }
     return hits;
   }
-  function hideSug(){ sug.style.display = "none"; }
+  let hlMesh = null;
+  function showHl(b){
+    const scn = (typeof scene === "undefined") ? null : scene;
+    if (!scn) return;
+    if (!hlMesh){
+      hlMesh = new THREE.Mesh(new THREE.RingGeometry(1.4, 1.75, 28), new THREE.MeshBasicMaterial({color: 0x0a84ff, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false}));
+      hlMesh.rotation.x = -Math.PI / 2; scn.add(hlMesh);
+    }
+    hlMesh.position.set(b.position.x, 0.14, b.position.z);
+    hlMesh.visible = true;
+  }
+  function clearHl(){ if (hlMesh) hlMesh.visible = false; }
+  function hideSug(){ sug.style.display = "none"; clearHl(); }
   function jumpTo(hit){
     hideSug(); inp.blur();
     if (window.__look) window.__look(hit.b.position.x, 1.2, hit.b.position.z);
@@ -4294,11 +4319,38 @@ window.__pond = () => {
   }
   function renderSug(){
     const hits = searchHits(inp.value.trim());
-    if (!hits.length){ hideSug(); return; }
+    if (!hits.length && sugChip === "alle"){ hideSug(); return; }
     const r = inp.getBoundingClientRect();
     sug.style.left = r.left + "px"; sug.style.top = (r.bottom + 6) + "px"; sug.style.display = "block";
-    sug.innerHTML = hits.map((h, i) =>
-      '<div class="s" data-i="' + i + '"><span>' + (h.b.userData.name || "Haus") + '</span><span class="t">' + h.tag + '</span></div>').join("");
+    const chips = '<div class="chips">' + [["alle","Alle"],["haeuser","Häuser"],["jobs","Jobs"]].map(c =>
+      '<button data-c="' + c[0] + '"' + (sugChip === c[0] ? ' class="on"' : '') + '>' + c[1] + '</button>').join("") + '</div>';
+    sug.innerHTML = chips + (hits.length ? hits.map((h, i) =>
+      '<div class="s" data-i="' + i + '"><span>' + (h.b.userData.name || "Haus") + '</span><span class="t">' + h.tag + '</span></div>').join("")
+      : '<div class="s" style="color:#9b9ba6;cursor:default">keine Treffer in ' + (sugChip === "haeuser" ? "Häusern" : "Jobs") + '</div>');
+    sug.querySelectorAll(".chips button").forEach(cb => cb.addEventListener("mousedown", e => {
+      e.preventDefault(); sugChip = cb.dataset.c; renderSug();
+    }));
+    sug.querySelectorAll(".s[data-i]").forEach(row => {
+      row.addEventListener("mouseenter", () => {
+        row.classList.add("hov");
+        const hit = searchHits(inp.value.trim())[+row.dataset.i];
+        if (hit) showHl(hit.b);
+      });
+      row.addEventListener("mouseleave", () => { row.classList.remove("hov"); clearHl(); });
+    });
+  }
+  {
+    const prevHT = window.__extraTick;
+    window.__extraTick = function(dt, t){
+      if (prevHT) prevHT(dt, t);
+      if (hlMesh && hlMesh.visible){ const sc = 1 + Math.sin(t * 5) * 0.08; hlMesh.scale.set(sc, sc, 1); }
+    };
+    const dbgPrevS = window.__dbg;
+    window.__dbg = function(){
+      const d = dbgPrevS ? dbgPrevS() : {};
+      d.search = {chip: sugChip, hl: !!(hlMesh && hlMesh.visible)};
+      return d;
+    };
   }
   inp.addEventListener("input", renderSug);
   inp.addEventListener("focus", renderSug);
