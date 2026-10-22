@@ -2125,10 +2125,19 @@ function lifeStep(rb, dt, t, crowd){
       const ox = p.x - fox.position.x, oz = p.z - fox.position.z, od = Math.hypot(ox, oz);
       if (od > 0.001 && od < 1.1){ const push = (1.1 - od)/1.1; vx += (ox/od)*push*2.0; vz += (oz/od)*push*2.0; }
     }
+    // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Steering-Inertia: Richtungswechsel
+    // laufen weich ein statt ruckartig (lerp auf geglaettete Richtung)
+    if (rb.svx == null){ rb.svx = bx; rb.svz = bz; }
+    const slerp = Math.min(1, dt * 6);
+    vx = rb.svx + (vx - rb.svx) * slerp;
+    vz = rb.svz + (vz - rb.svz) * slerp;
+    const vl0 = Math.hypot(vx, vz) || 1; vx /= vl0; vz /= vl0;
+    rb.svx = vx; rb.svz = vz;
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
     window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
-    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1);
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1)
+      * Math.min(1, 0.25 + d / 1.2); // Beta 116: Arrive-Bremse - sanftes Anhalten am Ziel
     const px0 = p.x, pz0 = p.z;
     p.x += (vx/vl) * Math.min(sp, d);
     p.z += (vz/vl) * Math.min(sp, d);
@@ -2185,7 +2194,9 @@ function lifeStep(rb, dt, t, crowd){
 window.__spawnRobot = spawnRobot;
 window.__lifeSpeed = 1;
 window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
-window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0});
+window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0, dodge: (window.__lifeStat && window.__lifeStat.dodge) || 0});
+window.__chickTest = () => { const ch = (window.__chicksRef && window.__chicksRef()) || []; if (villagers.length && ch.length){ villagers[0].target.set(ch[0].base.x, 0, ch[0].base.z); villagers[0].route = []; return true; } return false; };
+window.__chickProbe = () => ((window.__chicksRef && window.__chicksRef()) || []).map(c => [+c.g.position.x.toFixed(2), +c.g.position.z.toFixed(2)]);
 window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].route = []; villagers[1].route = []; villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
 function robotSetAnim(rec, name){
   if (!rec.mixer || !rec.act) return;
@@ -3333,6 +3344,7 @@ tick(); setInterval(tick, 30000);
     const e2 = e1.clone(); e2.position.x = 0.05; g.add(e2);
     return g;
   }
+  window.__chicksRef = () => chicks;
   function setChicks(n){
     const want = Math.max(0, Math.min(3, n | 0));
     while (chicks.length > want){ const c = chicks.pop(); scene.remove(c.g); }
@@ -3404,6 +3416,25 @@ tick(); setInterval(tick, 30000);
     chicks.forEach(c => {
       c.g.position.y = Math.abs(Math.sin(t*3 + c.ph))*0.05;
       c.g.rotation.y = Math.sin(t*0.8 + c.ph)*0.6;
+      // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Kueken weichen nahen Figuren aus
+      let ax = c.base.x, az = c.base.z, flee = false;
+      const cs = villagers.concat(robots);
+      for (const o of cs){
+        if (!o.g) continue;
+        const dx = c.g.position.x - o.g.position.x, dz = c.g.position.z - o.g.position.z;
+        const dd = Math.hypot(dx, dz);
+        if (dd > 0.001 && dd < 0.9){
+          ax += (dx/dd) * (0.9 - dd) * 1.2; az += (dz/dd) * (0.9 - dd) * 1.2; flee = true;
+        }
+      }
+      if (flee){
+        c.g.position.x += (ax - c.g.position.x) * Math.min(1, dt*4);
+        c.g.position.z += (az - c.g.position.z) * Math.min(1, dt*4);
+        window.__lifeStat && (window.__lifeStat.dodge = (window.__lifeStat.dodge || 0) + 1);
+      } else {
+        c.g.position.x += (c.base.x - c.g.position.x) * Math.min(1, dt*1.5);
+        c.g.position.z += (c.base.z - c.g.position.z) * Math.min(1, dt*1.5);
+      }
     });
     const bg = scene.background;
     if (bg && bg.isColor){
