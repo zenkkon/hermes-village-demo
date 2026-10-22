@@ -124,7 +124,7 @@
 <div id="panel"></div>
 <div id="bubble"></div>
 <div id="vig"></div>
-<div id="hint">Ziehen: Kamera · Scrollen: zoom · Gebäude/Figur anklicken</div>
+<div id="hint">Ziehen: Kamera · Scrollen: zoom · Klick: wählen · Doppelklick: Orbit</div>
 <button id="toggle">Weiche Schatten: an</button>
 <script type="module">
 import * as THREE from "three";
@@ -4729,7 +4729,7 @@ window.__pond = () => {
   document.head.appendChild(css);
 
   const DEF = {x:0, y:0.5, z:0};
-  let glide = null, follow = null, followPending = null, sel = null;
+  let glide = null, follow = null, followPending = null, sel = null, orbit = null;
   const cur = () => camC || DEF;
 
   // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
@@ -4760,7 +4760,7 @@ window.__pond = () => {
       pinchDist0 = dist; dragMode = "pinch"; return;
     }
     dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
-    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null;
+    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null; orbit = null;
   });
   addEventListener("pointermove", e => {
     if (!pointers.has(e.pointerId)) return;
@@ -4809,7 +4809,10 @@ window.__pond = () => {
   };
   addEventListener("pointerup", endPtr);
   addEventListener("pointercancel", endPtr);
-  addEventListener("wheel", e => { dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02)); }, {passive:true});
+  addEventListener("wheel", e => {
+    if (orbit){ orbit.dist = Math.max(4.5, Math.min(16, orbit.dist + e.deltaY * 0.02)); if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; } return; }
+    dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02));
+  }, {passive:true});
   addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
   // Beta 115: Escape hebt die Auswahl auf und fliegt zurueck zur Uebersicht
   addEventListener("keydown", e => {
@@ -4875,10 +4878,11 @@ window.__pond = () => {
   }
   window.__selActive = () => !!sel;
   window.__selBuilding = select;
+  window.__orbitState = () => orbit ? {on: true, ang: +orbit.ang.toFixed(3), dist: +orbit.dist.toFixed(1), target: objName(orbit.obj)} : null;
   function deselect(){
     if (!sel) return;
     scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
-    sel = null; follow = null;
+    sel = null; follow = null; orbit = null;
   }
   // Stufe 04 / Beta 109: Block 2 INTERACTION Pass 4 - Hover-Highlight auf klickbaren Objekten
   let hover = null, lastHoverT = 0;
@@ -4915,6 +4919,19 @@ window.__pond = () => {
     deselect();
     if (window.__panelOverview) window.__panelOverview(true);
   });
+  // Stufe 115 / Beta 121: Block 2 INTERACTION Pass 6 - Doppelklick: enger Fokus + Orbit-Modus (Auto-Rotation)
+  addEventListener("dblclick", e => {
+    if (e.target.closest && e.target.closest(UI)) return;
+    if (moved > 6) return;
+    ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+    ray.setFromCamera(ndc, camera);
+    let hit = ray.intersectObject(fox, true)[0] ? fox : null;
+    if (!hit){ for (const b of BUILDINGS){ if (ray.intersectObject(b, true)[0]){ hit = b; break; } } }
+    if (!hit) return;
+    select(hit);
+    const o = hit.position, c = cur();
+    orbit = {obj: hit, ang: Math.atan2(c.x - o.x, c.z - o.z), dist: Math.max(4.5, Math.min(14, Math.hypot(c.x - o.x, c.z - o.z))), h: hit === fox ? 1.7 : 2.4};
+  });
 
   // Tick-Kette: Glide, Follow, Ring-Puls, Label-Projektion, Live-Panel
   let lastPanel = 0;
@@ -4927,6 +4944,13 @@ window.__pond = () => {
       const arc = Math.sin(p * Math.PI) * (glide.arcAmp || 0.5);
       camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
       if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
+    } else if (orbit && orbit.obj){
+      const o = orbit.obj.position, c = cur();
+      orbit.ang += Math.min(dt, 0.1) * 0.35;
+      const tx = o.x + Math.sin(orbit.ang) * orbit.dist, tz = o.z + Math.cos(orbit.ang) * orbit.dist, ty = (o.y || 0) + orbit.h;
+      const f = 1 - Math.pow(0.005, Math.min(dt, 0.1));
+      camC = {x: c.x + (tx - c.x) * f, y: c.y + (ty - c.y) * f, z: c.z + (tz - c.z) * f};
+      if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; }
     } else if (follow && follow.obj){
       const o = follow.obj.position, c = cur();
       const ny = (o.y || 0) + 0.5;
