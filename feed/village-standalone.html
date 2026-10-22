@@ -189,6 +189,7 @@ function updateDayNight(){
   moon.position.set(Math.cos(mAng) * 70, Math.max(10, Math.sin(mAng) * 46), -30);
   moon.intensity = (1 - day) * 0.44;
   const moonVis = Math.max(0, Math.min(1, (1 - day) * 1.15 - dusk * 0.55));
+  window.__nightK = moonVis;
   moonDisc.position.set(Math.cos(mAng) * 72, Math.max(8, Math.sin(mAng) * 46), -30);
   moonHalo.position.copy(moonDisc.position);
   moonDiscMat.opacity = moonVis * 0.95; moonHaloMat.opacity = moonVis * 0.18;
@@ -2075,6 +2076,15 @@ function lifeStep(rb, dt, t, crowd){
       return;
     }
   }
+  // Stufe 115 / Beta 122: Block 3 LIFE Pass 8 - Nachtruhe: nachts kehren Villager heim und ruhen
+  const nk = window.__nightK || 0;
+  if (L.sleep){
+    if (nk < 0.4){ L.sleep = null; L.hold = 0; }
+  } else if (rb.villager && nk > 0.65 && Math.random() < dt * 0.8){
+    L.sleep = true; L.mode = "walk"; rb.route = [];
+    rb.target.set(rb.home.x + (Math.random()-0.5)*0.8, 0, rb.home.z + 1.2 + Math.random()*0.8);
+    window.__lifeStat && (window.__lifeStat.sleep = (window.__lifeStat.sleep || 0) + 1);
+  }
   const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
   const d = Math.hypot(dx, dz);
   if (d > 0.2){
@@ -2190,7 +2200,7 @@ function lifeStep(rb, dt, t, crowd){
         p.z += (sz/sd) * push * 0.5 * dt;
       }
     }
-    if (rb.villager && !L.chat && Math.random() < dt * 0.9){
+    if (rb.villager && !L.chat && !L.sleep && Math.random() < dt * 0.9){
       let best = null, bd = 1e9;
       for (const o of crowd){
         if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
@@ -2200,7 +2210,12 @@ function lifeStep(rb, dt, t, crowd){
       if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); }
     }
     L.hold -= dt;
-    if (L.hold <= 0){
+    if (L.sleep){
+      if (L.hold <= 0){
+        rb.target.set(rb.home.x + (Math.random()-0.5)*0.8, 0, rb.home.z + 1.4 + Math.random()*0.6);
+        L.hold = 3 + Math.random()*4;
+      }
+    } else if (L.hold <= 0){
       if (rb.villager || Math.random() < 0.6){
         const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
         if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
@@ -2217,7 +2232,8 @@ function lifeStep(rb, dt, t, crowd){
 window.__spawnRobot = spawnRobot;
 window.__lifeSpeed = 1;
 window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
-window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0, dodge: (window.__lifeStat && window.__lifeStat.dodge) || 0});
+window.__lifeSleep = () => ({nightK: +(window.__nightK || 0).toFixed(2), slept: villagers.filter(v => v.life && v.life.sleep).length, walkingHome: villagers.filter(v => v.life && v.life.sleep && v.life.mode === "walk").length});
+window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0, dodge: (window.__lifeStat && window.__lifeStat.dodge) || 0, slept: villagers.filter(v => v.life && v.life.sleep).length});
 window.__chickTest = () => { const ch = (window.__chicksRef && window.__chicksRef()) || []; if (villagers.length && ch.length){ villagers[0].target.set(ch[0].base.x, 0, ch[0].base.z); villagers[0].route = []; return true; } return false; };
 window.__chickProbe = () => ((window.__chicksRef && window.__chicksRef()) || []).map(c => [+c.g.position.x.toFixed(2), +c.g.position.z.toFixed(2)]);
 window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].route = []; villagers[1].route = []; villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
