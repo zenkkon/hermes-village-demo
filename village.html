@@ -361,6 +361,9 @@ function winPlane(w, h){
     new THREE.MeshStandardMaterial({color: 0xe0c08a, emissive: 0xffb340, emissiveIntensity: 0.9}));
   return m;
 }
+// Stufe 119 / Beta 126: Block 4 EXTRAS Pass 8 - Schneehauben auf Daechern (Winter)
+const snowRoofMat = new THREE.MeshStandardMaterial({color: 0xf4f8fb, roughness: 0.9, transparent: true, opacity: 0});
+window.__snowRoofs = [];
 function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   const g = new THREE.Group();
   const body = new THREE.Mesh(rboxGeo(w, h, d, Math.min(w, h, d) * 0.13), matWall(wall));
@@ -373,6 +376,9 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
   const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 16), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
+  const snowTop = new THREE.Mesh(new THREE.ConeGeometry(w*0.78*0.55, h*0.34, 16), snowRoofMat);
+  snowTop.position.y = (h + h*0.14 + h*0.62) - h*0.17; snowTop.rotation.y = Math.PI/4; g.add(snowTop);
+  window.__snowRoofs.push(snowTop);
   // Tuer + Fenster vorn und seitlich
   const door = new THREE.Mesh(new rboxGeo(w*0.18, h*0.42, 0.08, 0.024), matWall(0x5a3c28));
   door.position.set(0, h*0.21, d/2 + 0.04); g.add(door);
@@ -472,6 +478,9 @@ function hotel(x, z){
   // Flaches Walmdach
   const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 16), matWall(0x6a4fa3));
   roof.position.y = floors*fh + 0.5; roof.rotation.y = Math.PI/4; roof.castShadow = true; roof.name = "mh_roof"; g.add(roof);
+  const snowMh = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74*0.6, 0.4, 16), snowRoofMat);
+  snowMh.position.y = floors*fh + 0.8; snowMh.rotation.y = Math.PI/4; g.add(snowMh);
+  window.__snowRoofs.push(snowMh);
   // Leuchtschild
   const cv = document.createElement("canvas"); cv.width = 512; cv.height = 96;
   const cx = cv.getContext("2d");
@@ -508,6 +517,9 @@ function clockTower(x, z){
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
   const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
+  const snowGt = new THREE.Mesh(new THREE.ConeGeometry(0.8, 0.58, 16), snowRoofMat);
+  snowGt.position.y = 7.3 - 0.29; snowGt.rotation.y = Math.PI/4; g.add(snowGt);
+  window.__snowRoofs.push(snowGt);
   const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12),
     new THREE.MeshStandardMaterial({color: 0xffd60a, emissive: 0xffd60a, emissiveIntensity: 0.6}));
   ball.position.y = 7.3; g.add(ball);
@@ -572,6 +584,11 @@ pond.receiveShadow = true; scene.add(pond);
 const pondRim = new THREE.Mesh(new THREE.RingGeometry(3.2, 3.55, 26),
   new THREE.MeshStandardMaterial({color: 0x9c8a6a, roughness: 1}));
 pondRim.rotation.x = -Math.PI/2; pondRim.position.set(12.6, 0.615, 7.4); scene.add(pondRim);
+// Stufe 119 / Beta 126: Block 4 EXTRAS Pass 8 - Eis auf dem Teich (Winter)
+const iceMat = new THREE.MeshStandardMaterial({color: 0xdcecf4, roughness: 0.35, metalness: 0.05, transparent: true, opacity: 0});
+const iceMesh = new THREE.Mesh(new THREE.CircleGeometry(3.15, 26), iceMat);
+iceMesh.rotation.x = -Math.PI/2; iceMesh.position.set(12.6, 0.612, 7.4); iceMesh.visible = false; scene.add(iceMesh);
+window.__iceMat = iceMat; window.__iceMesh = iceMesh;
 
 // Bach vom Teich zur Inselkante + Holzbruecke
 (function bach(){
@@ -4155,6 +4172,7 @@ tick(); setInterval(tick, 30000);
   let name = "sommer", tgt = SEASONS.sommer;
   window.__seasonSet = n => { if (SEASONS[n]){ name = n; tgt = SEASONS[n]; } };
   window.__season = () => name;
+  window.__p12 = () => ({snow: +cur.snow.toFixed(2), caps: window.__snowRoofs.length, capOp: +snowRoofMat.opacity.toFixed(3), ice: +iceMat.opacity.toFixed(3), iceVis: iceMesh.visible});
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
@@ -4208,6 +4226,8 @@ tick(); setInterval(tick, 30000);
     foliage.forEach(e => { e.mat.color.copy(e.base); e.mat.color.lerp(cur.leaf, cur.lK); });
     if (window.__seaMat) window.__seaMat.color.lerp(cur.sea, cur.sK);
     sun.color.lerp(mk(0xbfd4ff), cur.snow * 0.3);
+    snowRoofMat.opacity = cur.snow * 0.96;
+    iceMat.opacity = cur.snow * 0.92; iceMesh.visible = cur.snow > 0.04;
     leafAmt += ((name === "herbst" ? 1 : 0) - leafAmt) * k;
     lmat.opacity = leafAmt * 0.85;
     lpts.visible = leafAmt > 0.03;
