@@ -1585,3 +1585,8 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 ## M113 / Beta 107 (22.10.2026, Phase 10:00)
 - Block 3 LIFE Pass 5: Chat-Sprechblasen ueber sprechenden Villagern (DOM, Kanzie-Stil: weisse Blase mit "...", projiziert ueber dem Kopf, sanftes Bobbing) + Idle-Schau-umher (sanftes Schwenken der Blickrichtung im Stand).
 - Review: Bubble-Nachweis erzwungen (Chat-Paar bei der Plaza) - 2 Blasen sichtbar im Screenshot, DOM-Layer 2 Kinder, dbg.lifeBubbles=2; organische Seeks im Soak bestaetigt (4 bzw. 2); Tag- und Nacht-Screenshots sauber, 0 JS-Fehler (nur bekannter Feed-404).
+
+
+## M114 / Beta 108 (22.10.2026, Phase 10:30)
+- Block 1 DASHBOARD Pass 7: Prozess-Tracker verfeinert. Fortschrittsleiste unterm 6-Schritte-Tracker (Fuellstand = erledigte Schritte, laufender Schritt zaehlt halb, Gradient blau->gruen, animiert). Aktiver Schritt pulsiert jetzt (CSS-Keyframes). Tracker ist klickbar: rechtes Panel zeigt dann Lauf-Details (Status, Gestartet, Schritte x/6), 15 s Pin gegen Ueberschreiben durch die Dorf-Uebersicht, danach Rueckkehr. Debug: __setTracker(), __trRun, __panelPinRun, dbg.tracker = {steps, prog, run}.
+- Review rv118: Probe verifiziert (running 2/6 -> 42 % + act-Puls, finished -> 100 % gruen, failed -> done done err + 33 %), Klick -> Lauf-Details im Panel, Pin haelt Uebersicht ab, Unpin gibt sie frei. Tag- und Nacht-Screenshots (rv118_tag14/nacht.png) angesehen: Tracker mit Leiste sichtbar, kein Layout-Bruch. 0 JS-Fehler (nur bekannter Feed-404; hier feilt der lokale Server sogar echte Feed-Daten ein, Tracker zeigt daily-backup/finished). village.html 1.489.417 -> 1.491.396 B, Zip beta108. Referenzdatei weiterhin nicht da (Check 10:34: 0 Treffer). Naechster Baustein: INTERACTION Pass 4 oder WORLD Pass 8.

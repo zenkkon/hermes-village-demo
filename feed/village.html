@@ -29,7 +29,7 @@
     transform:translate(-50%,-120%);pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.4)}
   #bubble .who{font:700 10px/1 -apple-system,sans-serif;letter-spacing:.08em;color:#c2601e;text-transform:uppercase}
   #vig{position:fixed;inset:0;pointer-events:none;z-index:4;
-    background:radial-gradient(ellipse at center, transparent 58%, rgba(8,10,22,.45) 100%)}
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(8,10,22,.62) 100%)}
 
   /* ===== Stufe 59 / Beta 62: World-Pack-Dashboard (Frosted Glass) ===== */
   .glass{background:rgba(18,20,28,.55);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);
@@ -40,6 +40,27 @@
   #dashSearch{flex:0 0 170px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
     background:rgba(255,255,255,.08);color:#ececf1;font-size:12px;padding:0 10px;outline:none}
   #dashSearch::placeholder{color:#9b9ba6}
+  /* Stufe 99 / Beta 105: Block 1 DASHBOARD Pass 6 - Kategorie-Chips + Hover-Highlight */
+  #dashSuggest .chips{display:flex;gap:4px;padding:5px 6px 7px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:2px}
+  #dashSuggest .chips button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#9b9ba6;border-radius:6px;font-size:10px;padding:2px 9px;cursor:pointer}
+  #dashSuggest .chips button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
+  #dashSuggest .s.hov{background:rgba(255,255,255,.08)}
+  #dashSuggest{position:fixed;z-index:9;min-width:220px;max-height:214px;overflow:hidden;border-radius:10px;
+    background:rgba(18,20,28,.78);backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.14);
+    padding:4px;font-size:12px;color:#e8e8ee}
+  #dashSuggest .s{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border-radius:6px;cursor:pointer}
+  #dashSuggest .s:hover{background:rgba(240,160,64,.18)}
+  #dashSuggest .t{color:#9b9ba6;font-size:11px;white-space:nowrap}
+  #dashAlerts{cursor:pointer}
+  @keyframes alertFlash{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+  #dashAlerts.flash{animation:alertFlash .6s ease 2}
+  /* Stufe 96 / Beta 102: Block 1 DASHBOARD Pass 5 - Alerts-Menue */
+  #dashAlertsMenu{position:fixed;top:46px;right:60px;z-index:30;min-width:230px;padding:8px;border-radius:12px;color:#e8ecf4;font-size:12px}
+  #dashAlertsMenu .alTitle{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8fa3b8;margin-bottom:6px}
+  #dashAlertsMenu .alRow{display:flex;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer}
+  #dashAlertsMenu .alRow b{font-weight:600}
+  #dashAlertsMenu .alRow span{color:#8fa3b8;font-size:10px}
+  #dashAlertsMenu .alRow:hover{background:rgba(255,255,255,.08)}
   #dashAreas,#dashWeather,#dashSeason{display:flex;gap:4px}
   #dashAreas button,#dashWeather button,#dashSeason button{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
@@ -53,8 +74,10 @@
   #dashUser{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#f0a040,#c2601e);
     color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
   #dashKpis{position:fixed;top:56px;left:12px;display:flex;gap:8px;z-index:5}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(3,7,14,.62) 100%)}
   .kpi{width:118px;padding:8px 10px}
   .kpi .l{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9b9ba6}
+  .kpi .l svg{width:11px;height:11px;vertical-align:-1px;margin-right:4px}
   .kpi .v{font-size:20px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
   .kpi .s{font-size:10px;color:#9b9ba6;margin-top:1px}
   #dashTracker{position:fixed;bottom:34px;left:12px;padding:9px 12px;z-index:5;max-width:430px}
@@ -66,6 +89,11 @@
   .step.done i{background:#30d158}.step.done{color:#30d158}
   .step.act i{background:#0a84ff;box-shadow:0 0 0 3px rgba(10,132,255,.25)}.step.act{color:#0a84ff}
   .step.err i{background:#ff453a;box-shadow:0 0 0 3px rgba(255,69,58,.25)}.step.err{color:#ff453a}
+  .step.act i{animation:trPulse 1.6s ease-in-out infinite}
+  @keyframes trPulse{0%,100%{box-shadow:0 0 0 3px rgba(10,132,255,.25)}50%{box-shadow:0 0 0 6px rgba(10,132,255,.1)}}
+  #dashTracker{cursor:pointer}#dashTracker:hover{background:rgba(30,34,46,.72)}
+  #dashTracker .trProgWrap{height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin-top:7px;overflow:hidden}
+  #dashTracker .trProgWrap b{display:block;height:100%;width:0;background:linear-gradient(90deg,#0a84ff,#30d158);transition:width .5s ease}
   #dashTable{position:fixed;bottom:34px;right:12px;width:300px;z-index:5;overflow:hidden}
   #dashTable .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.14)}
   #dashTable .tabs button{flex:1;border:0;background:transparent;color:#9b9ba6;font-size:11px;font-weight:700;
@@ -102,8 +130,9 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
+// Stufe 92 / Beta 94: Block 5 WORLD Pass 4 - weiche Materialien/Licht (Hemi-Boost, matte Kleinteile)
 // Licht: Tag-Nacht nach echter lokaler Uhrzeit
-const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x4a4436, 0.6); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x5a5346, 0.82); scene.add(hemi);
 const nightAmbient = new THREE.AmbientLight(0xffb060, 0); scene.add(nightAmbient);
 const groundDay = new THREE.Color(0x4a4436), groundNight = new THREE.Color(0x1d3340);
 const sun = new THREE.DirectionalLight(0xfff2d8, 1.0);
@@ -114,6 +143,8 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
+// Stufe 99 / Beta 106: WORLD Pass 7 Rim-Kontrast (Kanzie-Gap: Kantenglanz) - kuehles Gegenlicht
+const rimL = new THREE.DirectionalLight(0xbfd8ff, 0.25); rimL.position.set(-14, 10, -18); scene.add(rimL);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
@@ -138,6 +169,7 @@ function updateDayNight(){
   sun.color.set(0xfff6ec).lerp(new THREE.Color(0xffab5e), Math.min(1, dusk * 1.1));
   moon.position.set(-20, 18, -10);
   moon.intensity = (1 - day) * 0.44;
+  rimL.intensity = 0.1 + day * 0.22 + dusk * 0.12;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day).lerp(new THREE.Color(0xd98a5a), dusk * 0.3);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
   if (window.__terrainMats) window.__terrainMats.forEach(t => t.mat.color.set(t.day).lerp(grassNight, 1 - day).lerp(new THREE.Color(0x6f8a3a), dusk * 0.25));
@@ -153,13 +185,15 @@ function updateDayNight(){
 
 // Stufe 85 / Beta 87: WORLD-Block - Blocky-Sweep, 60 BoxGeometry -> rboxGeo (Clay-Rundungen)
 // Stufe 86 / Beta 88: WORLD-Block Pass 2 - Segment-Bump (29 Kugeln, 32 Zylinder, 2 Kegel glatter)
+// Stufe 96 / Beta 100: Block 5 WORLD Pass 6 - Kanzie-Abnahme-Umsetzung: Vignette, Kamera naeher, dunkler Erdschichten-Rim
+// Stufe 95 / Beta 97: Block 5 WORLD Pass 5 - Farbharmonie Erdschichten + glattere Inselform
 // Insel mit Erdschichten-Querschnitt
 const layers = [
-  {r: 20.5, y: 0.0, h: 1.2, c: 0x6fb048},
-  {r: 20.9, y: -0.7, h: 0.7, c: 0x6fb048},
-  {r: 19.8, y: -1.4, h: 1.6, c: 0x8a6242},
-  {r: 19.0, y: -3.0, h: 1.4, c: 0xa8845c},
-  {r: 18.0, y: -4.4, h: 1.4, c: 0x6e655c},
+  {r: 20.5, y: 0.0, h: 1.2, c: 0x67ab4b},
+  {r: 20.9, y: -0.7, h: 0.7, c: 0x67ab4b},
+  {r: 19.8, y: -1.4, h: 1.6, c: 0x74543c},
+  {r: 19.0, y: -3.0, h: 1.4, c: 0x8f6f52},
+  {r: 18.0, y: -4.4, h: 1.4, c: 0x5b554e},
 ];
 const worldLamps = [];
 const BUILDINGS = [];
@@ -168,7 +202,7 @@ layers.forEach(L => {
   const tm = new THREE.MeshStandardMaterial({color: L.c, roughness: 0.95});
   window.__terrainMats.push({mat: tm, day: L.c});
   const m = new THREE.Mesh(
-    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 44),
+    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 56),
     tm);
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);
@@ -951,7 +985,7 @@ window.__roofFix = roofFix;
   stool(6.4, 10.2); stool(8.1, 9.1);
   parasol(7.2, 9.6, 0xd94f3d);
   // Brotlaib + Teller als Picknick-Detail
-  const bread = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 10),
+  const bread = new THREE.Mesh(lumpySphere(0.14, 3.3, 1.0),
     new THREE.MeshStandardMaterial({color: 0xd9a15e, roughness: 0.9}));
   bread.scale.set(1.4, 0.7, 1); bread.position.set(7.0, 0.84, 9.5);
   bread.rotation.y = 0.4; bread.castShadow = true; scene.add(bread);
@@ -1174,7 +1208,7 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
     const soil = new THREE.Mesh(new rboxGeo(1.2, 0.06, 0.66, 0.05), soilM);
     soil.position.set(bx, 0.28, bz); scene.add(soil);
     for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++){
-      const plant = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10),
+      const plant = new THREE.Mesh(lumpySphere(0.085, 0.7, 1.0),
         matWall(r % 2 ? 0x4f7f3a : 0x6bae52));
       plant.scale.y = 0.8;
       plant.position.set(bx - 0.45 + c * 0.3, 0.37, bz - 0.16 + r * 0.32);
@@ -1183,7 +1217,7 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   }
   // Kuerbisse zwischen den Beeten
   for (const [px, pz, s] of [[-4.7, -5.45, 1.0], [-2.75, -5.6, 0.8], [-4.05, -6.2, 1.15], [-3.1, -6.15, 0.9]]){
-    const pumpkin = new THREE.Mesh(new THREE.SphereGeometry(0.15 * s, 9, 7), matWall(0xe07b2a));
+    const pumpkin = new THREE.Mesh(lumpySphere(0.15 * s, 1.2, 1.0), matWall(0xe07b2a));
     pumpkin.scale.set(1, 0.72, 1); pumpkin.castShadow = true;
     pumpkin.position.set(px, 0.11 * s, pz); scene.add(pumpkin); vegCount++;
     const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.025, 0.09, 8), matWall(0x3f6b2a));
@@ -1256,7 +1290,7 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   const bCols = [0xd4483a, 0x7a3f9d];
   [[-12.8, 1.2, 0.75, 0], [2.2, -5.2, 0.7, 1], [9.8, 4.2, 0.65, 0]].forEach((a, i) => {
     bush(a[0], a[1], a[2], greens[i % 3]);
-    const bMat = new THREE.MeshStandardMaterial({color: bCols[a[3]], roughness: 0.35});
+    const bMat = new THREE.MeshStandardMaterial({color: bCols[a[3]], roughness: 0.55});
     for (let k = 0; k < 6; k++){
       const berry = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), bMat);
       const ang = k * 1.05 + i * 0.6, rr = 0.22 * a[2];
@@ -1663,6 +1697,7 @@ window.__extraTick = function(dt, t){
   head.rotation.y = Math.sin(t * 0.37) * 0.38;
 };
 
+// Stufe 89 / Beta 91: Block 5 WORLD Pass 3 - organische Formen (Kuerbis, Gemuese, Brot, Krug, Feuertopf via lumpySphere)
 // Rauch (Kamine)
 const smoke = [];
 function puff(pos, fast){
@@ -1906,6 +1941,8 @@ function spawnRobot(jobName){
   rec.waveStart = null;
   scene.add(rec.g); robots.push(rec);
 }
+// Stufe 97 / Beta 103: Block 3 LIFE Pass 4 - Idle-Gruppenbildung + kurze Gespraech-Chats (gegenueberstehen, bis zu 13 s, danach neuer Loop)
+// Stufe 96 / Beta 101: Block 3 LIFE Pass 3 - Give-way verstaerkt (weiterer Radius, Anti-Overlap-Naheklaerung, Tempo-Daempfung nah) + gap-Messung im dbg
 // Stufe 87 / Beta 89: Block 3 LIFE - 6 Villager, Head-on-Ausweichen frueher, __lifeSpread-Abstandsmessung
 // LIFE (Stufe 61): Give-way, Ausweichen, endlose Loops
 const villagers = [];
@@ -1915,7 +1952,7 @@ const LIFE = {
     {x: -4, z: -5}, {x: 10.5, z: -8.5}, {x: -7.5, z: -9}, {x: 14.5, z: 1},
     {x: 1.5, z: 6.5}, {x: -6, z: 4.5}
   ],
-  obstacles: []
+  obstacles: [], chains: [], chainEnds: [], nodes: [], edges: []
 };
 BUILDINGS.forEach(bb => LIFE.obstacles.push({x: bb.position.x, z: bb.position.z, r: 2.1}));
 function spawnVillager(){
@@ -1936,23 +1973,96 @@ function spawnVillager(){
   if (rec.act.walk) rec.act.walk.play();
   scene.add(g); villagers.push(rec);
 }
+function lifeNearestNode(x, z){
+  let best = -1, bd = 1e9;
+  for (let i = 0; i < LIFE.nodes.length; i++){
+    const n = LIFE.nodes[i], d = Math.hypot(n.x - x, n.z - z);
+    if (d < bd){ bd = d; best = i; }
+  }
+  return best;
+}
+function lifeRoute(fx, fz, tx, tz){
+  if (!LIFE.nodes || LIFE.nodes.length < 2) return [];
+  const a = lifeNearestNode(fx, fz), b = lifeNearestNode(tx, tz);
+  if (a < 0 || b < 0 || a === b) return [];
+  const prev = {}, q = [a], seen = new Set([a]);
+  while (q.length){
+    const cur = q.shift();
+    if (cur === b) break;
+    for (const [u, v] of LIFE.edges){
+      const nxt = (u === cur) ? v : ((v === cur) ? u : -1);
+      if (nxt < 0 || seen.has(nxt)) continue;
+      seen.add(nxt); prev[nxt] = cur; q.push(nxt);
+    }
+  }
+  if (!seen.has(b)) return [];
+  const path = [];
+  for (let c = b; c !== undefined; c = prev[c]) path.push(c);
+  path.reverse();
+  if (path.length && path[0] === a) path.shift();
+  return path.map(i => LIFE.nodes[i]);
+}
+// Stufe 93 / Beta 95: Block 3 LIFE Pass 2 - Villager laufen entlang des Weg-Netzes
 function lifeStep(rb, dt, t, crowd){
   if (!rb.life) rb.life = {mode: "walk", hold: rb.villager ? (1.5 + Math.random()*3) : (7 + Math.random()*9)};
+  dt *= (window.__lifeDtScale || 1);
   const L = rb.life, p = rb.g.position;
+  if (L.chat){
+    if (t > L.until){
+      const o = L.chat;
+      if (o && o.life && o.life.chat === rb){ o.life.chat = null; o.life.hold = 0.5 + Math.random()*2; }
+      L.chat = null; L.hold = 0.5 + Math.random()*2;
+    } else {
+      const op = L.chat.g.position;
+      const cdx = op.x - p.x, cdz = op.z - p.z, cd = Math.hypot(cdx, cdz);
+      if (cd > 0.01){
+        const want = Math.atan2(cdx, cdz) + Math.PI;
+        const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
+        rb.g.rotation.y += diff * Math.min(1, dt*6);
+      }
+      robotSetAnim(rb, "idle"); p.y = 0;
+      if (rb.mixer) rb.mixer.update(dt);
+      return;
+    }
+  }
   const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
   const d = Math.hypot(dx, dz);
   if (d > 0.2){
+    if (rb.villager && rb.route && rb.route.length){
+      const nxt = rb.route[0];
+      if (Math.hypot(nxt.x - p.x, nxt.z - p.z) < 0.55) rb.route.shift();
+      if (rb.route.length) rb.target.set(rb.route[0].x, 0, rb.route[0].z);
+    }
+    if (rb.villager && L.chatSeek){
+      const o = L.chatSeek;
+      if (!o.life || o.life.chat || !o.g){ L.chatSeek = null; }
+      else {
+        const ox = o.g.position.x, oz = o.g.position.z;
+        const dd = Math.hypot(ox - p.x, oz - p.z);
+        if (dd < 1.3){
+          L.chatSeek = null;
+          if (o.life && !o.life.chat){
+            const until = t + 6 + Math.random()*7;
+            L.chat = o; L.until = until; L.mode = "chat"; window.__lifeStat && (window.__lifeStat.chat = (window.__lifeStat.chat || 0) + 1);
+            o.life.chat = rb; o.life.until = until; o.life.mode = "chat";
+            if (o.route) o.route = [];
+          }
+        } else rb.target.set(ox, 0, oz);
+      }
+    }
     const bd = d || 1;
     const bx = dx/bd, bz = dz/bd;
-    let vx = bx, vz = bz, yields = 0;
+    let vx = bx, vz = bz, yields = 0, close = 1e9;
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z;
       const od = Math.hypot(ox, oz);
-      if (od > 0.001 && od < 1.5){
-        const push = (1.5 - od) / 1.5;
-        vx -= (ox/od) * push * 1.8; vz -= (oz/od) * push * 1.8;
-        if ((bx*ox + bz*oz) / od > 0.35){ vx += bz * push * 1.4; vz += -bx * push * 1.4; yields++; }
+      if (od > 0.001 && od < close) close = od;
+      if (od > 0.001 && od < 1.8){
+        const push = (1.8 - od) / 1.8;
+        vx -= (ox/od) * push * 2.0; vz -= (oz/od) * push * 2.0;
+        if ((bx*ox + bz*oz) / od > 0.3){ vx += bz * push * 1.6; vz += -bx * push * 1.6; yields++; }
+        if (od < 0.55){ vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; }
       }
     }
     for (const ob of LIFE.obstacles){
@@ -1967,18 +2077,27 @@ function lifeStep(rb, dt, t, crowd){
       if (od > 0.001 && od < 1.1){ const push = (1.1 - od)/1.1; vx += (ox/od)*push*2.0; vz += (oz/od)*push*2.0; }
     }
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
+    window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
-    const sp = 1.05 * dt * (window.__lifeSpeed || 1);
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1);
     p.x += (vx/vl) * Math.min(sp, d);
     p.z += (vz/vl) * Math.min(sp, d);
     const want = Math.atan2(vx, vz) + Math.PI;
     const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
     rb.g.rotation.y += diff * Math.min(1, dt*8);
     robotSetAnim(rb, "walk");
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = p.x - o.g.position.x, oz = p.z - o.g.position.z, od = Math.hypot(ox, oz);
+      if (od > 0.001 && od < 0.5){ const k = (0.5 - od) / od * 0.6; p.x += (ox/od) * k; p.z += (oz/od) * k; }
+    }
     p.y = Math.abs(Math.sin(t*8))*0.02;
   } else {
     robotSetAnim(rb, "idle");
     p.y = 0;
+    // Stufe 99 / Beta 107: Block 3 LIFE Pass 5 - Idle-Schau-umher (sanftes Schwenken)
+    if (rb.wob == null) rb.wob = Math.random() * 10;
+    rb.g.rotation.y += Math.sin(t * 0.7 + rb.wob) * 0.45 * dt;
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const sx = p.x - o.g.position.x, sz = p.z - o.g.position.z, sd = Math.hypot(sx, sz);
@@ -1988,10 +2107,20 @@ function lifeStep(rb, dt, t, crowd){
         p.z += (sz/sd) * push * 0.5 * dt;
       }
     }
+    if (rb.villager && !L.chat && Math.random() < dt * 0.9){
+      let best = null, bd = 1e9;
+      for (const o of crowd){
+        if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
+        const ddx = o.g.position.x - p.x, ddz = o.g.position.z - p.z, dd2 = Math.hypot(ddx, ddz);
+        if (dd2 > 1.1 && dd2 < 8 && dd2 < bd){ bd = dd2; best = o; }
+      }
+      if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); }
+    }
     L.hold -= dt;
     if (L.hold <= 0){
       if (rb.villager || Math.random() < 0.6){
         const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
         rb.target.set(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8);
         L.hold = L.vil ? (1.5 + Math.random()*3.5) : (4 + Math.random()*5);
       } else {
@@ -2019,7 +2148,7 @@ function confettiBurst(pos){
   const cols = [0xff453a, 0x30d158, 0x0a84ff, 0xffd60a, 0xff9f0a];
   for (let i = 0; i < 14; i++){
     const c = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.02),
-      new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.5}));
+      new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.65}));
     c.position.copy(pos); c.position.y = 0.4;
     scene.add(c);
     confetti.push({m: c, vx: (Math.random()-0.5)*3, vy: 2 + Math.random()*2.5, vz: (Math.random()-0.5)*3, age: 0});
@@ -2027,7 +2156,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.78, dist = 33;
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand)
 let camC = null; // __look (Glide + Follow) kommt im INTERACTION-Block
 // Pointer-Steuerung kommt im INTERACTION-Block (Stufe 60): Links-Ziehen = Pan, Rechts-Ziehen = Rotate
 
@@ -2609,10 +2738,44 @@ const COTTAGE53_B64 = "Z2xURgIAAADYXAAAUDAAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6I
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}))}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), pathNodes: LIFE.nodes.length, pathEdges: LIFE.edges.length, crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)})), villagersList: villagers, gap: (() => { let g = null; const cs = villagers.concat(robots); for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++){ const dd = Math.hypot(cs[i].g.position.x - cs[j].g.position.x, cs[i].g.position.z - cs[j].g.position.z); if (g === null || dd < g) g = dd; } return g === null ? null : +g.toFixed(2); })(), chatN: villagers.filter(v => v.life && v.life.chat).length}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});
+// Stufe 99 / Beta 107: Block 3 LIFE Pass 5 - Chat-Sprechblasen (DOM, Kanzie-Stil)
+(function(){
+  let layer = document.getElementById("chatBubbles");
+  if (!layer){
+    layer = document.createElement("div");
+    layer.id = "chatBubbles";
+    layer.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden;";
+    document.body.appendChild(layer);
+  }
+  const bub = [];
+  window.__lifeBubbles = bub;
+  const V = new THREE.Vector3();
+  const prevHT = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevHT) prevHT(dt, t);
+    const talking = villagers.filter(v => v.life && v.life.chat && v.g);
+    while (bub.length > talking.length){ const d = bub.pop(); d.remove(); }
+    while (bub.length < talking.length){
+      const d = document.createElement("div");
+      d.style.cssText = "position:absolute;transform:translate(-50%,-100%);background:#fffdf6;border:1px solid rgba(60,50,40,.28);border-radius:10px;padding:3px 9px 4px;font:bold 11px/1.25 Arial,sans-serif;color:#8a7f6e;box-shadow:0 3px 10px rgba(20,30,40,.2);white-space:nowrap;";
+      d.textContent = "…";
+      layer.appendChild(d); bub.push(d);
+    }
+    talking.forEach((v, i) => {
+      const d = bub[i];
+      V.set(v.g.position.x, 2.3 + Math.sin(t * 3 + i * 1.7) * 0.06, v.g.position.z).project(camera);
+      d.style.left = ((V.x * 0.5 + 0.5) * innerWidth) + "px";
+      d.style.top = ((-V.y * 0.5 + 0.5) * innerHeight) + "px";
+      d.style.opacity = "0.94";
+    });
+  };
+  const dbgPrevB = window.__dbg;
+  window.__dbg = function(){ const d = dbgPrevB ? dbgPrevB() : {}; d.lifeBubbles = window.__lifeBubbles.length; return d; };
+})();
 tick(); setInterval(tick, 30000);
 
 // ===== Stufe 05: Draehte mit Pulsen, Notice Board, Kueken, Feuerwerk, Details =====
@@ -2675,9 +2838,11 @@ tick(); setInterval(tick, 30000);
   function layPath(p0, p1, p2, seed){
     const n = Math.max(10, Math.round(Math.hypot(p2[0]-p0[0], p2[1]-p0[1]) * 3.2));
     let prev = null;
+    const chain = []; LIFE.chains.push(chain);
     for (let i = 0; i <= n; i++){
       const t = i / n;
       const pt = qPoint(p0, p1, p2, t);
+      if (i % 4 === 0) chain.push({x: pt[0], z: pt[1]});
       if (prev){
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
         const pm = pathMat.clone();
@@ -2724,6 +2889,28 @@ tick(); setInterval(tick, 30000);
     const dxa = qb[0]-qa[0], dza = qb[1]-qa[1], Lq = Math.hypot(dxa, dza) || 1;
     const side = (k % 4 === 0) ? 1 : -1;
     layPath(qa, [mxq - (dza/Lq)*0.8*side, mzq + (dxa/Lq)*0.8*side], qb, k + 31);
+  }
+  // Stufe 93 / Beta 95: Weg-Netz aus den Kurven fuer Villager-Routen
+  for (const ch of LIFE.chains){
+    const start = LIFE.nodes.length;
+    for (const ptN of ch) LIFE.nodes.push({x: ptN.x, z: ptN.z});
+    for (let i = start + 1; i < LIFE.nodes.length; i++) LIFE.edges.push([i - 1, i]);
+    LIFE.chainEnds.push([start, LIFE.nodes.length - 1]);
+  }
+  LIFE.plazaNode = LIFE.nodes.length; LIFE.nodes.push({x: 0, z: 0});
+  for (const [a, b] of LIFE.chainEnds){
+    const nb = LIFE.nodes[b];
+    if (Math.hypot(nb.x, nb.z) < 4) LIFE.edges.push([b, LIFE.plazaNode]);
+    for (const c of [a, b]){
+      const pp = LIFE.nodes[c];
+      let best = -1, bd = 3.4;
+      for (let i = 0; i < LIFE.nodes.length; i++){
+        if (i >= a && i <= b) continue;
+        const q = LIFE.nodes[i], dd = Math.hypot(pp.x - q.x, pp.z - q.z);
+        if (dd < bd){ bd = dd; best = i; }
+      }
+      if (best >= 0) LIFE.edges.push([c, best]);
+    }
   }
   const plaza = new THREE.Mesh(new THREE.CircleGeometry(2.3, 26), new THREE.MeshStandardMaterial({color: 0xc9bfa6, roughness: 1}));
   plaza.rotation.x = -Math.PI/2; plaza.position.y = 0.615; plaza.receiveShadow = true;
@@ -2809,7 +2996,7 @@ tick(); setInterval(tick, 30000);
   const vegCols = [0x3e7d3a, 0x77b34c, 0xc977d9, 0xd94f6e];
   for (let r = 0; r < 4; r++){
     for (let cI = 0; cI < 5; cI++){
-      const v = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10),
+      const v = new THREE.Mesh(lumpySphere(0.11, 2.1, 1.0),
         new THREE.MeshStandardMaterial({color: vegCols[(r + cI) % vegCols.length]}));
       v.position.set(-1.15 + cI * 0.58, 0.16, -0.68 + r * 0.45);
       v.castShadow = true; garden.add(v);
@@ -2914,7 +3101,7 @@ tick(); setInterval(tick, 30000);
     dst.rotation.set(i, i * 0.7, 0); dst.castShadow = true; fountain.add(dst);
   }
   function rockM2(){ return matWall(0x7c8188); }
-  const jug = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), matWall(0xb06a45));
+  const jug = new THREE.Mesh(lumpySphere(0.12, 4.4, 1.0), matWall(0xb06a45));
   jug.scale.set(1, 1.1, 1); jug.position.set(1.2, 0.14, 0.3); jug.rotation.z = 0.35;
   jug.castShadow = true; fountain.add(jug);
   const jneck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, 0.09, 8), matWall(0xb06a45));
@@ -3300,7 +3487,7 @@ tick(); setInterval(tick, 30000);
     leg3.rotation.set(Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35);
     leg3.castShadow = true; fire.add(leg3);
   }
-  const pot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), matWall(0x3d3f42));
+  const pot = new THREE.Mesh(lumpySphere(0.15, 5.5, 1.0), matWall(0x3d3f42));
   pot.scale.set(1, 0.75, 1); pot.position.set(0.62, 0.5, 0.6); pot.castShadow = true; fire.add(pot);
   fire.position.set(-2.9, 0.61, 2.4);
   scene.add(fire);
@@ -3613,7 +3800,8 @@ tick(); setInterval(tick, 30000);
     const total = fin + fl;
     const rate = total ? Math.round(100 * fin / total) + "%" : "keine Daten";
     let html = row("Aktive Läufe", running, "#0a84ff");
-    if (window.__weather) html += row("Wetter", window.__weather() ? "Regen" : "Klar");
+    if (window.__weatherMode) html += row("Wetter", window.__weatherMode() === "gewitter" ? "Gewitter" : (window.__weatherMode() === "regen" ? "Regen" : "Klar"));
+    else if (window.__weather) html += row("Wetter", window.__weather() ? "Regen" : "Klar");
     html += row("Erfolgsquote (50)", rate, fl === 0 && total ? "#30d158" : "");
     html += row("Belegte Häuser", failed, failed ? "#ff453a" : "#30d158");
     const last = (feed.runs || [])[0];
@@ -3631,6 +3819,7 @@ tick(); setInterval(tick, 30000);
   };
 })();
 
+// Stufe 99 / Beta 104: Block 4 EXTRAS Pass 3 - Gewitter (Blitz-Flash, dunkler Himmel, harder Regen) + Pfuetzen nach dem Regen
 // ===== Stufe 09: Wetter-System (Regenschauer, Kanzie-Niveau: lebhafte Welt) =====
 (function(){
   const N = 1500;
@@ -3648,27 +3837,51 @@ tick(); setInterval(tick, 30000);
   scene.add(rain);
 
   const rainTint = new THREE.Color(0x5f6b7a);
-  let w = 0, target = 0, nextSwitch = Date.now() + 45000;
+  const stormTint = new THREE.Color(0x39414d);
+  const flashCol = new THREE.Color(0xdde6f2);
+  // Stufe 94 / Beta 96: Regen-Verfeinerung (Winddrift) + Saison-Wetterkopplung
+  // Stufe 99 / Beta 104: Gewitter-Modus + Blitz + Pfuetzen
+  let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
+  let storm = false, flashT = 0;
   window.__weather = () => w > 0.5;
-  window.__weatherSet = v => { target = v ? 1 : 0; nextSwitch = Date.now() + 120000; };
+  window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
+  window.__weatherForce = v => { w = +v; };
+  window.__weatherFlash = () => { flashT = 0.32; };
+  window.__weatherSet = v => {
+    const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
+    storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
+  };
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
     if (prevTick) prevTick(dt, t);
     const now = Date.now();
+    const se = window.__season ? window.__season() : "sommer";
+    lastSe = se; lastWinter = se === "winter";
     if (now >= nextSwitch){
-      target = target > 0.5 ? 0 : 1;
-      nextSwitch = now + (target ? 28000 + Math.random() * 14000 : 55000 + Math.random() * 50000);
+      if (storm){ nextSwitch = now + 180000; }
+      else if (lastWinter){ target = 0; nextSwitch = now + 60000; }
+      else {
+        target = target > 0.5 ? 0 : 1;
+        const rainDur = se === "herbst" ? (40000 + Math.random() * 22000) : (se === "sommer" ? (20000 + Math.random() * 12000) : (28000 + Math.random() * 14000));
+        nextSwitch = now + (target ? rainDur : 55000 + Math.random() * 50000);
+      }
     }
     w += (target - w) * Math.min(1, dt * 0.9);
     const raining = w > 0.02;
     rain.visible = raining;
     mat.opacity = w * 0.8;
+    mat.size = lastWinter ? 0.13 : 0.1;
+    mat.color.setHex(lastWinter ? 0xe4eef4 : 0x9fc8e8);
     if (raining){
       const arr = geo.attributes.position.array;
+      const fall = storm ? 22 : (lastWinter ? 5.5 : 16), wx = storm ? 4.2 : 2.2, wz = storm ? 1.8 : 0.9;
       for (let i = 0; i < N; i++){
-        arr[i*3+1] -= dt * 16;
+        arr[i*3+1] -= dt * fall;
+        arr[i*3] += dt * wx; arr[i*3+2] += dt * wz;
         if (arr[i*3+1] < 0) arr[i*3+1] = 13 + Math.random() * 2;
+        if (arr[i*3] > 17) arr[i*3] = -17; else if (arr[i*3] < -17) arr[i*3] = 17;
+        if (arr[i*3+2] > 17) arr[i*3+2] = -17; else if (arr[i*3+2] < -17) arr[i*3+2] = 17;
       }
       geo.attributes.position.needsUpdate = true;
     }
@@ -3676,15 +3889,55 @@ tick(); setInterval(tick, 30000);
     sun.intensity *= (1 - 0.35 * w);
     hemi.intensity *= (1 - 0.25 * w);
     if (scene.background && scene.background.isColor){
-      scene.background.lerp(rainTint, 0.3 * w);
+      scene.background.lerp(storm ? stormTint : rainTint, 0.3 * w);
       if (scene.fog) scene.fog.color.copy(scene.background);
     }
+    if (flashT > 0){
+      const f = Math.max(0, flashT / 0.32);
+      scene.background.lerp(flashCol, 0.5 * f);
+      if (scene.fog) scene.fog.color.copy(scene.background);
+      sun.intensity += 4.2 * f;
+      hemi.intensity += 1.1 * f;
+      flashT -= dt;
+    }
+    if (storm && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09) flashT = 0.32;
+    // Pfuetzen: erscheinen nach dem Regen, verblassen in ~40 s
+    const rainNow = w > 0.5;
+    if (rainNow) wasRain = true;
+    else if (wasRain && w < 0.05){
+      wasRain = false;
+      const k = 4 + ((Math.random() * 5) | 0);
+      for (let i = 0; i < k; i++) spawnPuddle();
+    }
+    for (let i = puddles.length - 1; i >= 0; i--){
+      const pd = puddles[i];
+      pd.life -= dt;
+      pd.m.material.opacity = Math.min(0.42, 0.42 * Math.min(1, pd.life / 8));
+      if (pd.life <= 0){ pGroup.remove(pd.m); pd.m.geometry.dispose(); pd.m.material.dispose(); puddles.splice(i, 1); }
+    }
   };
+
+  const puddles = [], pGroup = new THREE.Group(); scene.add(pGroup); let wasRain = false;
+  function spawnPuddle(){
+    for (let tries = 0; tries < 12; tries++){
+      const n = LIFE.nodes[(Math.random() * LIFE.nodes.length) | 0];
+      if (!n) return;
+      const px = n.x + (Math.random() - 0.5) * 3, pz = n.z + (Math.random() - 0.5) * 3;
+      let ok = true;
+      for (const ob of LIFE.obstacles){ if (Math.hypot(px - ob.x, pz - ob.z) < ob.r + 0.7){ ok = false; break; } }
+      if (!ok) continue;
+      const r = 0.45 + Math.random() * 0.65;
+      const m = new THREE.Mesh(new THREE.CircleGeometry(r, 20), new THREE.MeshBasicMaterial({color: 0x24455e, transparent: true, opacity: 0.42, depthWrite: false}));
+      m.rotation.x = -Math.PI / 2; m.position.set(px, 0.09, pz);
+      pGroup.add(m); puddles.push({m, life: 38 + Math.random() * 10});
+      return;
+    }
+  }
 
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.weather = {w: +w.toFixed(2), raining: w > 0.5};
+    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, flash: flashT > 0, season: lastSe, winterSleet: lastWinter && w > 0.5, puddles: puddles.length};
     return d;
   };
 })();
@@ -3717,6 +3970,17 @@ tick(); setInterval(tick, 30000);
   geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   const smat = new THREE.PointsMaterial({color: 0xffffff, size: 0.07, transparent: true, opacity: 0, depthWrite: false});
   const snow = new THREE.Points(geo, smat); snow.visible = false; scene.add(snow);
+  // Herbstlaub: langsamer treibende Partikel, Deckung folgt der Herbst-Tiefe (Beta 92)
+  const LN = 320, lgeo = new THREE.BufferGeometry(), lpos = new Float32Array(LN*3);
+  for (let i = 0; i < LN; i++){
+    const r = 3 + Math.random()*28, a = Math.random()*Math.PI*2;
+    lpos[i*3] = Math.cos(a)*r; lpos[i*3+1] = Math.random()*12; lpos[i*3+2] = Math.sin(a)*r;
+  }
+  lgeo.setAttribute("position", new THREE.Float32BufferAttribute(lpos, 3));
+  const lmat = new THREE.PointsMaterial({color: 0xc98a3a, size: 0.075, transparent: true, opacity: 0, depthWrite: false});
+  const lpts = new THREE.Points(lgeo, lmat); lpts.visible = false; scene.add(lpts);
+  let leafAmt = 0;
+  let lastSeasBtn = "";
   const foliage = window.__foliageMats || [];
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -3732,6 +3996,25 @@ tick(); setInterval(tick, 30000);
     foliage.forEach(e => { e.mat.color.copy(e.base); e.mat.color.lerp(cur.leaf, cur.lK); });
     if (window.__seaMat) window.__seaMat.color.lerp(cur.sea, cur.sK);
     sun.color.lerp(mk(0xbfd4ff), cur.snow * 0.3);
+    leafAmt += ((name === "herbst" ? 1 : 0) - leafAmt) * k;
+    lmat.opacity = leafAmt * 0.85;
+    lpts.visible = leafAmt > 0.03;
+    lmat.color.lerp(cur.leaf, k);
+    if (lpts.visible){
+      const la = lgeo.attributes.position.array;
+      for (let i = 0; i < LN; i++){
+        la[i*3+1] -= dt * 0.55;
+        la[i*3] += Math.sin(t*0.9 + i*1.3) * dt * 0.9;
+        la[i*3+2] += Math.cos(t*0.8 + i) * dt * 0.5;
+        if (la[i*3+1] < 0) la[i*3+1] = 10 + Math.random()*3;
+      }
+      lgeo.attributes.position.needsUpdate = true;
+    }
+    if (scene.fog){ scene.fog.far = 160 - cur.snow * 70; scene.fog.near = 55 - cur.snow * 35; }
+    if (name !== lastSeasBtn){
+      lastSeasBtn = name;
+      document.querySelectorAll("#dashSeason button").forEach(b => b.classList.toggle("on", b.dataset.s === name));
+    }
     worldLamps.forEach((l, i) => { if (l.light) l.light.intensity *= 1 + Math.sin(t*11 + i*1.7) * 0.06; });
     const on = cur.snow > 0.02;
     snow.visible = on;
@@ -3749,11 +4032,12 @@ tick(); setInterval(tick, 30000);
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.season = {name: name, snow: +cur.snow.toFixed(2)};
+    d.season = {name: name, snow: +cur.snow.toFixed(2), leaves: +leafAmt.toFixed(2)};
     return d;
   };
 })();
 
+// Stufe 90 / Beta 92: Block 4 EXTRAS Pass 1 - Herbstlaub-Partikel + Winternebel (Fog-Distanzen folgen Schnee)
 // ===== Stufe 10: Minimap (REA-Kanzie: Uebersichts-Karte mit Live-Zustaenden) =====
 (function(){
   const SIZE = 148, HALF = SIZE / 2, SCALE = 4.0;
@@ -3927,7 +4211,8 @@ window.__pond = () => {
     return "vor " + Math.floor(m / 60) + " h";
   };
   const cls = s => s === "finished" ? "rOK" : (s === "failed" ? "rBad" : (s === "running" ? "rRun" : ""));
-  // statsHud wird von den KPI-Karten ersetzt (Tick-Kette bleibt intakt)
+  // Stufe 88 / Beta 90: Block 1 DASHBOARD Nachbesserung - Suche mit Live-Treffern + Sprung, Alerts interaktiv
+// statsHud wird von den KPI-Karten ersetzt (Tick-Kette bleibt intakt)
   const sh = document.getElementById("statsHud"); if (sh) sh.style.display = "none";
   // Topbar
   const top = document.createElement("div"); top.id = "dashTop"; top.className = "glass";
@@ -3937,11 +4222,11 @@ window.__pond = () => {
     '<div id="dashAreas">' +
       ["Plaza","Hafen","Wohnviertel","Werkstatt"].map(a => '<button data-a="' + a + '">' + a + '</button>').join("") +
     '</div>' +
-    '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button></div>' +
+    '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button><button data-w="2">Gewitter</button></div>' +
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
     '<button id="dashDN" data-m="auto">Auto</button>' +
     '<span id="dashClock">--:--</span>' +
-    '<span id="dashAlerts" class="badge" style="display:none;color:#ff453a;border-color:rgba(255,69,58,.4)"></span>' +
+    '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
     '<span id="dashUser">KZ</span>';
   document.body.appendChild(top);
   // Stufe 84 / Beta 86: Tag/Nacht-Toggle (Auto -> Tag -> Nacht), pinnt die Dorfzeit
@@ -3960,35 +4245,53 @@ window.__pond = () => {
   // KPI-Karten
   const kpis = document.createElement("div"); kpis.id = "dashKpis";
   kpis.innerHTML =
-    '<div class="kpi glass"><div class="l">Aktive Läufe</div><div class="v" id="kpiRuns">0</div><div class="s">Agenten arbeiten</div></div>' +
-    '<div class="kpi glass"><div class="l">Erfolgsquote</div><div class="v" id="kpiRate">–</div><div class="s">letzte 50 Läufe</div></div>' +
-    '<div class="kpi glass"><div class="l">Services</div><div class="v" id="kpiSvc">0</div><div class="s">Häuser im Dorf</div></div>';
+    '<div class="kpi glass"><div class="l"><svg viewBox="0 0 24 24"><path fill="#f0a040" d="M8 5v14l11-7z"/></svg>Aktive Läufe</div><div class="v" id="kpiRuns">0</div><div class="s">Agenten arbeiten</div></div>' +
+    '<div class="kpi glass"><div class="l"><svg viewBox="0 0 24 24"><path fill="#30d158" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.4l-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z"/></svg>Erfolgsquote</div><div class="v" id="kpiRate">–</div><div class="s">letzte 50 Läufe</div></div>' +
+    '<div class="kpi glass"><div class="l"><svg viewBox="0 0 24 24"><path fill="#0a84ff" d="M12 3l9 8h-2v9h-5v-6h-4v6H5v-9H3z"/></svg>Services</div><div class="v" id="kpiSvc">0</div><div class="s">Häuser im Dorf</div></div>';
   document.body.appendChild(kpis);
-  // Lauf-Tracker (6 Schritte, unten links)
+  // Stufe 91 / Beta 93: Block 1 DASHBOARD Feinschliff - KPI-Icons, Saison-Buttons folgen auch Jumps
+// Lauf-Tracker (6 Schritte, unten links)
   const tr = document.createElement("div"); tr.id = "dashTracker"; tr.className = "glass";
   tr.innerHTML = '<div class="t">Lauf-Tracker</div><div id="trName">–</div><div class="steps" id="trSteps">' +
-    ["Eingang","Zugewiesen","Arbeitet","Prüfung","Fertig","Protokolliert"].map(s => '<div class="step"><i></i><span>' + s + '</span></div>').join("") + '</div>';
+    ["Eingang","Zugewiesen","Arbeitet","Prüfung","Fertig","Protokolliert"].map(s => '<div class="step"><i></i><span>' + s + '</span></div>').join("") + '</div><div class="trProgWrap"><b id="trProg"></b></div>';
   document.body.appendChild(tr);
   function setTracker(r){
     const nameEl = document.getElementById("trName");
     const steps = document.querySelectorAll("#trSteps .step");
-    if (!r){ if (nameEl) nameEl.textContent = "kein aktiver Lauf"; steps.forEach(s => s.className = "step"); return; }
+    if (!r){ if (nameEl) nameEl.textContent = "kein aktiver Lauf"; const pr0 = document.getElementById("trProg"); if (pr0) pr0.style.width = "0%"; steps.forEach(s => s.className = "step"); window.__trRun = null; return; }
     if (nameEl) nameEl.textContent = (r.job_name || "Lauf") + " · " + relTime2(r.started_at);
-    const st = (r.state || "").toLowerCase();
+    window.__trRun = r; const st = (r.state || "").toLowerCase();
     const map = st === "finished" ? ["done","done","done","done","done","done"]
       : st === "failed" ? ["done","done","err","","",""]
       : st === "running" ? ["done","done","act","","",""]
       : st ? ["act","","","","",""] : [];
     steps.forEach((s, i) => s.className = "step " + (map[i] || ""));
+    const prog = document.getElementById("trProg");
+    if (prog){ const dn = map.filter(m => m === "done").length; const actN = map.includes("act") ? 0.5 : 0; prog.style.width = Math.round(100 * (dn + actN) / 6) + "%"; }
   }
+  // Stufe 04 / Beta 108: Block 1 DASHBOARD Pass 7 - Tracker klickbar -> Lauf-Details im rechten Panel
+  window.__setTracker = setTracker;
+  tr.addEventListener("click", () => {
+    const r = window.__trRun; if (!r) return;
+    window.__panelPinRun = performance.now() + 15000;
+    const p = document.getElementById("panel"); if (!p) return;
+    const dn = document.querySelectorAll("#trSteps .step.done").length;
+    p.innerHTML = '<div class="tag">Lauf-Details</div><h3>' + (r.job_name || "Lauf") + '</h3>' +
+      '<div class="row"><span>Status</span><span class="' + cls(r.state || "") + '">' + (r.state || "—") + '</span></div>' +
+      '<div class="row"><span>Gestartet</span><span>' + (r.started_at ? relTime2(r.started_at) : "—") + '</span></div>' +
+      '<div class="row"><span>Schritte</span><span>' + dn + '/6</span></div>';
+    p.style.display = "block";
+  });
   // Tabbed Live-Tabelle (unten rechts)
   const tb = document.createElement("div"); tb.id = "dashTable"; tb.className = "glass";
   tb.innerHTML = '<div class="tabs"><button data-t="agents" class="on">Agenten</button><button data-t="jobs">Jobs</button><button data-t="runs">Läufe</button></div><div class="rows" id="tbRows"></div>';
   document.body.appendChild(tb);
   let tab = "agents";
+  let failedOnly = false;
   tb.querySelector(".tabs").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     tab = b.dataset.t;
+    failedOnly = false;
     tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
     renderTable();
   });
@@ -4004,7 +4307,8 @@ window.__pond = () => {
     } else if (tab === "jobs"){
       html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>Job</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
     } else {
-      html = (feed.runs || []).slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>keine Läufe</span><span></span></div>';
+      const rr = failedOnly ? (feed.runs || []).filter(r => r.state === "failed") : (feed.runs || []);
+      html = rr.slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>' + (failedOnly ? "keine Fehlerläufe" : "keine Läufe") + '</span><span></span></div>';
     }
     el.innerHTML = html;
   }
@@ -4019,7 +4323,7 @@ window.__pond = () => {
   top.querySelector("#dashWeather").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     top.querySelectorAll("#dashWeather button").forEach(x => x.classList.toggle("on", x === b));
-    if (window.__weatherSet) window.__weatherSet(b.dataset.w === "1");
+    if (window.__weatherSet) window.__weatherSet(+b.dataset.w);
   });
   // Jahreszeiten-Menü (EXTRAS)
   top.querySelector("#dashSeason").addEventListener("click", e => {
@@ -4027,20 +4331,133 @@ window.__pond = () => {
     top.querySelectorAll("#dashSeason button").forEach(x => x.classList.toggle("on", x === b));
     if (window.__seasonSet) window.__seasonSet(b.dataset.s);
   });
-  // Suche
+  // Stufe 99 / Beta 105: Block 1 DASHBOARD Pass 6 - Suche mit Kategorie-Chips + Hover-Highlight (Ring pulsiert)
+  // Suche: Live-Treffer, Klick/Enter springt hin und waehlt aus (Beta 90)
   const inp = top.querySelector("#dashSearch");
-  inp.addEventListener("keydown", e => {
-    if (e.key !== "Enter") return;
-    const q = inp.value.trim().toLowerCase(); if (!q) return;
-    let hit = BUILDINGS.find(b => (b.userData.name || "").toLowerCase().indexOf(q) >= 0);
-    if (!hit) hit = BUILDINGS.find(b => (b.userData.jobs || []).some(k => (k || "").toLowerCase().indexOf(q) >= 0));
-    if (hit && window.__look){
-      window.__look(hit.position.x, 1.2, hit.position.z);
-      showCard(hit.userData.name || "Haus", "Service",
-        '<div class="m">' + (hit.userData.role || "Hermes-Agent") + '</div>' +
-        '<div class="row"><span>Jobs</span><span>' + (hit.userData.jobs || []).length + ' konfiguriert</span></div>');
+  const vig = document.createElement('div'); vig.id = 'vig'; document.body.appendChild(vig);
+  const sug = document.createElement("div"); sug.id = "dashSuggest"; sug.style.display = "none";
+  document.body.appendChild(sug);
+  let sugChip = "alle";
+  function searchHits(q, chip){
+    q = q.toLowerCase(); if (!q) return [];
+    chip = chip || sugChip;
+    const hits = [];
+    for (const b of BUILDINGS){
+      const n = (b.userData.name || "").toLowerCase();
+      const js = (b.userData.jobs || []).map(k => (k || "").toLowerCase());
+      let tag = null;
+      if (n.indexOf(q) >= 0) tag = "Haus";
+      else if (js.some(k => k.indexOf(q) >= 0)) tag = "Job";
+      if (!tag) continue;
+      if (chip === "haeuser" && tag !== "Haus") continue;
+      if (chip === "jobs" && tag !== "Job") continue;
+      hits.push({b, tag});
+      if (hits.length >= 6) break;
     }
+    return hits;
+  }
+  let hlMesh = null;
+  function showHl(b){
+    const scn = (typeof scene === "undefined") ? null : scene;
+    if (!scn) return;
+    if (!hlMesh){
+      hlMesh = new THREE.Mesh(new THREE.RingGeometry(1.4, 1.75, 28), new THREE.MeshBasicMaterial({color: 0x0a84ff, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false}));
+      hlMesh.rotation.x = -Math.PI / 2; scn.add(hlMesh);
+    }
+    hlMesh.position.set(b.position.x, 0.14, b.position.z);
+    hlMesh.visible = true;
+  }
+  function clearHl(){ if (hlMesh) hlMesh.visible = false; }
+  function hideSug(){ sug.style.display = "none"; clearHl(); }
+  function jumpTo(hit){
+    hideSug(); inp.blur();
+    if (window.__look) window.__look(hit.b.position.x, 1.2, hit.b.position.z);
+    if (window.__selBuilding) window.__selBuilding(hit.b);
+    else showCard(hit.b.userData.name || "Haus", "Service",
+      '<div class="m">' + (hit.b.userData.role || "Hermes-Agent") + '</div>' +
+      '<div class="row"><span>Jobs</span><span>' + (hit.b.userData.jobs || []).length + ' konfiguriert</span></div>');
+  }
+  function renderSug(){
+    const hits = searchHits(inp.value.trim());
+    if (!hits.length && sugChip === "alle"){ hideSug(); return; }
+    const r = inp.getBoundingClientRect();
+    sug.style.left = r.left + "px"; sug.style.top = (r.bottom + 6) + "px"; sug.style.display = "block";
+    const chips = '<div class="chips">' + [["alle","Alle"],["haeuser","Häuser"],["jobs","Jobs"]].map(c =>
+      '<button data-c="' + c[0] + '"' + (sugChip === c[0] ? ' class="on"' : '') + '>' + c[1] + '</button>').join("") + '</div>';
+    sug.innerHTML = chips + (hits.length ? hits.map((h, i) =>
+      '<div class="s" data-i="' + i + '"><span>' + (h.b.userData.name || "Haus") + '</span><span class="t">' + h.tag + '</span></div>').join("")
+      : '<div class="s" style="color:#9b9ba6;cursor:default">keine Treffer in ' + (sugChip === "haeuser" ? "Häusern" : "Jobs") + '</div>');
+    sug.querySelectorAll(".chips button").forEach(cb => cb.addEventListener("mousedown", e => {
+      e.preventDefault(); sugChip = cb.dataset.c; renderSug();
+    }));
+    sug.querySelectorAll(".s[data-i]").forEach(row => {
+      row.addEventListener("mouseenter", () => {
+        row.classList.add("hov");
+        const hit = searchHits(inp.value.trim())[+row.dataset.i];
+        if (hit) showHl(hit.b);
+      });
+      row.addEventListener("mouseleave", () => { row.classList.remove("hov"); clearHl(); });
+    });
+  }
+  {
+    const prevHT = window.__extraTick;
+    window.__extraTick = function(dt, t){
+      if (prevHT) prevHT(dt, t);
+      if (hlMesh && hlMesh.visible){ const sc = 1 + Math.sin(t * 5) * 0.08; hlMesh.scale.set(sc, sc, 1); }
+    };
+    const dbgPrevS = window.__dbg;
+    window.__dbg = function(){
+      const d = dbgPrevS ? dbgPrevS() : {};
+      d.search = {chip: sugChip, hl: !!(hlMesh && hlMesh.visible)};
+      return d;
+    };
+  }
+  inp.addEventListener("input", renderSug);
+  inp.addEventListener("focus", renderSug);
+  inp.addEventListener("blur", () => setTimeout(hideSug, 180));
+  inp.addEventListener("keydown", e => {
+    if (e.key === "Escape"){ hideSug(); inp.blur(); return; }
+    if (e.key !== "Enter") return;
+    const hits = searchHits(inp.value.trim());
+    if (hits[0]) jumpTo(hits[0]);
   });
+  sug.addEventListener("mousedown", e => {
+    const row = e.target.closest(".s"); if (!row) return;
+    const hit = searchHits(inp.value.trim())[+row.dataset.i]; if (hit) jumpTo(hit);
+  });
+  // Stufe 96 / Beta 102: Block 1 DASHBOARD Pass 5 - Alerts-Menue mit echten Alerts (Beta 90-Filter bleibt)
+  const alBtn = document.getElementById("dashAlerts");
+  let alMenu = null;
+  function buildAlertsMenu(){
+    if (alMenu){ alMenu.remove(); alMenu = null; return; }
+    alMenu = document.createElement("div"); alMenu.id = "dashAlertsMenu"; alMenu.className = "glass";
+    const today = new Date(); today.setHours(0,0,0,0);
+    const items = [];
+    (feed.runs || []).forEach(r => {
+      if (r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime()){
+        const tt = new Date((r.started_at || 0) * 1000);
+        items.push({label: (r.service || r.agent || r.kind || "Lauf") + " · " + (tt.getHours() < 10 ? "0" : "") + tt.getHours() + ":" + (tt.getMinutes() < 10 ? "0" : "") + tt.getMinutes(), sub: "fehlgeschlagen"});
+      }
+    });
+    const l50 = (feed.runs || []).slice(0, 50);
+    const fin = l50.filter(r => r.state === "finished").length, fl = l50.filter(r => r.state === "failed").length;
+    if (l50.length && fl > 0 && fin < fl) items.push({label: "Erfolgsquote unter 50%", sub: "letzte 50 Läufe"});
+    if (!(feed.runs || []).length) items.push({label: "Noch keine Läufe", sub: "Feed leer"});
+    if (!items.length) items.push({label: "Alles ruhig", sub: "keine Fehler heute"});
+    alMenu.innerHTML = '<div class="alTitle">Alerts</div>' + items.slice(0, 6).map(i =>
+      '<div class="alRow" data-q="' + (i.sub === "fehlgeschlagen" ? "1" : "") + '"><b>' + i.label + '</b><span>' + i.sub + '</span></div>').join("");
+    document.body.appendChild(alMenu);
+    alMenu.querySelectorAll(".alRow[data-q='1']").forEach(row => row.addEventListener("click", () => {
+      failedOnly = true; tab = "runs";
+      tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "runs"));
+      renderTable(); buildAlertsMenu();
+    }));
+  }
+  if (alBtn){
+    alBtn.title = "Alerts anzeigen";
+    alBtn.addEventListener("click", buildAlertsMenu);
+    document.addEventListener("mousedown", e => { if (alMenu && !alMenu.contains(e.target) && e.target !== alBtn && !alBtn.contains(e.target)) buildAlertsMenu(); });
+  }
   // Live-Tick (Kette): Uhr, KPIs, Alerts, Tracker, Tabelle
   let lastTick = 0;
   const prevTick = window.__extraTick;
@@ -4061,13 +4478,13 @@ window.__pond = () => {
     const today = new Date(); today.setHours(0,0,0,0);
     const failedToday = (feed.runs || []).filter(r => r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime());
     const al = document.getElementById("dashAlerts");
-    if (al){ al.style.display = failedToday.length ? "" : "none"; al.textContent = failedToday.length + " Fehler"; }
+    if (al){ al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler"; al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8"; al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)"; }
     setTracker((feed.runs || [])[0]);
     renderTable();
     if (window.__panelOverview) window.__panelOverview();
     if (window.__weather){
       const wb = top.querySelectorAll("#dashWeather button");
-      if (wb.length >= 2) wb[0].classList.toggle("on", !window.__weather());
+      if (wb.length >= 2){ const wmode = window.__weatherMode ? window.__weatherMode() : "klar"; wb.forEach(x => x.classList.toggle("on", x.dataset.w === (wmode === "gewitter" ? "2" : (wmode === "regen" ? "1" : "0")))); }
     }
   };
   // Stufe 84 / Beta 86: rechtes Detail-Panel als Dorf-Übersicht, wenn nichts ausgewaehlt ist
@@ -4075,6 +4492,7 @@ window.__pond = () => {
   let ovT = 0;
   window.__panelOverview = (force) => {
     const nm = performance.now();
+    if (window.__panelPinRun && nm < window.__panelPinRun) return;
     if (!force && nm - ovT < 700) return;
     ovT = nm;
     if (window.__selActive && window.__selActive()) return;
@@ -4082,11 +4500,16 @@ window.__pond = () => {
     const runs = feed.runs || [], jobs = feed.jobs || [];
     const act = runs.filter(r => r.state === "running").length;
     const last = runs[0];
+    const l50 = runs.slice(0, 50), fin = l50.filter(r => r.state === "finished").length, fl = l50.filter(r => r.state === "failed").length, tot = fin + fl;
+    const sb = document.querySelector("#dashSeason button.on");
     pnl.innerHTML = '<div class="tag">Dorf-Übersicht</div><h3>Hermes Village</h3>' +
       '<div class="row"><span>Aktive Läufe</span><span>' + act + '</span></div>' +
       '<div class="row"><span>Letzter Lauf</span><span>' + (last ? (last.job_name || "Lauf") : "—") + '</span></div>' +
       '<div class="row"><span>Status</span>' + (last ? '<span class="' + cls(last.state || "") + '">' + (last.state || "—") + '</span>' : '<span>—</span>') + '</div>' +
       '<div class="row"><span>Jobs</span><span>' + jobs.length + '</span></div>' +
+      '<div class="row"><span>Erfolgsquote</span><span>' + (tot ? Math.round(100 * fin / tot) + '%' : '–') + '</span></div>' +
+      '<div class="row"><span>Services</span><span>' + BUILDINGS.length + '</span></div>' +
+      '<div class="row"><span>Saison</span><span>' + (sb ? sb.textContent : "Sommer") + '</span></div>' +
       '<div class="row"><span>Wetter</span><span>' + (window.__weather && window.__weather() ? "Regen" : "Klar") + '</span></div>';
     pnl.style.display = "block";
   };
@@ -4095,27 +4518,28 @@ window.__pond = () => {
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
     d.dash = true; d.kpis = !!document.getElementById("kpiRuns");
-    d.tracker = document.querySelectorAll("#trSteps .step").length; d.dashTab = tab;
+    const trProg = document.getElementById("trProg"); d.tracker = {steps: document.querySelectorAll("#trSteps .step").length, prog: trProg ? trProg.style.width : "", run: !!window.__trRun}; d.dashTab = tab;
     d.dnPin = (window.__pinTime && window.__pinTime.length === 2) ? window.__pinTime.join(":") : "auto";
     return d;
   };
 })();
 
 
+// Stufe 96 / Beta 98: Block 2 INTERACTION Pass 3 - Kamera gleitet bei Auswahl erst hin (Hoehenbogen), dann Follow; Label schwebt und blendet ein
 // ===== Stufe 60 / Beta 63: INTERACTION-Block (Drag-Pan, Right-Drag-Rotate, Zoom/Pinch, Klick → Glide + Follow + Ring + Label + Live-Panel) =====
 (function(){
   const css = document.createElement("style");
-  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap}';
+  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .28s ease;animation:sellBob 2.6s ease-in-out infinite}@keyframes sellBob{0%,100%{margin-top:0}50%{margin-top:-5px}}#selLabel::after{content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:6px;border-radius:50%;background:#f0a040;transform:translateX(-50%);box-shadow:0 0 8px rgba(240,160,64,.7)}';
   document.head.appendChild(css);
 
   const DEF = {x:0, y:0.5, z:0};
-  let glide = null, follow = null, sel = null;
+  let glide = null, follow = null, followPending = null, sel = null;
   const cur = () => camC || DEF;
 
   // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
   window.__look = (x, y, z) => {
-    if (x == null){ follow = null; glide = null; camC = null; return; }
-    follow = null;
+    if (x == null){ follow = null; followPending = null; glide = null; camC = null; return; }
+    follow = null; followPending = null;
     const c = cur();
     glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: 900};
   };
@@ -4133,7 +4557,7 @@ window.__pond = () => {
       pinchDist0 = dist; dragMode = "pinch"; return;
     }
     dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
-    px = e.clientX; py = e.clientY; moved = 0; follow = null;
+    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null;
   });
   addEventListener("pointermove", e => {
     if (!pointers.has(e.pointerId)) return;
@@ -4184,6 +4608,9 @@ window.__pond = () => {
     const rel = feed.runs.filter(r => names.some(n => r.job_name === n)).slice(0, 4);
     let rows = '<div class="m">' + (u.role || "Hermes-Agent") + '</div>';
     rows += '<div class="row"><span>Jobs</span><span>' + matched.length + ' aktiv konfiguriert</span></div>';
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    const todayRuns = feed.runs.filter(r => names.some(n => r.job_name === n) && (r.started_at || 0) * 1000 >= today0.getTime());
+    rows += '<div class="row"><span>Läufe heute</span><span>' + todayRuns.length + '</span></div>';
     if (window.__souls){
       const s = window.__souls.find(x => x.b === obj);
       if (s){
@@ -4191,7 +4618,11 @@ window.__pond = () => {
         rows += '<div class="row"><span>Soul</span><span class="' + (s.mode === "failed" ? "failed" : (s.mode === "finished" ? "ok" : (s.mode === "running" ? "run" : ""))) + '">' + (lbl[s.mode] || s.mode) + '</span></div>';
       }
     }
-    rel.forEach(r => rows += '<div class="row"><span>' + r.job_name + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>');
+    const nowMs = Date.now();
+    rel.forEach(r => {
+      const ago = r.started_at ? Math.max(1, Math.round((nowMs - r.started_at * 1000) / 60000)) + "m" : "";
+      rows += '<div class="row"><span>' + r.job_name + (ago ? ' <span style="color:#9b9ba6;font-size:10px">' + ago + '</span>' : '') + '</span><span class="' + statusClass(r.state) + '">' + r.state + '</span></div>';
+    });
     if (!rel.length) rows += '<div class="m">Keine belegten Läufe für dieses Haus.</div>';
     return rows;
   }
@@ -4211,10 +4642,14 @@ window.__pond = () => {
     label.textContent = objName(obj);
     document.body.appendChild(label);
     sel = {obj, ring, label};
-    follow = {obj};
+    const c0 = cur();
+    glide = {fx: c0.x, fy: c0.y, fz: c0.z, tx: obj.position.x, ty: (obj.position.y || 0) + 0.5, tz: obj.position.z, t0: performance.now(), dur: 900};
+    followPending = obj;
+    requestAnimationFrame(() => { label.style.opacity = 1; });
     refreshPanel();
   }
   window.__selActive = () => !!sel;
+  window.__selBuilding = select;
   function deselect(){
     if (!sel) return;
     scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
@@ -4239,12 +4674,14 @@ window.__pond = () => {
     if (glide){
       const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
       const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2, z: glide.fz + (glide.tz - glide.fz) * e2};
-      if (p >= 1) glide = null;
+      const arc = Math.sin(p * Math.PI) * 0.5;
+      camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
+      if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
     } else if (follow && follow.obj){
       const o = follow.obj.position, c = cur();
       const ny = (o.y || 0) + 0.5;
-      camC = {x: c.x + (o.x - c.x) * 0.1, y: c.y + (ny - c.y) * 0.1, z: c.z + (o.z - c.z) * 0.1};
+      const f = 1 - Math.pow(0.005, Math.min(dt, 0.1));
+      camC = {x: c.x + (o.x - c.x) * f, y: c.y + (ny - c.y) * f, z: c.z + (o.z - c.z) * f};
     }
     if (sel){
       const s = 1 + 0.14 * Math.sin(t * 5);
@@ -4271,6 +4708,22 @@ window.__pond = () => {
 })();
 
 
+
+// Stufe 96 / Beta 99: Block 1 DASHBOARD Pass 4 - Detail-Panel lebt: Overview-Panel refresh im Tick
+(function(){
+  let lastOv = 0;
+  const pt = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (pt) pt(dt, t);
+    if (t - lastOv > 0.7){ lastOv = t; if (window.__panelOverview && !(window.__selActive && window.__selActive())) window.__panelOverview(); }
+  };
+  const dp = window.__dbg;
+  window.__dbg = function(){
+    const d = dp ? dp() : {};
+    d.panelLive = true;
+    return d;
+  };
+})();
 
 // Stufe 83 / Beta 85: neunzehnter Polier-Durchgang (Draht-Gluehbirnen + Glow-Pools)
 (function(){
