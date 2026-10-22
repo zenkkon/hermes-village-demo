@@ -4541,7 +4541,10 @@ window.__pond = () => {
     if (x == null){ follow = null; followPending = null; glide = null; camC = null; return; }
     follow = null; followPending = null;
     const c = cur();
-    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: 900};
+    const dxy = Math.hypot(x - c.x, z - c.z);
+    const dur = Math.round(700 + Math.min(700, dxy * 40));
+    const amp = 0.35 + Math.min(2.2, dxy * 0.07);
+    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur, arcAmp: amp};
   };
 
   // Pointer: Linkes Ziehen = Pan, rechtes Ziehen = Rotate, Rad/Pinch = Zoom
@@ -4655,6 +4658,31 @@ window.__pond = () => {
     scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
     sel = null; follow = null;
   }
+  // Stufe 04 / Beta 109: Block 2 INTERACTION Pass 4 - Hover-Highlight auf klickbaren Objekten
+  let hover = null, lastHoverT = 0;
+  function setHover(obj){
+    if (hover && hover.obj === obj) return;
+    if (hover){ hover.obj.scale.set(hover.sx, hover.sy, hover.sz); }
+    hover = null;
+    document.body.style.cursor = "";
+    if (obj){
+      hover = {obj, sx: obj.scale.x, sy: obj.scale.y, sz: obj.scale.z};
+      obj.scale.set(hover.sx * 1.03, hover.sy * 1.03, hover.sz * 1.03);
+      document.body.style.cursor = "pointer";
+    }
+  }
+  addEventListener("mousemove", e => {
+    if (dragMode) { setHover(null); return; }
+    if (e.target && e.target.closest && e.target.closest(UI)) { setHover(null); return; }
+    const now = performance.now();
+    if (now - lastHoverT < 70) return;
+    lastHoverT = now;
+    ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+    ray.setFromCamera(ndc, camera);
+    let hit = ray.intersectObject(fox, true)[0] ? fox : null;
+    if (!hit){ for (const b of BUILDINGS){ if (ray.intersectObject(b, true)[0]){ hit = b; break; } } }
+    setHover(hit);
+  });
   addEventListener("click", e => {
     if (e.target.closest && e.target.closest(UI)) return;
     if (moved > 6) return;
@@ -4674,7 +4702,7 @@ window.__pond = () => {
     if (glide){
       const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
       const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      const arc = Math.sin(p * Math.PI) * 0.5;
+      const arc = Math.sin(p * Math.PI) * (glide.arcAmp || 0.5);
       camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
       if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
     } else if (follow && follow.obj){
@@ -4701,7 +4729,8 @@ window.__pond = () => {
     const d = dp ? dp() : {};
     const cc2 = cur();
     d.inter = {pan: true, rotate: "right", pinch: true, follow: !!(follow && follow.obj),
-      sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode,
+      sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode, hover: hover ? objName(hover.obj) : null,
+      glideAmp: glide ? (glide.arcAmp || 0.5) : null,
       cam: {x: +cc2.x.toFixed(2), y: +cc2.y.toFixed(2), z: +cc2.z.toFixed(2)}, rotY: +rotY.toFixed(2)};
     return d;
   };
