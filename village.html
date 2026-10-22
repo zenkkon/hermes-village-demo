@@ -3750,7 +3750,8 @@ tick(); setInterval(tick, 30000);
     const total = fin + fl;
     const rate = total ? Math.round(100 * fin / total) + "%" : "keine Daten";
     let html = row("Aktive Läufe", running, "#0a84ff");
-    if (window.__weather) html += row("Wetter", window.__weather() ? "Regen" : "Klar");
+    if (window.__weatherMode) html += row("Wetter", window.__weatherMode() === "gewitter" ? "Gewitter" : (window.__weatherMode() === "regen" ? "Regen" : "Klar"));
+    else if (window.__weather) html += row("Wetter", window.__weather() ? "Regen" : "Klar");
     html += row("Erfolgsquote (50)", rate, fl === 0 && total ? "#30d158" : "");
     html += row("Belegte Häuser", failed, failed ? "#ff453a" : "#30d158");
     const last = (feed.runs || [])[0];
@@ -3768,6 +3769,7 @@ tick(); setInterval(tick, 30000);
   };
 })();
 
+// Stufe 99 / Beta 104: Block 4 EXTRAS Pass 3 - Gewitter (Blitz-Flash, dunkler Himmel, harder Regen) + Pfuetzen nach dem Regen
 // ===== Stufe 09: Wetter-System (Regenschauer, Kanzie-Niveau: lebhafte Welt) =====
 (function(){
   const N = 1500;
@@ -3785,10 +3787,20 @@ tick(); setInterval(tick, 30000);
   scene.add(rain);
 
   const rainTint = new THREE.Color(0x5f6b7a);
+  const stormTint = new THREE.Color(0x39414d);
+  const flashCol = new THREE.Color(0xdde6f2);
   // Stufe 94 / Beta 96: Regen-Verfeinerung (Winddrift) + Saison-Wetterkopplung
+  // Stufe 99 / Beta 104: Gewitter-Modus + Blitz + Pfuetzen
   let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
+  let storm = false, flashT = 0;
   window.__weather = () => w > 0.5;
-  window.__weatherSet = v => { target = v ? 1 : 0; nextSwitch = Date.now() + 120000; };
+  window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
+  window.__weatherForce = v => { w = +v; };
+  window.__weatherFlash = () => { flashT = 0.32; };
+  window.__weatherSet = v => {
+    const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
+    storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
+  };
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -3797,7 +3809,8 @@ tick(); setInterval(tick, 30000);
     const se = window.__season ? window.__season() : "sommer";
     lastSe = se; lastWinter = se === "winter";
     if (now >= nextSwitch){
-      if (lastWinter){ target = 0; nextSwitch = now + 60000; }
+      if (storm){ nextSwitch = now + 180000; }
+      else if (lastWinter){ target = 0; nextSwitch = now + 60000; }
       else {
         target = target > 0.5 ? 0 : 1;
         const rainDur = se === "herbst" ? (40000 + Math.random() * 22000) : (se === "sommer" ? (20000 + Math.random() * 12000) : (28000 + Math.random() * 14000));
@@ -3812,7 +3825,7 @@ tick(); setInterval(tick, 30000);
     mat.color.setHex(lastWinter ? 0xe4eef4 : 0x9fc8e8);
     if (raining){
       const arr = geo.attributes.position.array;
-      const fall = lastWinter ? 5.5 : 16, wx = 2.2, wz = 0.9;
+      const fall = storm ? 22 : (lastWinter ? 5.5 : 16), wx = storm ? 4.2 : 2.2, wz = storm ? 1.8 : 0.9;
       for (let i = 0; i < N; i++){
         arr[i*3+1] -= dt * fall;
         arr[i*3] += dt * wx; arr[i*3+2] += dt * wz;
@@ -3826,15 +3839,55 @@ tick(); setInterval(tick, 30000);
     sun.intensity *= (1 - 0.35 * w);
     hemi.intensity *= (1 - 0.25 * w);
     if (scene.background && scene.background.isColor){
-      scene.background.lerp(rainTint, 0.3 * w);
+      scene.background.lerp(storm ? stormTint : rainTint, 0.3 * w);
       if (scene.fog) scene.fog.color.copy(scene.background);
     }
+    if (flashT > 0){
+      const f = Math.max(0, flashT / 0.32);
+      scene.background.lerp(flashCol, 0.5 * f);
+      if (scene.fog) scene.fog.color.copy(scene.background);
+      sun.intensity += 4.2 * f;
+      hemi.intensity += 1.1 * f;
+      flashT -= dt;
+    }
+    if (storm && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09) flashT = 0.32;
+    // Pfuetzen: erscheinen nach dem Regen, verblassen in ~40 s
+    const rainNow = w > 0.5;
+    if (rainNow) wasRain = true;
+    else if (wasRain && w < 0.05){
+      wasRain = false;
+      const k = 4 + ((Math.random() * 5) | 0);
+      for (let i = 0; i < k; i++) spawnPuddle();
+    }
+    for (let i = puddles.length - 1; i >= 0; i--){
+      const pd = puddles[i];
+      pd.life -= dt;
+      pd.m.material.opacity = Math.min(0.42, 0.42 * Math.min(1, pd.life / 8));
+      if (pd.life <= 0){ pGroup.remove(pd.m); pd.m.geometry.dispose(); pd.m.material.dispose(); puddles.splice(i, 1); }
+    }
   };
+
+  const puddles = [], pGroup = new THREE.Group(); scene.add(pGroup); let wasRain = false;
+  function spawnPuddle(){
+    for (let tries = 0; tries < 12; tries++){
+      const n = LIFE.nodes[(Math.random() * LIFE.nodes.length) | 0];
+      if (!n) return;
+      const px = n.x + (Math.random() - 0.5) * 3, pz = n.z + (Math.random() - 0.5) * 3;
+      let ok = true;
+      for (const ob of LIFE.obstacles){ if (Math.hypot(px - ob.x, pz - ob.z) < ob.r + 0.7){ ok = false; break; } }
+      if (!ok) continue;
+      const r = 0.45 + Math.random() * 0.65;
+      const m = new THREE.Mesh(new THREE.CircleGeometry(r, 20), new THREE.MeshBasicMaterial({color: 0x24455e, transparent: true, opacity: 0.42, depthWrite: false}));
+      m.rotation.x = -Math.PI / 2; m.position.set(px, 0.09, pz);
+      pGroup.add(m); puddles.push({m, life: 38 + Math.random() * 10});
+      return;
+    }
+  }
 
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.weather = {w: +w.toFixed(2), raining: w > 0.5, season: lastSe, winterSleet: lastWinter && w > 0.5};
+    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, flash: flashT > 0, season: lastSe, winterSleet: lastWinter && w > 0.5, puddles: puddles.length};
     return d;
   };
 })();
@@ -4119,7 +4172,7 @@ window.__pond = () => {
     '<div id="dashAreas">' +
       ["Plaza","Hafen","Wohnviertel","Werkstatt"].map(a => '<button data-a="' + a + '">' + a + '</button>').join("") +
     '</div>' +
-    '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button></div>' +
+    '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button><button data-w="2">Gewitter</button></div>' +
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
     '<button id="dashDN" data-m="auto">Auto</button>' +
     '<span id="dashClock">--:--</span>' +
@@ -4205,7 +4258,7 @@ window.__pond = () => {
   top.querySelector("#dashWeather").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     top.querySelectorAll("#dashWeather button").forEach(x => x.classList.toggle("on", x === b));
-    if (window.__weatherSet) window.__weatherSet(b.dataset.w === "1");
+    if (window.__weatherSet) window.__weatherSet(+b.dataset.w);
   });
   // Jahreszeiten-Menü (EXTRAS)
   top.querySelector("#dashSeason").addEventListener("click", e => {
@@ -4319,7 +4372,7 @@ window.__pond = () => {
     if (window.__panelOverview) window.__panelOverview();
     if (window.__weather){
       const wb = top.querySelectorAll("#dashWeather button");
-      if (wb.length >= 2) wb[0].classList.toggle("on", !window.__weather());
+      if (wb.length >= 2){ const wmode = window.__weatherMode ? window.__weatherMode() : "klar"; wb.forEach(x => x.classList.toggle("on", x.dataset.w === (wmode === "gewitter" ? "2" : (wmode === "regen" ? "1" : "0")))); }
     }
   };
   // Stufe 84 / Beta 86: rechtes Detail-Panel als Dorf-Übersicht, wenn nichts ausgewaehlt ist

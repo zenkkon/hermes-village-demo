@@ -1560,3 +1560,14 @@ Block 3 LIFE Pass 4 (Idle-Gruppenbildung + Gespraechs-Chats):
 - Headless-Erkenntnis: sim-Zeit laeuft im Headless-Run sehr viel langsamer als Wandzeit (dt-Cap 0.1 + geringe rAF-Rate), deshalb Chat-Verifikation mit __lifeDtScale=60: Probe 9041 zeigte 13 Seeks, 2 Chats gleichzeitig (Paar-Bildung bestätigt), 0 JS-Fehler; rv112_chat.png aufgenommen. rv113 (Port 9042, Normalgeschwindigkeit): Tag+Nacht sauber, gap ok, 0 JS-Fehler.
 - village.html 1.479.192 -> 1.481.342 B. Zip beta103.
 - Naechster Baustein: EXTRAS Pass 3 (Gewitter: Blitz-Flash + Donner-Pause + Pfuetzen nach Regen) oder DASHBOARD Pass 6 (Such-Feinschliff mit Kategorie-Chips), je nach naechster Abnahme.
+
+## M110 / Beta 104 (08:00-08:11, 22.10.)
+Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
+- Wetter-Menue um "Gewitter" erweitert (data-w 0/1/2); __weatherSet nimmt Modus, __weatherMode liefert klar/regen/gewitter.
+- Gewitter: dunklerer Himmel (stormTint 0x39414d), harder Regen (fall 22, mehr Winddrift), Blitz-Flash (alle ~12 s: sky/fog-Lerp auf 0xdde6f2 + sun/hemi-Boost 0,32 s), Auto-Zyklus laesst Gewitter min. 3 Min stehen.
+- Pfuetzen: nach Regenende spawnen 4-8 dunkle Puddle-Scheiben an Weg-Nodes (Gebaeude-Aussparung), verblassen in ~40 s.
+- Badge-Panel "Wetter"-Zeile zeigt jetzt Klar/Regen/Gewitter; Topbar-Buttons-Toggle folgt dem echten Modus.
+- Debug-Hooks fuer Headless-Review: __weatherForce (w setzen), __weatherFlash (Blitz ausloesen).
+- Review rv114 (Port 9043/9044): Gewitter-Button aktiviert, storm=true, Regen faellt; Blitz: flash sofort true, nach ~1 s false (rv114_flash.png, Himmel aufgehellt); nach Klar: 5 Pfuetzen gespawnt (rv114_puddles.png); Tag+Nacht sauber, 0 JS-Fehler.
+- village.html 1.481.342 -> 1.484.590 B. Zip beta104.
+- Naechster Baustein: DASHBOARD Pass 6 (Suche mit Kategorie-Chips + Hover-Highlight) oder WORLD Pass 7 (weitere Kanzie-Gap-Optik), je nach naechster Abnahme.
