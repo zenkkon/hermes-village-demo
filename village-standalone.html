@@ -253,7 +253,7 @@ layers.forEach(L => {
   });
 })();
 const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
-  new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.08, metalness: 0.35, envMapIntensity: 1.2}));
+  new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.14, metalness: 0.22, envMapIntensity: 0.85})); // Stufe 118 / Beta 132: Pass 15 Wasser-Clay
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
 window.__seaMat = water.material;
 scene.add(water);
@@ -578,7 +578,7 @@ const millB = mill(9.5, 5.5, -0.5); window.__millSwap = millB;
 
 // Teich am Muehlrad
 const pond = new THREE.Mesh(new THREE.CircleGeometry(3.2, 26),
-  new THREE.MeshStandardMaterial({color: 0x3f7fae, roughness: 0.15, metalness: 0.1}));
+  new THREE.MeshStandardMaterial({color: 0x3f7fae, roughness: 0.2, metalness: 0.08})); // B132 P15 Teich
 pond.rotation.x = -Math.PI/2; pond.position.set(12.6, 0.605, 7.4);
 pond.receiveShadow = true; scene.add(pond);
 const pondRim = new THREE.Mesh(new THREE.RingGeometry(3.2, 3.55, 26),
@@ -595,7 +595,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   const P0 = [14.5, 8.5], P1 = [15.7, 10.1], P2 = [17.55, 10.3];
   const q = t => { const u = 1 - t;
     return [u*u*P0[0] + 2*u*t*P1[0] + t*t*P2[0], u*u*P0[1] + 2*u*t*P1[1] + t*t*P2[1]]; };
-  const wMat = new THREE.MeshStandardMaterial({color: 0x4a90c2, transparent: true, opacity: 0.92, roughness: 0.06, metalness: 0.3, envMapIntensity: 1.2});
+  const wMat = new THREE.MeshStandardMaterial({color: 0x4a90c2, transparent: true, opacity: 0.92, roughness: 0.12, metalness: 0.18, envMapIntensity: 0.85}); // B132 P15
   const bankMat = new THREE.MeshStandardMaterial({color: 0x6b4f33, roughness: 1});
   const n = 14;
   let prev = null, segs = 0;
@@ -3266,7 +3266,7 @@ tick(); setInterval(tick, 30000);
   const basin = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.9, 0.35, 14), matWall(0x9a8f7a));
   basin.position.y = 0.18; basin.castShadow = true; fountain.add(basin);
   const fw = new THREE.Mesh(new THREE.CircleGeometry(0.68, 14),
-    new THREE.MeshStandardMaterial({color: 0x6fc4e8, roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.85}));
+    new THREE.MeshStandardMaterial({color: 0x6fc4e8, roughness: 0.2, metalness: 0.08, transparent: true, opacity: 0.85})); // B132 P15 Wasserfall
   fw.rotation.x = -Math.PI/2; fw.position.y = 0.31; fountain.add(fw);
   const fcol = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.7, 10), matWall(0x9a8f7a));
   fcol.position.y = 0.55; fountain.add(fcol);
@@ -4175,7 +4175,7 @@ tick(); setInterval(tick, 30000);
   window.__p12 = () => ({snow: +cur.snow.toFixed(2), caps: window.__snowRoofs.length, capOp: +snowRoofMat.opacity.toFixed(3), ice: +iceMat.opacity.toFixed(3), iceVis: iceMesh.visible});
   window.__p13 = () => ({snow: +cur.snow.toFixed(2), nightK: +(window.__nightK || 0).toFixed(2), nf: +aurNf.toFixed(2), aur: +auroraMats[0].opacity.toFixed(3), aur2: +auroraMats[1].opacity.toFixed(3), vis: auroraGroup.visible});
   window.__p14 = () => ({wallR: matWall(0xffffff).roughness, pass: 12}); // Stufe 118 / Beta 129: WORLD Pass 12 Probe
-  window.__p15 = () => ({terrR: +window.__terrainMats[0].mat.roughness.toFixed(2), pass: 13}); // Stufe 118 / Beta 130: WORLD Pass 13 Probe
+  window.__p15 = () => ({terrR: +window.__terrainMats[0].mat.roughness.toFixed(2), waterR: window.__seaMat.roughness.toFixed(2), pass: 15}); // Stufe 118 / Beta 132: WORLD Pass 15 Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
