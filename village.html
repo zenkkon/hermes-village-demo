@@ -112,8 +112,9 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
+// Stufe 92 / Beta 94: Block 5 WORLD Pass 4 - weiche Materialien/Licht (Hemi-Boost, matte Kleinteile)
 // Licht: Tag-Nacht nach echter lokaler Uhrzeit
-const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x4a4436, 0.6); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(0xbdd3ff, 0x5a5346, 0.82); scene.add(hemi);
 const nightAmbient = new THREE.AmbientLight(0xffb060, 0); scene.add(nightAmbient);
 const groundDay = new THREE.Color(0x4a4436), groundNight = new THREE.Color(0x1d3340);
 const sun = new THREE.DirectionalLight(0xfff2d8, 1.0);
@@ -1266,7 +1267,7 @@ treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] :
   const bCols = [0xd4483a, 0x7a3f9d];
   [[-12.8, 1.2, 0.75, 0], [2.2, -5.2, 0.7, 1], [9.8, 4.2, 0.65, 0]].forEach((a, i) => {
     bush(a[0], a[1], a[2], greens[i % 3]);
-    const bMat = new THREE.MeshStandardMaterial({color: bCols[a[3]], roughness: 0.35});
+    const bMat = new THREE.MeshStandardMaterial({color: bCols[a[3]], roughness: 0.55});
     for (let k = 0; k < 6; k++){
       const berry = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), bMat);
       const ang = k * 1.05 + i * 0.6, rr = 0.22 * a[2];
@@ -2030,7 +2031,7 @@ function confettiBurst(pos){
   const cols = [0xff453a, 0x30d158, 0x0a84ff, 0xffd60a, 0xff9f0a];
   for (let i = 0; i < 14; i++){
     const c = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.02),
-      new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.5}));
+      new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.65}));
     c.position.copy(pos); c.position.y = 0.4;
     scene.add(c);
     confetti.push({m: c, vx: (Math.random()-0.5)*3, vy: 2 + Math.random()*2.5, vz: (Math.random()-0.5)*3, age: 0});

@@ -1464,3 +1464,11 @@ jetzt auch Headless-Jumps: Season-Tick sync't #dashSeason .on mit name (Cache
 lastSeasBtn, nur bei Wechsel). Review rv100 (Port 9018): alle 3 Icons gerendert
 (svg true), nach __seasonJump('herbst') zeigt der Topbar-Button "Herbst" .on,
 0 JS-Fehler. Screenshots rv100_tag14/rv100_nacht angesehen. 1.468.492 -> 1.469.177 B.
+
+## M100 / Beta 94 (03:00-03:14, 22.10.)
+Block 5 WORLD Pass 4 (weiche Materialien/Licht): Hemisphaerenlicht 0.6 -> 0.82 mit
+waermerer Bodenreflexion 0x4a4436 -> 0x5a5346 (weichere Schatten, clay-Fill); matte
+Kleinteile (Beeren 0.35 -> 0.55, Blueten/Konfetti 0.5 -> 0.65); Wasser/Glas/Lampen
+bewusst glaenzend. Review rv101 (Port 9019): pol17/18/19 = 53/1929/20, life 6 Villager,
+0 JS-Fehler, Saison/Tag-Nacht intakt. Screenshots rv101_tag14/rv101_nacht angesehen.
+1.469.177 -> 1.469.281 B.
