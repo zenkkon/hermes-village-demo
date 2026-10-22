@@ -144,6 +144,14 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
+// Stufe 114 / Beta 119: Block 4 EXTRAS Pass 5 - sichtbarer Mond bei Nacht
+const moonDiscMat = new THREE.MeshBasicMaterial({color: 0xf2ecd8, transparent: true, opacity: 0, fog: false});
+const moonDisc = new THREE.Mesh(new THREE.SphereGeometry(2.6, 24, 20), moonDiscMat);
+moonDisc.renderOrder = -5; scene.add(moonDisc);
+const moonHaloMat = new THREE.MeshBasicMaterial({color: 0xbfd0ff, transparent: true, opacity: 0, fog: false, depthWrite: false});
+const moonHalo = new THREE.Mesh(new THREE.SphereGeometry(4.4, 24, 20), moonHaloMat);
+moonHalo.renderOrder = -6; scene.add(moonHalo);
+window.__moonDisc = () => moonDiscMat.opacity;
 // Stufe 99 / Beta 106: WORLD Pass 7 Rim-Kontrast (Kanzie-Gap: Kantenglanz) - kuehles Gegenlicht
 const rimL = new THREE.DirectionalLight(0xbfd8ff, 0.25); rimL.position.set(-14, 10, -18); scene.add(rimL);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
@@ -168,8 +176,13 @@ function updateDayNight(){
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
   sun.intensity = 0.25 + day * 1.45 + dusk * 0.55;
   sun.color.set(0xfff6ec).lerp(new THREE.Color(0xffab5e), Math.min(1, dusk * 1.1));
-  moon.position.set(-20, 18, -10);
+  const mAng = ang - Math.PI;   // Beta 119-Fix: Anti-Sonne, Mond steht nachts HOCH
+  moon.position.set(Math.cos(mAng) * 70, Math.max(10, Math.sin(mAng) * 46), -30);
   moon.intensity = (1 - day) * 0.44;
+  const moonVis = Math.max(0, Math.min(1, (1 - day) * 1.15 - dusk * 0.55));
+  moonDisc.position.set(Math.cos(mAng) * 72, Math.max(8, Math.sin(mAng) * 46), -30);
+  moonHalo.position.copy(moonDisc.position);
+  moonDiscMat.opacity = moonVis * 0.95; moonHaloMat.opacity = moonVis * 0.18;
   rimL.intensity = 0.1 + day * 0.22 + dusk * 0.12;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day).lerp(new THREE.Color(0xd98a5a), dusk * 0.3);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
@@ -3440,7 +3453,7 @@ tick(); setInterval(tick, 30000);
     const bg = scene.background;
     if (bg && bg.isColor){
       const lum = (bg.r + bg.g + bg.b) / 3;
-      starMat.opacity = Math.max(0, Math.min(1, (0.24 - lum) * 6));
+      starMat.opacity = Math.max(0, Math.min(1, (0.24 - lum) * 6)) * (0.82 + Math.sin(t * 2.3) * 0.09 + Math.sin(t * 5.7) * 0.06);
     }
     const da = t * 0.15;
     duck.position.set(duckBase.x + Math.cos(da)*1.2, 0.62 + Math.abs(Math.sin(t*2))*0.02, duckBase.z + Math.sin(da)*1.2);
