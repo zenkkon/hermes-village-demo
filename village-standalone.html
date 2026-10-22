@@ -3172,6 +3172,40 @@ tick(); setInterval(tick, 30000);
     window.__flies.push(ff);
   }
 
+  // Stufe 118 / Beta 125: Block 4 EXTRAS Pass 7 - Schmetterlinge bei Tag (Gegenstueck zu den Gluehwuermchen)
+  const bCols = [0xf6a8c0, 0xffd27a, 0x9fd8f0];
+  const bMats = bCols.map(c => new THREE.MeshBasicMaterial({color: c, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false}));
+  const bGroup = new THREE.Group(); scene.add(bGroup);
+  window.__butterflies = [];
+  const bSpots = [[-10,-0.4],[-9,-2],[3.5,4],[5,4.6],[-3,-8],[4,-9],[-5,6.5],[2,7.5],[8,-2],[-8,3],[0,-4],[6,1]];
+  for (let i = 0; i < 12; i++){
+    const g = new THREE.Group();
+    const mat = bMats[i % 3];
+    const wl = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.15), mat); wl.position.x = 0.1;
+    const wr = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.15), mat); wr.position.x = -0.1;
+    g.add(wl); g.add(wr);
+    g.scale.setScalar(0.85);
+    bGroup.add(g);
+    window.__butterflies.push({g, wl, wr, x: bSpots[i][0], z: bSpots[i][1], ph: i * 1.7, r: 0.9 + (i % 4) * 0.5});
+  }
+  window.__bfProbe = () => ({n: window.__butterflies.length, vis: +bMats[0].opacity.toFixed(3), y: +window.__butterflies[0].g.position.y.toFixed(2), flap: +window.__butterflies[0].wl.rotation.z.toFixed(3)});
+  const prevBf = window.__extraTick;
+  window.__extraTick = function(dt, t){
+    if (prevBf) prevBf(dt, t);
+    const dayK = Math.max(0, 1 - (window.__nightK || 0));
+    bMats.forEach(m => m.opacity = dayK * 0.95);
+    bGroup.visible = dayK > 0.03;
+    if (bGroup.visible){
+      window.__butterflies.forEach((b, i) => {
+        const a = t * (0.35 + (i % 5) * 0.06) + b.ph;
+        b.g.position.set(b.x + Math.cos(a) * b.r, 1.0 + Math.sin(t * 2.2 + b.ph) * 0.35, b.z + Math.sin(a * 1.3) * b.r);
+        b.g.rotation.y = a * 1.3;
+        const flap = Math.sin(t * 14 + b.ph) * 0.9;
+        b.wl.rotation.z = flap; b.wr.rotation.z = -flap;
+      });
+    }
+  };
+
   // 6) Wegweiser am Platz
   function labelTex(text){
     const cv = document.createElement("canvas");
