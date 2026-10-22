@@ -1551,3 +1551,12 @@ Block 1 DASHBOARD Pass 5 (Alerts-Menue mit echten Alerts):
 - Review rv111 (Port 9037): Badge sichtbar + grau, Menue oeffnet/schliesst, Eintraege korrekt ("Alles ruhig"), Tag+Nacht ok, 0 JS-Fehler. Screenshots rv111_alerts/tag14/nacht geprueft.
 - village.html 1.476.634 -> 1.479.192 B. Zip beta102.
 - Naechster Baustein: LIFE Pass 4 (Idle-Verhalten ausbauen: Gruppenbildung, kurze Gespraech-Spawns) oder EXTRAS Pass 3 (Wetter-Verbesserung: Blitz/Gewitter + Pfuetzen), je nach naechster Abnahme.
+
+## M109 / Beta 103 (07:30-07:57, 22.10.)
+Block 3 LIFE Pass 4 (Idle-Gruppenbildung + Gespraechs-Chats):
+- Idle-Villager suchen mit Wahrscheinlichkeit dt*0.9 den naechsten freien Villager in 1.1-8 Abstand und laufen hin (chatSeek, Route verworfen).
+- Unter 1.3 Abstand: Chat-Start (6-13 s): beide in mode "chat", spielen Idle, drehen sich langsam gegeneinander, danach Loesung beiderseits + neuer Wander-Loop.
+- dbg: chatN (aktive Chats), villagersList, __lifeStat (seek/chat-Zaehler); neues Debug-Fenster __lifeDtScale (skaliert dt nur in lifeStep, fuer Headless-Beschleunigung).
+- Headless-Erkenntnis: sim-Zeit laeuft im Headless-Run sehr viel langsamer als Wandzeit (dt-Cap 0.1 + geringe rAF-Rate), deshalb Chat-Verifikation mit __lifeDtScale=60: Probe 9041 zeigte 13 Seeks, 2 Chats gleichzeitig (Paar-Bildung bestätigt), 0 JS-Fehler; rv112_chat.png aufgenommen. rv113 (Port 9042, Normalgeschwindigkeit): Tag+Nacht sauber, gap ok, 0 JS-Fehler.
+- village.html 1.479.192 -> 1.481.342 B. Zip beta103.
+- Naechster Baustein: EXTRAS Pass 3 (Gewitter: Blitz-Flash + Donner-Pause + Pfuetzen nach Regen) oder DASHBOARD Pass 6 (Such-Feinschliff mit Kategorie-Chips), je nach naechster Abnahme.
