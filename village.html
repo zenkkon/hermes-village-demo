@@ -1921,6 +1921,7 @@ function spawnRobot(jobName){
   rec.waveStart = null;
   scene.add(rec.g); robots.push(rec);
 }
+// Stufe 96 / Beta 101: Block 3 LIFE Pass 3 - Give-way verstaerkt (weiterer Radius, Anti-Overlap-Naheklaerung, Tempo-Daempfung nah) + gap-Messung im dbg
 // Stufe 87 / Beta 89: Block 3 LIFE - 6 Villager, Head-on-Ausweichen frueher, __lifeSpread-Abstandsmessung
 // LIFE (Stufe 61): Give-way, Ausweichen, endlose Loops
 const villagers = [];
@@ -1994,15 +1995,17 @@ function lifeStep(rb, dt, t, crowd){
     }
     const bd = d || 1;
     const bx = dx/bd, bz = dz/bd;
-    let vx = bx, vz = bz, yields = 0;
+    let vx = bx, vz = bz, yields = 0, close = 1e9;
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z;
       const od = Math.hypot(ox, oz);
-      if (od > 0.001 && od < 1.5){
-        const push = (1.5 - od) / 1.5;
-        vx -= (ox/od) * push * 1.8; vz -= (oz/od) * push * 1.8;
-        if ((bx*ox + bz*oz) / od > 0.35){ vx += bz * push * 1.4; vz += -bx * push * 1.4; yields++; }
+      if (od > 0.001 && od < close) close = od;
+      if (od > 0.001 && od < 1.8){
+        const push = (1.8 - od) / 1.8;
+        vx -= (ox/od) * push * 2.0; vz -= (oz/od) * push * 2.0;
+        if ((bx*ox + bz*oz) / od > 0.3){ vx += bz * push * 1.6; vz += -bx * push * 1.6; yields++; }
+        if (od < 0.55){ vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; }
       }
     }
     for (const ob of LIFE.obstacles){
@@ -2018,13 +2021,18 @@ function lifeStep(rb, dt, t, crowd){
     }
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
     const vl = Math.hypot(vx, vz) || 1;
-    const sp = 1.05 * dt * (window.__lifeSpeed || 1);
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1);
     p.x += (vx/vl) * Math.min(sp, d);
     p.z += (vz/vl) * Math.min(sp, d);
     const want = Math.atan2(vx, vz) + Math.PI;
     const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
     rb.g.rotation.y += diff * Math.min(1, dt*8);
     robotSetAnim(rb, "walk");
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = p.x - o.g.position.x, oz = p.z - o.g.position.z, od = Math.hypot(ox, oz);
+      if (od > 0.001 && od < 0.5){ const k = (0.5 - od) / od * 0.6; p.x += (ox/od) * k; p.z += (oz/od) * k; }
+    }
     p.y = Math.abs(Math.sin(t*8))*0.02;
   } else {
     robotSetAnim(rb, "idle");
@@ -2660,7 +2668,7 @@ const COTTAGE53_B64 = "Z2xURgIAAADYXAAAUDAAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6I
 lampPost(-1.8, -4.4); lampPost(8.2, 0.6); lampPost(-3.6, 7.4); lampPost(0.2, 11.8);
 
 connectStream();
-window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), pathNodes: LIFE.nodes.length, pathEdges: LIFE.edges.length, crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)}))}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
+window.__dbg = () => ({robots: robots.length, confetti: confetti.length, proto: !!robotProto, house: !!houseProto, acHouse: window.__acHouseCount || 0, acMill: window.__acMillCount || 0, acStudio: window.__acStudioCount || 0, studioSwap: !!window.__studioSwap, acMedia: window.__acMediaCount || 0, mhSwap: !!window.__mhSwap, acMine: window.__acMineCount || 0, mineSwap: !!window.__mineSwap, acGate: window.__acGateCount || 0, gateSwap: !!window.__gateSwap, houseSwap: !!(boathouse && boathouse.getObjectByName && !!boathouse.getObjectByName("blenderhouse")), props: window.__propSwaps || {bench:0,table:0,umbrella:0,stool:0}, domeSwap: !!window.__domeSwap, nightMood8: true, nightMood9: true, nightMood10: true, life: {villagers: villagers.length, yields: (window.__lifeYields || 0), pathNodes: LIFE.nodes.length, pathEdges: LIFE.edges.length, crowd: villagers.concat(robots).map(r => ({x: +r.g.position.x.toFixed(2), z: +r.g.position.z.toFixed(2)})), gap: (() => { let g = null; const cs = villagers.concat(robots); for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++){ const dd = Math.hypot(cs[i].g.position.x - cs[j].g.position.x, cs[i].g.position.z - cs[j].g.position.z); if (g === null || dd < g) g = dd; } return g === null ? null : +g.toFixed(2); })()}, terrainTint: (window.__terrainMats || []).length, core5: true, flora4: window.__flora4Count || 0, core6: true, shore12: true, core7: true, pier13: window.__dbgPier13 || 0, harbor14: window.__dbgHarbor14 || 0, sea8: !!(window.__seaMat && window.__seaMat.color.getHex() !== 0x2c5f86),
   stream: streamState,
   states: robots.map(r => ({cur: r.cur,
     w: r.act && r.act.wave ? [r.act.wave.time.toFixed(2), r.act.wave.getClip().duration.toFixed(2), r.act.wave.isRunning()] : null}))});

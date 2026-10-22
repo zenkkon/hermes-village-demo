@@ -1532,3 +1532,13 @@ Block 5 WORLD Pass 6 (Kanzie-Abnahme + Umsetzung):
 - Review rv108 (Port 9033, 14:00 + 22:30): Insel komplett im Rahmen, naeher und diorama-artiger, Vignette aktiv, 0 JS-Fehler. Screenshots rv108_tag14/nacht geprueft.
 - village.html 1.475.346 -> 1.475.708 B. Zip beta100.
 - Naechster Baustein: LIFE Pass 3 (Give-way-Logik bei Villager-Begegnungen verstaerken) oder DASHBOARD Pass 5, je nach naechster Abnahme.
+
+## M107 / Beta 101 (06:30-06:55, 22.10.)
+Block 3 LIFE Pass 3 (Give-way verstaerkt):
+- Ausweich-Radius 1.5 -> 1.8, Staerke 1.8 -> 2.0; Head-on-Schwellwert 0.35 -> 0.30, Tangential 1.4 -> 1.6.
+- Anti-Overlap-Naheklaerung: extra Abstossung (2.6x) unter 0.55 Abstand; Hard-Clamp nach dem Positions-Update (Paare unter 0.5 werden direkt auseinandergezogen).
+- Tempo-Daempfung: unter 0.7 Abstand laufen Figuren mit 0.55x, statt durchzudruecken.
+- dbg: neues life.gap (minimaler Paarabstand aller Figuren) fuer Headless-Review.
+- Review rv109/rv110 (Port 9034-9036): rv109 zeigte transient gap 0.26 -> Hard-Clamp nachgezogen; rv110 Tag gap 5.57-5.65, Nacht gap 1.45 mit 10 yields, 0 JS-Fehler. Screenshots rv110_tag14/nacht geprueft: Figuren verteilt, keine Ueberlappungen, Nachtszene mit Lampen ok. (rv110-Tag-Screenshot-Timeout auf Port 9035, Retry 9036 ok.)
+- village.html 1.475.708 -> 1.476.634 B. Zip beta101.
+- Naechster Baustein: DASHBOARD Pass 5 (Suche-Feinschliff / Alerts-Menue mit echten Alerts) oder LIFE Pass 4 (Idle-Verhalten ausbauen: Gruppenbildung, kurze Gespraeche), je nach naechster Abnahme.
