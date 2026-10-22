@@ -151,6 +151,8 @@ sun.shadow.mapSize.set(2048, 2048);
 sun.shadow.camera.left = -22; sun.shadow.camera.right = 22;
 sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
+sun.shadow.normalBias = 0.03; // Stufe 118 / Beta 133: Pass 16 Schatten-Feinschliff (keine Akne-Streifen auf Clay-Formen)
+sun.shadow.bias = -0.0002;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
 // Stufe 114 / Beta 119: Block 4 EXTRAS Pass 5 - sichtbarer Mond bei Nacht
@@ -4176,6 +4178,7 @@ tick(); setInterval(tick, 30000);
   window.__p13 = () => ({snow: +cur.snow.toFixed(2), nightK: +(window.__nightK || 0).toFixed(2), nf: +aurNf.toFixed(2), aur: +auroraMats[0].opacity.toFixed(3), aur2: +auroraMats[1].opacity.toFixed(3), vis: auroraGroup.visible});
   window.__p14 = () => ({wallR: matWall(0xffffff).roughness, pass: 12}); // Stufe 118 / Beta 129: WORLD Pass 12 Probe
   window.__p15 = () => ({terrR: +window.__terrainMats[0].mat.roughness.toFixed(2), waterR: window.__seaMat.roughness.toFixed(2), pass: 15}); // Stufe 118 / Beta 132: WORLD Pass 15 Probe
+  window.__p16 = () => ({nb: sun.shadow.normalBias, bias: sun.shadow.bias, pass: 16}); // Stufe 118 / Beta 133: WORLD Pass 16 Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
