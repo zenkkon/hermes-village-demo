@@ -4173,6 +4173,7 @@ tick(); setInterval(tick, 30000);
   window.__seasonSet = n => { if (SEASONS[n]){ name = n; tgt = SEASONS[n]; } };
   window.__season = () => name;
   window.__p12 = () => ({snow: +cur.snow.toFixed(2), caps: window.__snowRoofs.length, capOp: +snowRoofMat.opacity.toFixed(3), ice: +iceMat.opacity.toFixed(3), iceVis: iceMesh.visible});
+  window.__p13 = () => ({snow: +cur.snow.toFixed(2), nightK: +(window.__nightK || 0).toFixed(2), nf: +aurNf.toFixed(2), aur: +auroraMats[0].opacity.toFixed(3), aur2: +auroraMats[1].opacity.toFixed(3), vis: auroraGroup.visible});
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
@@ -4210,6 +4211,14 @@ tick(); setInterval(tick, 30000);
   const bpts = new THREE.Points(bgeo, bmat); bpts.visible = false; scene.add(bpts);
   let petalAmt = 0;
   window.__petalsForce = v => { petalAmt = +v; };
+  // Stufe 120 / Beta 127: Block 4 EXTRAS Pass 9 - Aurora borealis in Winternaechten
+  const auroraCols = [0x5ff0b0, 0x7de8ff, 0x4fd7a0];
+  const auroraGroup = new THREE.Group(); auroraGroup.position.set(0, -8, -45); scene.add(auroraGroup);
+  const auroraMats = auroraCols.map((c, i) => {
+    const m = new THREE.MeshBasicMaterial({color: c, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide});
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(30 - i * 1.6, 1.6, 8, 64, Math.PI), m);
+    auroraGroup.add(arc); return m;
+  });
   let lastSeasBtn = "";
   const foliage = window.__foliageMats || [];
   const prevTick = window.__extraTick;
@@ -4228,6 +4237,9 @@ tick(); setInterval(tick, 30000);
     sun.color.lerp(mk(0xbfd4ff), cur.snow * 0.3);
     snowRoofMat.opacity = cur.snow * 0.96;
     iceMat.opacity = cur.snow * 0.92; iceMesh.visible = cur.snow > 0.04;
+    const aurNf = Math.max(0, ((window.__nightK || 0) - 0.3) / 0.7);
+    auroraMats.forEach((m, i) => { m.opacity = Math.max(0, cur.snow * aurNf * (0.2 + 0.12 * Math.sin(t * 0.45 + i * 1.7))); });
+    auroraGroup.visible = auroraMats[0].opacity > 0.008;
     leafAmt += ((name === "herbst" ? 1 : 0) - leafAmt) * k;
     lmat.opacity = leafAmt * 0.85;
     lpts.visible = leafAmt > 0.03;
