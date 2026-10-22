@@ -3727,6 +3727,16 @@ tick(); setInterval(tick, 30000);
   geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   const smat = new THREE.PointsMaterial({color: 0xffffff, size: 0.07, transparent: true, opacity: 0, depthWrite: false});
   const snow = new THREE.Points(geo, smat); snow.visible = false; scene.add(snow);
+  // Herbstlaub: langsamer treibende Partikel, Deckung folgt der Herbst-Tiefe (Beta 92)
+  const LN = 320, lgeo = new THREE.BufferGeometry(), lpos = new Float32Array(LN*3);
+  for (let i = 0; i < LN; i++){
+    const r = 3 + Math.random()*28, a = Math.random()*Math.PI*2;
+    lpos[i*3] = Math.cos(a)*r; lpos[i*3+1] = Math.random()*12; lpos[i*3+2] = Math.sin(a)*r;
+  }
+  lgeo.setAttribute("position", new THREE.Float32BufferAttribute(lpos, 3));
+  const lmat = new THREE.PointsMaterial({color: 0xc98a3a, size: 0.075, transparent: true, opacity: 0, depthWrite: false});
+  const lpts = new THREE.Points(lgeo, lmat); lpts.visible = false; scene.add(lpts);
+  let leafAmt = 0;
   const foliage = window.__foliageMats || [];
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -3742,6 +3752,21 @@ tick(); setInterval(tick, 30000);
     foliage.forEach(e => { e.mat.color.copy(e.base); e.mat.color.lerp(cur.leaf, cur.lK); });
     if (window.__seaMat) window.__seaMat.color.lerp(cur.sea, cur.sK);
     sun.color.lerp(mk(0xbfd4ff), cur.snow * 0.3);
+    leafAmt += ((name === "herbst" ? 1 : 0) - leafAmt) * k;
+    lmat.opacity = leafAmt * 0.85;
+    lpts.visible = leafAmt > 0.03;
+    lmat.color.lerp(cur.leaf, k);
+    if (lpts.visible){
+      const la = lgeo.attributes.position.array;
+      for (let i = 0; i < LN; i++){
+        la[i*3+1] -= dt * 0.55;
+        la[i*3] += Math.sin(t*0.9 + i*1.3) * dt * 0.9;
+        la[i*3+2] += Math.cos(t*0.8 + i) * dt * 0.5;
+        if (la[i*3+1] < 0) la[i*3+1] = 10 + Math.random()*3;
+      }
+      lgeo.attributes.position.needsUpdate = true;
+    }
+    if (scene.fog){ scene.fog.far = 160 - cur.snow * 70; scene.fog.near = 55 - cur.snow * 35; }
     worldLamps.forEach((l, i) => { if (l.light) l.light.intensity *= 1 + Math.sin(t*11 + i*1.7) * 0.06; });
     const on = cur.snow > 0.02;
     snow.visible = on;
@@ -3759,11 +3784,12 @@ tick(); setInterval(tick, 30000);
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.season = {name: name, snow: +cur.snow.toFixed(2)};
+    d.season = {name: name, snow: +cur.snow.toFixed(2), leaves: +leafAmt.toFixed(2)};
     return d;
   };
 })();
 
+// Stufe 90 / Beta 92: Block 4 EXTRAS Pass 1 - Herbstlaub-Partikel + Winternebel (Fog-Distanzen folgen Schnee)
 // ===== Stufe 10: Minimap (REA-Kanzie: Uebersichts-Karte mit Live-Zustaenden) =====
 (function(){
   const SIZE = 148, HALF = SIZE / 2, SCALE = 4.0;

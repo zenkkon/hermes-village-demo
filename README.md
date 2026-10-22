@@ -1446,3 +1446,13 @@ Brotlaib 0.14 seed 3.3, Krug am Brunnen 0.12 seed 4.4, Feuertopf 0.15 seed 5.5);
 und Existing-Transforms unveraendert; Rauch/Kugeln/Koepfe bewusst round. rv98 (Port 9014):
 pol17/18/19 = 53/1929/20 unveraendert, life 6 Villager, 0 JS-Fehler. Screenshots
 rv98_tag14/rv98_nacht angesehen. 1.466.992 -> 1.467.051 B.
+
+## M98 / Beta 92 (02:00-02:16, 22.10.)
+Block 4 EXTRAS Pass 1: Herbstlaub-Partikelsystem (320 Punkte, Fall 0.55/s + seitlicher
+Drift, Deckung folgt leafAmt = eigene Lerp-Blende auf herbst, Farbe folgt cur.leaf) und
+Winternebel (Fog near/far sinken mit cur.snow: 55/160 -> 20/90). dbg season meldet
+jetzt leaves. Review rv99: herbst leaves=0.14 nach 12s Headless-Lerp (Boden/Blattwerk
+deutlich herbstlich), winter snow=1 + leaves=0 (Screenshot: weisse Landschaft, Schnee-
+Partikel, weichere Horizontlinie durch Fog). 0 JS-Fehler, Screenshots rv99_herbst/
+rv99_winter angesehen. 1.467.051 -> 1.468.492 B. Bekannt (kosmetisch): __seasonJump
+(Headless-Pfad) aktualisiert die Topbar-Buttons nicht, UI-Klicks tun es.
