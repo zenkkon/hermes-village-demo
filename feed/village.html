@@ -4410,12 +4410,17 @@ window.__pond = () => {
   tbChip.style.display = "none";
   tb.querySelector(".tabs").after(tbChip);
   tbChip.querySelector("button").addEventListener("click", e => {
-    e.stopPropagation(); activeOnly = false; tbChip.style.display = "none"; renderTable();
+    e.stopPropagation(); activeOnly = false; failedOnly = false; tbChip.style.display = "none"; renderTable();
   });
+  // Stufe 113 / Beta 117: Block 1 DASHBOARD Pass 9 - Chip-Text folgt dem aktiven Filter
+  function syncChip(){
+    tbChip.firstChild.nodeValue = activeOnly ? "nur aktive Läufe " : (failedOnly ? "nur fehlgeschlagene Läufe " : "nur aktive Läufe ");
+    tbChip.style.display = (activeOnly || failedOnly) ? "flex" : "none";
+  }
   function kpiTo(t, act){
     tab = t; activeOnly = !!act; failedOnly = false;
     tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === t));
-    tbChip.style.display = activeOnly ? "flex" : "none";
+    syncChip();
     renderTable();
   }
   const kpiEls = document.querySelectorAll("#dashKpis .kpi");
@@ -4425,7 +4430,7 @@ window.__pond = () => {
   const dbgPrevK = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrevK ? dbgPrevK() : {};
-    d.kpi = {tab: tab, activeOnly: activeOnly};
+    d.kpi = {tab: tab, activeOnly: activeOnly, failedOnly: failedOnly};
     return d;
   };
   function renderTable(){
@@ -4548,6 +4553,12 @@ window.__pond = () => {
   inp.addEventListener("input", renderSug);
   inp.addEventListener("focus", renderSug);
   inp.addEventListener("blur", () => setTimeout(hideSug, 180));
+  // Beta 117: "/"-Shortcut fokussiert die Suche (ausser in Eingabefeldern)
+  addEventListener("keydown", e => {
+    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.closest && e.target.closest("input,textarea")) return;
+    e.preventDefault(); inp.focus();
+  });
   inp.addEventListener("keydown", e => {
     if (e.key === "Escape"){ hideSug(); inp.blur(); return; }
     if (e.key !== "Enter") return;
@@ -4583,7 +4594,7 @@ window.__pond = () => {
     alMenu.querySelectorAll(".alRow[data-q='1']").forEach(row => row.addEventListener("click", () => {
       failedOnly = true; tab = "runs";
       tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "runs"));
-      renderTable(); buildAlertsMenu();
+      syncChip(); renderTable(); buildAlertsMenu();
     }));
   }
   if (alBtn){
@@ -4611,7 +4622,14 @@ window.__pond = () => {
     const today = new Date(); today.setHours(0,0,0,0);
     const failedToday = (feed.runs || []).filter(r => r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime());
     const al = document.getElementById("dashAlerts");
-    if (al){ al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler"; al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8"; al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)"; }
+    if (al){
+      al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler";
+      al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8";
+      al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)";
+      // Beta 117: Badge blinkt einmal, wenn die Fehlerzahl heute steigt
+      if (failedToday.length > (window.__alertCount || 0)){ al.classList.remove("flash"); void al.offsetWidth; al.classList.add("flash"); }
+      window.__alertCount = failedToday.length;
+    }
     setTracker((feed.runs || [])[0]);
     renderTable();
     if (window.__panelOverview) window.__panelOverview();
