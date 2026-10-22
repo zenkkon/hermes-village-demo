@@ -1456,3 +1456,11 @@ deutlich herbstlich), winter snow=1 + leaves=0 (Screenshot: weisse Landschaft, S
 Partikel, weichere Horizontlinie durch Fog). 0 JS-Fehler, Screenshots rv99_herbst/
 rv99_winter angesehen. 1.467.051 -> 1.468.492 B. Bekannt (kosmetisch): __seasonJump
 (Headless-Pfad) aktualisiert die Topbar-Buttons nicht, UI-Klicks tun es.
+
+## M99 / Beta 93 (02:30-02:45, 22.10.)
+Block 1 DASHBOARD Feinschliff: KPI-Icons als Inline-SVG in den Labeln (Play orange
+#f0a040, Check gruen #30d158, Haus blau #0a84ff, je 11px) und Saison-Buttons folgen
+jetzt auch Headless-Jumps: Season-Tick sync't #dashSeason .on mit name (Cache
+lastSeasBtn, nur bei Wechsel). Review rv100 (Port 9018): alle 3 Icons gerendert
+(svg true), nach __seasonJump('herbst') zeigt der Topbar-Button "Herbst" .on,
+0 JS-Fehler. Screenshots rv100_tag14/rv100_nacht angesehen. 1.468.492 -> 1.469.177 B.
