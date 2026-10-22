@@ -45,6 +45,7 @@
   #dashSuggest .chips button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#9b9ba6;border-radius:6px;font-size:10px;padding:2px 9px;cursor:pointer}
   #dashSuggest .chips button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
   #dashSuggest .s.hov{background:rgba(255,255,255,.08)}
+  #tbChip{align-items:center;background:rgba(10,132,255,.14);border-radius:6px;color:#0a84ff;display:flex;font-size:10px;justify-content:space-between;margin:0 10px;padding:3px 8px} #tbChip button{background:none;border:none;color:#0a84ff;cursor:pointer;font-size:11px;padding:0 2px} .kpi{cursor:pointer;transition:transform .15s} .kpi:hover{transform:translateY(-1px)}
   #dashSuggest{position:fixed;z-index:9;min-width:220px;max-height:214px;overflow:hidden;border-radius:10px;
     background:rgba(18,20,28,.78);backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.14);
     padding:4px;font-size:12px;color:#e8e8ee}
@@ -61,6 +62,15 @@
   #dashAlertsMenu .alRow b{font-weight:600}
   #dashAlertsMenu .alRow span{color:#8fa3b8;font-size:10px}
   #dashAlertsMenu .alRow:hover{background:rgba(255,255,255,.08)}
+  #dashUserMenu{position:fixed;top:46px;right:10px;z-index:30;min-width:210px;padding:10px;border-radius:12px;color:#e8ecf4;font-size:12px}
+  #dashUserMenu .uName{font-weight:700;font-size:13px}
+  #dashUserMenu .uRole{color:#8fa3b8;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  #dashUserMenu .uRow{display:flex;justify-content:space-between;gap:10px;padding:5px 6px;border-radius:8px;color:#c8d0dc;font-size:11px}
+  #dashUserMenu .uRow span:last-child{color:#9b9ba6}
+  #dashUserMenu button{width:100%;margin-top:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#e8ecf4;border-radius:8px;font-size:11px;padding:5px 8px;cursor:pointer}
+  #dashUserMenu button:hover{background:rgba(240,160,64,.16)}
+  #dashUser{cursor:pointer}
+  #dashUserMenu .uDiv{border-top:1px solid rgba(255,255,255,.12);margin:6px 0}
   #dashAreas,#dashWeather,#dashSeason{display:flex;gap:4px}
   #dashAreas button,#dashWeather button,#dashSeason button{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
@@ -89,6 +99,11 @@
   .step.done i{background:#30d158}.step.done{color:#30d158}
   .step.act i{background:#0a84ff;box-shadow:0 0 0 3px rgba(10,132,255,.25)}.step.act{color:#0a84ff}
   .step.err i{background:#ff453a;box-shadow:0 0 0 3px rgba(255,69,58,.25)}.step.err{color:#ff453a}
+  .step.act i{animation:trPulse 1.6s ease-in-out infinite}
+  @keyframes trPulse{0%,100%{box-shadow:0 0 0 3px rgba(10,132,255,.25)}50%{box-shadow:0 0 0 6px rgba(10,132,255,.1)}}
+  #dashTracker{cursor:pointer}#dashTracker:hover{background:rgba(30,34,46,.72)}
+  #dashTracker .trProgWrap{height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin-top:7px;overflow:hidden}
+  #dashTracker .trProgWrap b{display:block;height:100%;width:0;background:linear-gradient(90deg,#0a84ff,#30d158);transition:width .5s ease}
   #dashTable{position:fixed;bottom:34px;right:12px;width:300px;z-index:5;overflow:hidden}
   #dashTable .tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.14)}
   #dashTable .tabs button{flex:1;border:0;background:transparent;color:#9b9ba6;font-size:11px;font-weight:700;
@@ -109,7 +124,7 @@
 <div id="panel"></div>
 <div id="bubble"></div>
 <div id="vig"></div>
-<div id="hint">Ziehen: Kamera · Scrollen: zoom · Gebäude/Figur anklicken</div>
+<div id="hint">Ziehen: Kamera · Scrollen: zoom · Klick: wählen · Doppelklick: Orbit</div>
 <button id="toggle">Weiche Schatten: an</button>
 <script type="module">
 import * as THREE from "three";
@@ -138,6 +153,14 @@ sun.shadow.camera.top = 22; sun.shadow.camera.bottom = -22;
 sun.shadow.camera.far = 80;
 scene.add(sun);
 const moon = new THREE.DirectionalLight(0x8ea6ff, 0.0); scene.add(moon);
+// Stufe 114 / Beta 119: Block 4 EXTRAS Pass 5 - sichtbarer Mond bei Nacht
+const moonDiscMat = new THREE.MeshBasicMaterial({color: 0xf2ecd8, transparent: true, opacity: 0, fog: false});
+const moonDisc = new THREE.Mesh(new THREE.SphereGeometry(2.6, 24, 20), moonDiscMat);
+moonDisc.renderOrder = -5; scene.add(moonDisc);
+const moonHaloMat = new THREE.MeshBasicMaterial({color: 0xbfd0ff, transparent: true, opacity: 0, fog: false, depthWrite: false});
+const moonHalo = new THREE.Mesh(new THREE.SphereGeometry(4.4, 24, 20), moonHaloMat);
+moonHalo.renderOrder = -6; scene.add(moonHalo);
+window.__moonDisc = () => moonDiscMat.opacity;
 // Stufe 99 / Beta 106: WORLD Pass 7 Rim-Kontrast (Kanzie-Gap: Kantenglanz) - kuehles Gegenlicht
 const rimL = new THREE.DirectionalLight(0xbfd8ff, 0.25); rimL.position.set(-14, 10, -18); scene.add(rimL);
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
@@ -158,12 +181,23 @@ function updateDayNight(){
   const sky = skyNight.clone().lerp(skyDay, day).lerp(skyDawn, dusk * 0.85);
   scene.background = sky;
   scene.fog = new THREE.Fog(sky.getHex(), 55, 160);
+  // Stufe 117 / Beta 124: Block 4 EXTRAS Pass 6 - Daemmerungsnebel (Morgen-/Abendnebel)
+  const mist = dusk * 0.8;
+  scene.fog.near = 55 - 26 * mist; scene.fog.far = 160 - 70 * mist;
+  window.__fogRange = () => ({near: +scene.fog.near.toFixed(1), far: +scene.fog.far.toFixed(1)});
+  window.__updDayNight = updateDayNight;
   const ang = (hour - 6) / 12 * Math.PI;
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
   sun.intensity = 0.25 + day * 1.45 + dusk * 0.55;
   sun.color.set(0xfff6ec).lerp(new THREE.Color(0xffab5e), Math.min(1, dusk * 1.1));
-  moon.position.set(-20, 18, -10);
+  const mAng = ang - Math.PI;   // Beta 119-Fix: Anti-Sonne, Mond steht nachts HOCH
+  moon.position.set(Math.cos(mAng) * 70, Math.max(10, Math.sin(mAng) * 46), -30);
   moon.intensity = (1 - day) * 0.44;
+  const moonVis = Math.max(0, Math.min(1, (1 - day) * 1.15 - dusk * 0.55));
+  window.__nightK = moonVis;
+  moonDisc.position.set(Math.cos(mAng) * 72, Math.max(8, Math.sin(mAng) * 46), -30);
+  moonHalo.position.copy(moonDisc.position);
+  moonDiscMat.opacity = moonVis * 0.95; moonHaloMat.opacity = moonVis * 0.18;
   rimL.intensity = 0.1 + day * 0.22 + dusk * 0.12;
   if (window.__seaMat) window.__seaMat.color.copy(seaDay).lerp(seaNight, 1 - day).lerp(new THREE.Color(0xd98a5a), dusk * 0.3);
   hemi.groundColor.copy(groundDay).lerp(groundNight, 1 - day);
@@ -202,6 +236,22 @@ layers.forEach(L => {
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);
 });
+// Stufe 110 / Beta 110: WORLD Pass 8 - Grasfarb-Patches (weiche Tonabstufungen)
+(function grassPatches(){
+  const gCols = [0x3e8f3e, 0x58a34a, 0x2f7a37, 0x63b054];
+  const spots = [
+    [-9.5, 3.5, 2.6], [6.5, 5.5, 2.2], [-5.5, -8.5, 2.4], [11.5, -7.5, 2.0],
+    [-14.5, 6.5, 2.1], [2.5, 9.5, 1.9], [14.5, 3.5, 1.8], [-11.5, -6.5, 2.2],
+    [8.5, 11.5, 1.7], [-2.5, -13.5, 2.0]
+  ];
+  window.__p8 = {patches: 0};
+  spots.forEach((p, i) => {
+    const m = new THREE.Mesh(new THREE.CircleGeometry(p[2], 16),
+      new THREE.MeshStandardMaterial({color: gCols[i % 4], roughness: 1, transparent: true, opacity: 0.22, depthWrite: false}));
+    m.rotation.x = -Math.PI / 2; m.position.set(p[0], 0.012 + i * 0.0005, p[1]);
+    m.renderOrder = 1; scene.add(m); window.__p8.patches++;
+  });
+})();
 const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
   new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.08, metalness: 0.35, envMapIntensity: 1.2}));
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
@@ -284,6 +334,16 @@ function rboxGeo(w, h, d, r){
   g.translate(0, -(h - 2 * r) / 2, 0);
   return weldGeo(g);
 }
+function lumpyCone(g, seed, amt){
+  const pa = g.attributes.position;
+  for (let i = 0; i < pa.count; i++){
+    const X = pa.getX(i), Z = pa.getZ(i);
+    const f = 1 + amt * Math.sin(X * 2.2 + seed * 1.3) * Math.cos(Z * 1.8 - seed * 0.7);
+    pa.setXYZ(i, X * f, pa.getY(i), Z * f);
+  }
+  g.computeVertexNormals();
+  return g;
+}
 // Organische Kugel: deterministische Delle + Stauchung (Felsen, Kronen)
 function lumpySphere(r, seed, squash){
   const g = new THREE.SphereGeometry(r, 12, 9);
@@ -297,7 +357,7 @@ function lumpySphere(r, seed, squash){
   return g;
 }
 function winPlane(w, h){
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.06),
+  const m = new THREE.Mesh(new rboxGeo(w, h, 0.06, Math.min(w, h, 0.06) * 0.22),
     new THREE.MeshStandardMaterial({color: 0xe0c08a, emissive: 0xffb340, emissiveIntensity: 0.9}));
   return m;
 }
@@ -308,12 +368,13 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   // Dach mit Ueberhang, zweiteilig (Kranz + Kegel); Ton pro Haus leicht variiert
   const roofMat = matWall(roof);
   roofMat.color.offsetHSL((((x*7 + z*3) % 5) - 2) * 0.008, 0, (((x*3 + z*11) % 7) - 3) * 0.022);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 4), roofMat);
+  // Stufe 114 / Beta 118: Block 5 WORLD Pass 10 - Silhouetten weicher (mehr Segmente)
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 16), roofMat);
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
-  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 4), roofMat);
+  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 16), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
   // Tuer + Fenster vorn und seitlich
-  const door = new THREE.Mesh(new THREE.BoxGeometry(w*0.18, h*0.42, 0.08), matWall(0x5a3c28));
+  const door = new THREE.Mesh(new rboxGeo(w*0.18, h*0.42, 0.08, 0.024), matWall(0x5a3c28));
   door.position.set(0, h*0.21, d/2 + 0.04); g.add(door);
   const winA = winPlane(w*0.22, h*0.3); winA.position.set(w*0.28, h*0.55, d/2 + 0.05); g.add(winA);
   const winB = winA.clone(); winB.position.x = -w*0.28; g.add(winB);
@@ -375,7 +436,7 @@ function mineBuild(x, z){
     rail.position.set(off, 0.05, 3.3); g.add(rail);
   }
   for (let i = 0; i < 4; i++){
-    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.04, 0.14), matWall(0x6e5238));
+    const tie = new THREE.Mesh(new rboxGeo(0.8, 0.04, 0.14, 0.013), matWall(0x6e5238));
     tie.position.set(0, 0.03, 2.1 + i*0.8); g.add(tie);
   }
   // Lore
@@ -400,7 +461,7 @@ function hotel(x, z){
   for (let f = 0; f < floors; f++){
     const body = new THREE.Mesh(rboxGeo(w, fh, d, 0.1), wallM);
     body.position.y = f*fh + fh/2; body.castShadow = true; body.receiveShadow = true; body.name = "mh_body"; g.add(body);
-    const trim = new THREE.Mesh(new THREE.BoxGeometry(w + 0.16, 0.1, d + 0.16), matWall(0xf2e8dc));
+    const trim = new THREE.Mesh(new rboxGeo(w + 0.16, 0.1, d + 0.16, 0.03), matWall(0xf2e8dc));
     trim.position.y = f*fh + fh; trim.name = "mh_trim"; g.add(trim);
     for (const wx of [-1.1, 0, 1.1]){
       const win = winPlane(0.5, 0.62); win.position.set(wx, f*fh + fh*0.55, d/2 + 0.05); g.add(win);
@@ -409,7 +470,7 @@ function hotel(x, z){
     const winS = winPlane(0.5, 0.62); winS.position.set(w/2 + 0.05, f*fh + fh*0.55, 0); winS.rotation.y = Math.PI/2; g.add(winS);
   }
   // Flaches Walmdach
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 4), matWall(0x6a4fa3));
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 16), matWall(0x6a4fa3));
   roof.position.y = floors*fh + 0.5; roof.rotation.y = Math.PI/4; roof.castShadow = true; roof.name = "mh_roof"; g.add(roof);
   // Leuchtschild
   const cv = document.createElement("canvas"); cv.width = 512; cv.height = 96;
@@ -433,7 +494,7 @@ const media = hotel(-10.5, 3.5); window.__mhSwap = media;
 // 5) Cron Gatehouse: Uhrturm mit gehender Uhr
 function clockTower(x, z){
   const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 10), matWall(0x9aa0ac));
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 18), matWall(0x9aa0ac));
   base.position.y = 2.8; base.castShadow = true; base.receiveShadow = true; g.add(base); base.name = "gt_base";
   const face = new THREE.Mesh(new THREE.CircleGeometry(0.78, 24),
     new THREE.MeshStandardMaterial({color: 0xfff6e6, emissive: 0xffe9b0, emissiveIntensity: 0.15}));
@@ -445,7 +506,7 @@ function clockTower(x, z){
   hourH.geometry.translate(0, 0.17, 0); hourH.position.set(0, 4.9, 1.27); g.add(hourH);
   const minH = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.03), handM);
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
-  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 8), matWall(0x3f6fb5));
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
   const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12),
     new THREE.MeshStandardMaterial({color: 0xffd60a, emissive: 0xffd60a, emissiveIntensity: 0.6}));
@@ -743,7 +804,7 @@ function stall(x, z, ry, c1, c2){
     pole.position.set(px, 0.95, pz); g.add(pole);
   }
   for (let i = 0; i < 6; i++){
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.04, 1.15),
+    const stripe = new THREE.Mesh(new rboxGeo(0.34, 0.04, 1.15, 0.013),
       matWall(i % 2 ? c2 : c1));
     stripe.position.set(-0.85 + i*0.34, 1.92, 0.12); stripe.rotation.x = 0.28; stripe.castShadow = true; g.add(stripe);
   }
@@ -1111,12 +1172,12 @@ function fenceLine(x1, z1, x2, z2){
     picket.position.set(x1 + (x2-x1)*t, 0.25, z1 + (z2-z1)*t);
     picket.castShadow = true; scene.add(picket);
   }
-  const rail = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1, z2-z1), 0.06, 0.04), matWall(0xd8d0bd));
+  const rail = new THREE.Mesh(new rboxGeo(Math.hypot(x2-x1, z2-z1), 0.06, 0.04, 0.013), matWall(0xd8d0bd));
   rail.position.set((x1+x2)/2, 0.34, (z1+z2)/2);
   rail.rotation.y = Math.atan2(z2-z1, x2-x1) * -1 + Math.PI/2;
   rail.rotation.y = Math.atan2(x2-x1, z2-z1);
   scene.add(rail);
-  const rail2 = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1, z2-z1), 0.06, 0.04), matWall(0xd8d0bd));
+  const rail2 = new THREE.Mesh(new rboxGeo(Math.hypot(x2-x1, z2-z1), 0.06, 0.04, 0.013), matWall(0xd8d0bd));
   rail2.position.set((x1+x2)/2, 0.16, (z1+z2)/2);
   rail2.rotation.y = Math.atan2(x2-x1, z2-z1);
   scene.add(rail2);
@@ -1241,14 +1302,14 @@ function tree(x, z, s, leaf){
   trunk.position.y = 0.35*s; trunk.castShadow = true; g.add(trunk);
   const m1 = new THREE.MeshStandardMaterial({color: leaf, roughness: 0.9});
   (window.__foliageMats = window.__foliageMats || []).push({mat: m1, base: new THREE.Color(leaf)});
-  const crown = new THREE.Mesh(new THREE.ConeGeometry(0.55*s, 1.0*s, 14), m1);
+  const crown = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(0.55*s, 1.0*s, 14), x * 3.1 + z, 0.10), m1);
   crown.position.y = 1.0*s; crown.castShadow = true; g.add(crown);
-  const crown2 = new THREE.Mesh(new THREE.ConeGeometry(0.38*s, 0.8*s, 12), m1);
+  const crown2 = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(0.38*s, 0.8*s, 12), x * 1.7 + z * 2.3, 0.12), m1); (window.__p8 = window.__p8 || {}); (() => { const pa = crown.geometry.attributes.position; let lo = 1e9, hi = -1e9; for (let i = 0; i < pa.count; i++){ const X = pa.getX(i); if (X < lo) lo = X; if (X > hi) hi = X; } window.__p8.crownSpread = +(hi - lo).toFixed(3); window.__p8.crownJit = true; })();
   crown2.position.y = 1.55*s; crown2.castShadow = true; g.add(crown2);
   g.position.set(x, 0, z);
   g.rotation.y = (x * 13 + z * 7) % 6;
   scene.add(g);
-  treeReg.push({g, x, z, s, leaf: leaf, rot: (x * 13 + z * 7) % 6, kind: "cone"});
+  treeReg.push({g, x, z, s, leaf: leaf, rot: (x * 13 + z * 7) % 6, kind: "cone", cr: [crown, crown2]});
 }
 function bush(x, z, s, leaf){
   const bushMat = new THREE.MeshStandardMaterial({color: leaf, roughness: 1});
@@ -1267,7 +1328,7 @@ function roundTree(x, z, s, leaf){
   crown.position.y = 1.25*s; crown.castShadow = true; g.add(crown);
   g.position.set(x, 0, z);
   scene.add(g);
-  treeReg.push({g, x, z, s, leaf: leaf, rot: 0, kind: "round"});
+  treeReg.push({g, x, z, s, leaf: leaf, rot: 0, kind: "round", cr: [crown]});
 }
 const greens = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
 const treeSpots = [
@@ -1278,6 +1339,28 @@ const treeSpots = [
 ];
 const autumn = [0xd9822b, 0xc2542a, 0xe8a33d, 0xb57a2e];
 treeSpots.forEach((a, i) => tree(a[0], a[1], a[2], i % 3 === 2 ? autumn[i % 4] : greens[i % 4]));
+// Stufe 116 / Beta 123: Block 5 WORLD Pass 11 - Gluehwuermchen bei Nacht (weiche Aufglimmer)
+const ffMat = new THREE.PointsMaterial({color: 0xd8f27a, size: 0.09, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true});
+const ffGeo = new THREE.BufferGeometry();
+const ffN = 26, ffPos = new Float32Array(ffN * 3), ffSeed = [];
+for (let i = 0; i < ffN; i++){
+  const fa = Math.random() * Math.PI * 2;
+  ffSeed.push({a: fa, r: 1.5 + Math.random() * 9, y: 0.35 + Math.random() * 0.85, ph: Math.random() * 6.28, sp: 0.3 + Math.random() * 0.45});
+}
+ffGeo.setAttribute("position", new THREE.BufferAttribute(ffPos, 3));
+const ffPts = new THREE.Points(ffGeo, ffMat); ffPts.renderOrder = 3; scene.add(ffPts);
+window.__ffTick = (dt, t) => {
+  const k = window.__nightK || 0;
+  ffMat.opacity = k * 0.85;
+  if (k <= 0.01) return;
+  for (let i = 0; i < ffN; i++){
+    const s = ffSeed[i];
+    ffPos[i*3] = Math.cos(s.a + t * s.sp) * s.r;
+    ffPos[i*3+1] = s.y + Math.sin(t * 1.3 + s.ph) * 0.18;
+    ffPos[i*3+2] = Math.sin(s.a + t * s.sp) * s.r;
+  }
+  ffGeo.attributes.position.needsUpdate = true;
+};
 [[-4.5, 9.5, 1.3], [11.5, 1.5, 1.4], [-16, 8.5, 1.2], [6, -6.5, 1.3], [-7.5, 7.5, 1.1], [1.5, 10.5, 1.2]].forEach((a, i) => roundTree(a[0], a[1], a[2], i % 2 ? autumn[(i+1) % 4] : greens[(i+2) % 4]));
 [[-3.5, -5.5, 0.9], [6.5, 2.5, 0.8], [-1, 4.5, 0.9], [8.5, -5.5, 0.7], [-10, -3.5, 0.8], [4.5, 3.5, 0.6], [-13, -3.5, 0.7], [14, -1.5, 0.8]].forEach((a, i) => bush(a[0], a[1], a[2], greens[(i+1) % 3]));
 // Stufe 72 / Beta 74: Beerenstraeucher
@@ -2020,6 +2103,15 @@ function lifeStep(rb, dt, t, crowd){
       return;
     }
   }
+  // Stufe 115 / Beta 122: Block 3 LIFE Pass 8 - Nachtruhe: nachts kehren Villager heim und ruhen
+  const nk = window.__nightK || 0;
+  if (L.sleep){
+    if (nk < 0.4){ L.sleep = null; L.hold = 0; }
+  } else if (rb.villager && nk > 0.65 && Math.random() < dt * 0.8){
+    L.sleep = true; L.mode = "walk"; rb.route = [];
+    rb.target.set(rb.home.x + (Math.random()-0.5)*0.8, 0, rb.home.z + 1.2 + Math.random()*0.8);
+    window.__lifeStat && (window.__lifeStat.sleep = (window.__lifeStat.sleep || 0) + 1);
+  }
   const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
   const d = Math.hypot(dx, dz);
   if (d > 0.2){
@@ -2060,6 +2152,20 @@ function lifeStep(rb, dt, t, crowd){
         if (od < 0.55){ vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; }
       }
     }
+    // Stufe 111 / Beta 111: Block 3 LIFE Pass 6 - Head-on-Erkennung via Ist-Geschwindigkeit,
+    // beide lenken gleichsinnig lateral -> sie passieren sich statt zu blockieren
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z, od = Math.hypot(ox, oz);
+      if (od > 0.01 && od < 2.2){
+        const ovx = o.pvx || 0, ovz = o.pvz || 0;
+        if (bx * ovx + bz * ovz < -0.25 && (bx * ox + bz * oz) / od > 0.4){
+          window.__lifeStat && (window.__lifeStat.headOn = (window.__lifeStat.headOn || 0) + 1);
+          const s = (2.2 - od) / 2.2;
+          vx += -bz * s * 1.5; vz += bx * s * 1.5;
+        }
+      }
+    }
     for (const ob of LIFE.obstacles){
       const ox = p.x - ob.x, oz = p.z - ob.z, od = Math.hypot(ox, oz);
       if (od > 0.001 && od < ob.r + 0.9){
@@ -2067,16 +2173,35 @@ function lifeStep(rb, dt, t, crowd){
         vx += (ox/od) * push * 2.4; vz += (oz/od) * push * 2.4;
       }
     }
+    // Stufe 111: Lookahead - 1.4 vor der Laufrichtung pruefen, tangential ausweichen
+    for (const ob of LIFE.obstacles){
+      const ax = p.x + bx * 1.4 - ob.x, az = p.z + bz * 1.4 - ob.z, ad = Math.hypot(ax, az);
+      if (ad > 0.001 && ad < ob.r + 0.7){
+        const push = (ob.r + 0.7 - ad) / (ob.r + 0.7);
+        vx += (-az / ad) * push * 1.1; vz += (ax / ad) * push * 1.1;
+      }
+    }
     {
       const ox = p.x - fox.position.x, oz = p.z - fox.position.z, od = Math.hypot(ox, oz);
       if (od > 0.001 && od < 1.1){ const push = (1.1 - od)/1.1; vx += (ox/od)*push*2.0; vz += (oz/od)*push*2.0; }
     }
+    // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Steering-Inertia: Richtungswechsel
+    // laufen weich ein statt ruckartig (lerp auf geglaettete Richtung)
+    if (rb.svx == null){ rb.svx = bx; rb.svz = bz; }
+    const slerp = Math.min(1, dt * 6);
+    vx = rb.svx + (vx - rb.svx) * slerp;
+    vz = rb.svz + (vz - rb.svz) * slerp;
+    const vl0 = Math.hypot(vx, vz) || 1; vx /= vl0; vz /= vl0;
+    rb.svx = vx; rb.svz = vz;
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
     window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
-    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1);
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1)
+      * Math.min(1, 0.25 + d / 1.2); // Beta 116: Arrive-Bremse - sanftes Anhalten am Ziel
+    const px0 = p.x, pz0 = p.z;
     p.x += (vx/vl) * Math.min(sp, d);
     p.z += (vz/vl) * Math.min(sp, d);
+    rb.pvx = (p.x - px0) / Math.max(dt, 1e-4); rb.pvz = (p.z - pz0) / Math.max(dt, 1e-4);
     const want = Math.atan2(vx, vz) + Math.PI;
     const diff = ((want - rb.g.rotation.y + Math.PI*3) % (Math.PI*2)) - Math.PI;
     rb.g.rotation.y += diff * Math.min(1, dt*8);
@@ -2102,7 +2227,7 @@ function lifeStep(rb, dt, t, crowd){
         p.z += (sz/sd) * push * 0.5 * dt;
       }
     }
-    if (rb.villager && !L.chat && Math.random() < dt * 0.9){
+    if (rb.villager && !L.chat && !L.sleep && Math.random() < dt * 0.9){
       let best = null, bd = 1e9;
       for (const o of crowd){
         if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
@@ -2112,7 +2237,12 @@ function lifeStep(rb, dt, t, crowd){
       if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); }
     }
     L.hold -= dt;
-    if (L.hold <= 0){
+    if (L.sleep){
+      if (L.hold <= 0){
+        rb.target.set(rb.home.x + (Math.random()-0.5)*0.8, 0, rb.home.z + 1.4 + Math.random()*0.6);
+        L.hold = 3 + Math.random()*4;
+      }
+    } else if (L.hold <= 0){
       if (rb.villager || Math.random() < 0.6){
         const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
         if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
@@ -2129,8 +2259,11 @@ function lifeStep(rb, dt, t, crowd){
 window.__spawnRobot = spawnRobot;
 window.__lifeSpeed = 1;
 window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
-window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0});
-window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
+window.__lifeSleep = () => ({nightK: +(window.__nightK || 0).toFixed(2), slept: villagers.filter(v => v.life && v.life.sleep).length, walkingHome: villagers.filter(v => v.life && v.life.sleep && v.life.mode === "walk").length});
+window.__lifeSpread = () => ({n: villagers.length + robots.length, curD: window.__lifeCurD || null, minD: window.__lifeMinD || null, yields: window.__lifeYields || 0, headOn: (window.__lifeStat && window.__lifeStat.headOn) || 0, dodge: (window.__lifeStat && window.__lifeStat.dodge) || 0, slept: villagers.filter(v => v.life && v.life.sleep).length});
+window.__chickTest = () => { const ch = (window.__chicksRef && window.__chicksRef()) || []; if (villagers.length && ch.length){ villagers[0].target.set(ch[0].base.x, 0, ch[0].base.z); villagers[0].route = []; return true; } return false; };
+window.__chickProbe = () => ((window.__chicksRef && window.__chicksRef()) || []).map(c => [+c.g.position.x.toFixed(2), +c.g.position.z.toFixed(2)]);
+window.__lifeTest = () => { if (villagers.length >= 2){ villagers[0].route = []; villagers[1].route = []; villagers[0].target.set(villagers[1].g.position.x, 0, villagers[1].g.position.z); villagers[1].target.set(villagers[0].g.position.x, 0, villagers[0].g.position.z); return true; } return false; };
 function robotSetAnim(rec, name){
   if (!rec.mixer || !rec.act) return;
   const next = rec.act[name]; if (!next || rec.cur === name) return;
@@ -2842,7 +2975,7 @@ tick(); setInterval(tick, 30000);
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
         const pm = pathMat.clone();
         pm.color.offsetHSL(0, (i * 37 % 5 - 2) * 0.008, (i * 53 % 7 - 3) * 0.012);
-        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.04, segL + 0.14), pm);
+        const seg = new THREE.Mesh(new rboxGeo(0.95, 0.04, segL + 0.14, 0.013), pm);
         seg.position.set((pt[0]+prev[0])/2, 0.615 + (i % 2) * 0.002, (pt[1]+prev[1])/2);
         seg.rotation.y = Math.atan2(pt[0]-prev[0], pt[1]-prev[1]);
         seg.receiveShadow = true;
@@ -2851,7 +2984,7 @@ tick(); setInterval(tick, 30000);
           const tx = (pt[0]-prev[0])/segL, tz = (pt[1]-prev[1])/segL;
           const side = ((seed*7 + i*13) % 2) ? 1 : -1;
           const off = 0.55 + ((seed*11 + i*29) % 10) * 0.02;
-          const s = new THREE.Mesh(new THREE.BoxGeometry(0.1 + (i*37 % 7)*0.012, 0.05, 0.09 + (i*53 % 5)*0.014), stoneMat);
+          const s = new THREE.Mesh(new rboxGeo(0.1 + (i*37 % 7)*0.012, 0.05, 0.09 + (i*53 % 5)*0.014, 0.015), stoneMat);
           s.position.set(pt[0] - tz*side*off, 0.628, pt[1] + tx*side*off);
           s.rotation.y = (i*0.7 + seed) % 3.14;
           scene.add(s);
@@ -3003,7 +3136,7 @@ tick(); setInterval(tick, 30000);
     p.position.set(px, 0.28, pz); p.castShadow = true; garden.add(p);
   }
   for (const rz of [-1.1, 1.1]){
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.05, 0.04), fenceM);
+    const rail = new THREE.Mesh(new rboxGeo(3.2, 0.05, 0.04, 0.013), fenceM);
     rail.position.set(0, 0.42, rz); garden.add(rail);
   }
   garden.position.set(-10, 0.61, -0.4);
@@ -3277,6 +3410,7 @@ tick(); setInterval(tick, 30000);
     const e2 = e1.clone(); e2.position.x = 0.05; g.add(e2);
     return g;
   }
+  window.__chicksRef = () => chicks;
   function setChicks(n){
     const want = Math.max(0, Math.min(3, n | 0));
     while (chicks.length > want){ const c = chicks.pop(); scene.remove(c.g); }
@@ -3348,11 +3482,30 @@ tick(); setInterval(tick, 30000);
     chicks.forEach(c => {
       c.g.position.y = Math.abs(Math.sin(t*3 + c.ph))*0.05;
       c.g.rotation.y = Math.sin(t*0.8 + c.ph)*0.6;
+      // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Kueken weichen nahen Figuren aus
+      let ax = c.base.x, az = c.base.z, flee = false;
+      const cs = villagers.concat(robots);
+      for (const o of cs){
+        if (!o.g) continue;
+        const dx = c.g.position.x - o.g.position.x, dz = c.g.position.z - o.g.position.z;
+        const dd = Math.hypot(dx, dz);
+        if (dd > 0.001 && dd < 0.9){
+          ax += (dx/dd) * (0.9 - dd) * 1.2; az += (dz/dd) * (0.9 - dd) * 1.2; flee = true;
+        }
+      }
+      if (flee){
+        c.g.position.x += (ax - c.g.position.x) * Math.min(1, dt*4);
+        c.g.position.z += (az - c.g.position.z) * Math.min(1, dt*4);
+        window.__lifeStat && (window.__lifeStat.dodge = (window.__lifeStat.dodge || 0) + 1);
+      } else {
+        c.g.position.x += (c.base.x - c.g.position.x) * Math.min(1, dt*1.5);
+        c.g.position.z += (c.base.z - c.g.position.z) * Math.min(1, dt*1.5);
+      }
     });
     const bg = scene.background;
     if (bg && bg.isColor){
       const lum = (bg.r + bg.g + bg.b) / 3;
-      starMat.opacity = Math.max(0, Math.min(1, (0.24 - lum) * 6));
+      starMat.opacity = Math.max(0, Math.min(1, (0.24 - lum) * 6)) * (0.82 + Math.sin(t * 2.3) * 0.09 + Math.sin(t * 5.7) * 0.06);
     }
     const da = t * 0.15;
     duck.position.set(duckBase.x + Math.cos(da)*1.2, 0.62 + Math.abs(Math.sin(t*2))*0.02, duckBase.z + Math.sin(da)*1.2);
@@ -3838,6 +3991,7 @@ tick(); setInterval(tick, 30000);
   // Stufe 99 / Beta 104: Gewitter-Modus + Blitz + Pfuetzen
   let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
   let storm = false, flashT = 0;
+  let rbT = 0;
   window.__weather = () => w > 0.5;
   window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
   window.__weatherForce = v => { w = +v; };
@@ -3901,8 +4055,15 @@ tick(); setInterval(tick, 30000);
     if (rainNow) wasRain = true;
     else if (wasRain && w < 0.05){
       wasRain = false;
+      rbT = 1;
       const k = 4 + ((Math.random() * 5) | 0);
       for (let i = 0; i < k; i++) spawnPuddle();
+    }
+    // Beta 124: Regenbogen verblasst in ~55 s, nur bei Tag sichtbar (nightK-Gate)
+    if (rbT > 0){
+      rbT = Math.max(0, rbT - dt / 55);
+      const dayF = Math.max(0, 1 - (window.__nightK || 0) * 1.6);
+      rbMats.forEach(m => m.opacity = rbT * dayF * 0.3);
     }
     for (let i = puddles.length - 1; i >= 0; i--){
       const pd = puddles[i];
@@ -3913,6 +4074,16 @@ tick(); setInterval(tick, 30000);
   };
 
   const puddles = [], pGroup = new THREE.Group(); scene.add(pGroup); let wasRain = false;
+  // Stufe 117 / Beta 124: Block 4 EXTRAS Pass 6 - Regenbogen nach dem Regen (6 additive Boegen)
+  const rbCols = [0xff5d5d, 0xffa94d, 0xffe86b, 0x6fd97a, 0x5fa8ff, 0x9b7bdd];
+  const rbGroup = new THREE.Group(); rbGroup.position.set(0, -3.5, -30); scene.add(rbGroup);
+  const rbMats = rbCols.map((c, i) => {
+    const m = new THREE.MeshBasicMaterial({color: c, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide});
+    rbGroup.add(new THREE.Mesh(new THREE.TorusGeometry(24 - i * 1.05, 0.5, 6, 64, Math.PI), m));
+    return m;
+  });
+  window.__rbProbe = () => ({t: +rbT.toFixed(2), vis: +rbMats[0].opacity.toFixed(3)});
+  window.__wState = () => ({w: +w.toFixed(2), target, was: wasRain, rb: +rbT.toFixed(2)});
   function spawnPuddle(){
     for (let tries = 0; tries < 12; tries++){
       const n = LIFE.nodes[(Math.random() * LIFE.nodes.length) | 0];
@@ -3975,6 +4146,18 @@ tick(); setInterval(tick, 30000);
   const lmat = new THREE.PointsMaterial({color: 0xc98a3a, size: 0.075, transparent: true, opacity: 0, depthWrite: false});
   const lpts = new THREE.Points(lgeo, lmat); lpts.visible = false; scene.add(lpts);
   let leafAmt = 0;
+  window.__leavesForce = v => { leafAmt = +v; };
+  // Fruehlings-Blueten: sanft sinkende rosa Partikel (Beta 113)
+  const BN = 260, bgeo = new THREE.BufferGeometry(), bpos = new Float32Array(BN*3);
+  for (let i = 0; i < BN; i++){
+    const r = 3 + Math.random()*28, a = Math.random()*Math.PI*2;
+    bpos[i*3] = Math.cos(a)*r; bpos[i*3+1] = Math.random()*12; bpos[i*3+2] = Math.sin(a)*r;
+  }
+  bgeo.setAttribute("position", new THREE.Float32BufferAttribute(bpos, 3));
+  const bmat = new THREE.PointsMaterial({color: 0xf3b7cf, size: 0.07, transparent: true, opacity: 0, depthWrite: false});
+  const bpts = new THREE.Points(bgeo, bmat); bpts.visible = false; scene.add(bpts);
+  let petalAmt = 0;
+  window.__petalsForce = v => { petalAmt = +v; };
   let lastSeasBtn = "";
   const foliage = window.__foliageMats || [];
   const prevTick = window.__extraTick;
@@ -4005,6 +4188,20 @@ tick(); setInterval(tick, 30000);
       }
       lgeo.attributes.position.needsUpdate = true;
     }
+    petalAmt += ((name === "fruehling" ? 1 : 0) - petalAmt) * k;
+    bmat.opacity = petalAmt * 0.8;
+    bpts.visible = petalAmt > 0.03;
+    if (bpts.visible){
+      const ba = bgeo.attributes.position.array;
+      for (let i = 0; i < BN; i++){
+        ba[i*3+1] -= dt * 0.38;
+        ba[i*3] += Math.sin(t*1.2 + i*1.1) * dt * 0.7;
+        ba[i*3+2] += Math.cos(t*1.0 + i*0.7) * dt * 0.45;
+        if (ba[i*3+1] < 0) ba[i*3+1] = 10 + Math.random()*3;
+      }
+      bgeo.attributes.position.needsUpdate = true;
+    }
+    sun.color.lerp(mk(0xfff0d6), petalAmt * 0.2);
     if (scene.fog){ scene.fog.far = 160 - cur.snow * 70; scene.fog.near = 55 - cur.snow * 35; }
     if (name !== lastSeasBtn){
       lastSeasBtn = name;
@@ -4027,7 +4224,7 @@ tick(); setInterval(tick, 30000);
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.season = {name: name, snow: +cur.snow.toFixed(2), leaves: +leafAmt.toFixed(2)};
+    d.season = {name: name, snow: +cur.snow.toFixed(2), leaves: +leafAmt.toFixed(2), petals: +petalAmt.toFixed(2)};
     return d;
   };
 })();
@@ -4108,6 +4305,14 @@ function loop(){
   requestAnimationFrame(loop);
   const dt = Math.min(0.1, clock.getDelta());
   const t = clock.getElapsedTime();
+  // Stufe 116 / Beta 123: Block 5 WORLD Pass 11 - Wind-Sway: Kronen schwingen weich
+  for (const tr of treeReg){
+    if (!tr.cr) continue;
+    const s0 = Math.sin(t * 0.8 + tr.rot * 2.1) * 0.035, s1 = Math.cos(t * 0.6 + tr.rot * 1.3) * 0.022;
+    for (const c of tr.cr){ c.rotation.z = s0; c.rotation.x = s1; }
+  }
+  window.__ffTick && window.__ffTick(dt, t);
+window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] && treeReg[0].cr ? +treeReg[0].cr[0].rotation.z.toFixed(4) : null, ff: +ffMat.opacity.toFixed(2)});
   tail.rotation.y = Math.sin(t*3)*0.4;
   fox.position.y = Math.abs(Math.sin(t*4))*0.05;
   const target = fox.userData.working ? workPos : homePos;
@@ -4224,6 +4429,28 @@ window.__pond = () => {
     '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
     '<span id="dashUser">KZ</span>';
   document.body.appendChild(top);
+  // Stufe 114 / Beta 120: Block 1 DASHBOARD Pass 10 - User-Menue (dashUser ist jetzt interaktiv)
+  const um = document.createElement("div"); um.id = "dashUserMenu"; um.className = "glass"; um.style.display = "none";
+  um.innerHTML =
+    '<div class="uName">Konstantin Zenk</div>' +
+    '<div class="uRole">Admin</div>' +
+    '<div class="uDiv"></div>' +
+    '<div class="uRow"><span>Dorf</span><span>Hermes Village</span></div>' +
+    '<div class="uRow"><span>Version</span><span>v1.2</span></div>' +
+    '<div class="uRow"><span>Agenten</span><span>' + BUILDINGS.length + ' geladen</span></div>' +
+    '<button id="dashUserReload">Demo neu laden</button>';
+  document.body.appendChild(um);
+  const uBtn = document.getElementById("dashUser");
+  uBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    const open = um.style.display !== "none";
+    um.style.display = open ? "none" : "block";
+    window.__userMenuOpen = !open;
+  });
+  um.addEventListener("click", e => e.stopPropagation());
+  um.querySelector("#dashUserReload").addEventListener("click", () => location.reload());
+  document.addEventListener("click", () => { if (um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
   // Stufe 84 / Beta 86: Tag/Nacht-Toggle (Auto -> Tag -> Nacht), pinnt die Dorfzeit
   const dnB = document.getElementById("dashDN");
   if (dnB){ dnB.addEventListener("click", () => {
@@ -4248,33 +4475,78 @@ window.__pond = () => {
 // Lauf-Tracker (6 Schritte, unten links)
   const tr = document.createElement("div"); tr.id = "dashTracker"; tr.className = "glass";
   tr.innerHTML = '<div class="t">Lauf-Tracker</div><div id="trName">–</div><div class="steps" id="trSteps">' +
-    ["Eingang","Zugewiesen","Arbeitet","Prüfung","Fertig","Protokolliert"].map(s => '<div class="step"><i></i><span>' + s + '</span></div>').join("") + '</div>';
+    ["Eingang","Zugewiesen","Arbeitet","Prüfung","Fertig","Protokolliert"].map(s => '<div class="step"><i></i><span>' + s + '</span></div>').join("") + '</div><div class="trProgWrap"><b id="trProg"></b></div>';
   document.body.appendChild(tr);
   function setTracker(r){
     const nameEl = document.getElementById("trName");
     const steps = document.querySelectorAll("#trSteps .step");
-    if (!r){ if (nameEl) nameEl.textContent = "kein aktiver Lauf"; steps.forEach(s => s.className = "step"); return; }
+    if (!r){ if (nameEl) nameEl.textContent = "kein aktiver Lauf"; const pr0 = document.getElementById("trProg"); if (pr0) pr0.style.width = "0%"; steps.forEach(s => s.className = "step"); window.__trRun = null; return; }
     if (nameEl) nameEl.textContent = (r.job_name || "Lauf") + " · " + relTime2(r.started_at);
-    const st = (r.state || "").toLowerCase();
+    window.__trRun = r; const st = (r.state || "").toLowerCase();
     const map = st === "finished" ? ["done","done","done","done","done","done"]
       : st === "failed" ? ["done","done","err","","",""]
       : st === "running" ? ["done","done","act","","",""]
       : st ? ["act","","","","",""] : [];
     steps.forEach((s, i) => s.className = "step " + (map[i] || ""));
+    const prog = document.getElementById("trProg");
+    if (prog){ const dn = map.filter(m => m === "done").length; const actN = map.includes("act") ? 0.5 : 0; prog.style.width = Math.round(100 * (dn + actN) / 6) + "%"; }
   }
+  // Stufe 04 / Beta 108: Block 1 DASHBOARD Pass 7 - Tracker klickbar -> Lauf-Details im rechten Panel
+  window.__setTracker = setTracker;
+  tr.addEventListener("click", () => {
+    const r = window.__trRun; if (!r) return;
+    window.__panelPinRun = performance.now() + 15000;
+    const p = document.getElementById("panel"); if (!p) return;
+    const dn = document.querySelectorAll("#trSteps .step.done").length;
+    p.innerHTML = '<div class="tag">Lauf-Details</div><h3>' + (r.job_name || "Lauf") + '</h3>' +
+      '<div class="row"><span>Status</span><span class="' + cls(r.state || "") + '">' + (r.state || "—") + '</span></div>' +
+      '<div class="row"><span>Gestartet</span><span>' + (r.started_at ? relTime2(r.started_at) : "—") + '</span></div>' +
+      '<div class="row"><span>Schritte</span><span>' + dn + '/6</span></div>';
+    p.style.display = "block";
+  });
   // Tabbed Live-Tabelle (unten rechts)
   const tb = document.createElement("div"); tb.id = "dashTable"; tb.className = "glass";
   tb.innerHTML = '<div class="tabs"><button data-t="agents" class="on">Agenten</button><button data-t="jobs">Jobs</button><button data-t="runs">Läufe</button></div><div class="rows" id="tbRows"></div>';
   document.body.appendChild(tb);
   let tab = "agents";
   let failedOnly = false;
+  let activeOnly = false;
   tb.querySelector(".tabs").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     tab = b.dataset.t;
-    failedOnly = false;
+    failedOnly = false; activeOnly = false;
     tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
     renderTable();
   });
+  // Stufe 87 / Beta 112: Block 1 DASHBOARD Pass 8 - KPI-Karten klickbar (oeffnen passenden Tab + Filter)
+  const tbChip = document.createElement("div"); tbChip.id = "tbChip";
+  tbChip.innerHTML = 'nur aktive Läufe <button aria-label="Filter entfernen">×</button>';
+  tbChip.style.display = "none";
+  tb.querySelector(".tabs").after(tbChip);
+  tbChip.querySelector("button").addEventListener("click", e => {
+    e.stopPropagation(); activeOnly = false; failedOnly = false; tbChip.style.display = "none"; renderTable();
+  });
+  // Stufe 113 / Beta 117: Block 1 DASHBOARD Pass 9 - Chip-Text folgt dem aktiven Filter
+  function syncChip(){
+    tbChip.firstChild.nodeValue = activeOnly ? "nur aktive Läufe " : (failedOnly ? "nur fehlgeschlagene Läufe " : "nur aktive Läufe ");
+    tbChip.style.display = (activeOnly || failedOnly) ? "flex" : "none";
+  }
+  function kpiTo(t, act){
+    tab = t; activeOnly = !!act; failedOnly = false;
+    tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === t));
+    syncChip();
+    renderTable();
+  }
+  const kpiEls = document.querySelectorAll("#dashKpis .kpi");
+  if (kpiEls[0]) kpiEls[0].addEventListener("click", () => kpiTo("runs", true));
+  if (kpiEls[1]) kpiEls[1].addEventListener("click", () => kpiTo("runs", false));
+  if (kpiEls[2]) kpiEls[2].addEventListener("click", () => kpiTo("agents", false));
+  const dbgPrevK = window.__dbg;
+  window.__dbg = function(){
+    const d = dbgPrevK ? dbgPrevK() : {};
+    d.kpi = {tab: tab, activeOnly: activeOnly, failedOnly: failedOnly};
+    return d;
+  };
   function renderTable(){
     const el = document.getElementById("tbRows"); if (!el) return;
     let html = "";
@@ -4285,10 +4557,10 @@ window.__pond = () => {
         return '<div class="r"><span>' + (b.userData.name || "Haus") + '</span><span class="' + cls(mode) + '">' + mode + '</span></div>';
       }).join("") || '<div class="r"><span>keine Agenten geladen</span><span></span></div>';
     } else if (tab === "jobs"){
-      html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>Job</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
+      html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>' + (j.cron || j.schedule || j.status || "Job") + '</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
     } else {
-      const rr = failedOnly ? (feed.runs || []).filter(r => r.state === "failed") : (feed.runs || []);
-      html = rr.slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>' + (failedOnly ? "keine Fehlerläufe" : "keine Läufe") + '</span><span></span></div>';
+      const rr = (feed.runs || []).filter(r => (!failedOnly || r.state === "failed") && (!activeOnly || r.state === "running"));
+      html = rr.slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>' + (failedOnly ? "keine Fehlerläufe" : activeOnly ? "keine aktiven Läufe" : "keine Läufe") + '</span><span></span></div>';
     }
     el.innerHTML = html;
   }
@@ -4395,6 +4667,12 @@ window.__pond = () => {
   inp.addEventListener("input", renderSug);
   inp.addEventListener("focus", renderSug);
   inp.addEventListener("blur", () => setTimeout(hideSug, 180));
+  // Beta 117: "/"-Shortcut fokussiert die Suche (ausser in Eingabefeldern)
+  addEventListener("keydown", e => {
+    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.closest && e.target.closest("input,textarea")) return;
+    e.preventDefault(); inp.focus();
+  });
   inp.addEventListener("keydown", e => {
     if (e.key === "Escape"){ hideSug(); inp.blur(); return; }
     if (e.key !== "Enter") return;
@@ -4430,7 +4708,7 @@ window.__pond = () => {
     alMenu.querySelectorAll(".alRow[data-q='1']").forEach(row => row.addEventListener("click", () => {
       failedOnly = true; tab = "runs";
       tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "runs"));
-      renderTable(); buildAlertsMenu();
+      syncChip(); renderTable(); buildAlertsMenu();
     }));
   }
   if (alBtn){
@@ -4458,7 +4736,14 @@ window.__pond = () => {
     const today = new Date(); today.setHours(0,0,0,0);
     const failedToday = (feed.runs || []).filter(r => r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime());
     const al = document.getElementById("dashAlerts");
-    if (al){ al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler"; al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8"; al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)"; }
+    if (al){
+      al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler";
+      al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8";
+      al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)";
+      // Beta 117: Badge blinkt einmal, wenn die Fehlerzahl heute steigt
+      if (failedToday.length > (window.__alertCount || 0)){ al.classList.remove("flash"); void al.offsetWidth; al.classList.add("flash"); }
+      window.__alertCount = failedToday.length;
+    }
     setTracker((feed.runs || [])[0]);
     renderTable();
     if (window.__panelOverview) window.__panelOverview();
@@ -4472,6 +4757,7 @@ window.__pond = () => {
   let ovT = 0;
   window.__panelOverview = (force) => {
     const nm = performance.now();
+    if (window.__panelPinRun && nm < window.__panelPinRun) return;
     if (!force && nm - ovT < 700) return;
     ovT = nm;
     if (window.__selActive && window.__selActive()) return;
@@ -4497,7 +4783,7 @@ window.__pond = () => {
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
     d.dash = true; d.kpis = !!document.getElementById("kpiRuns");
-    d.tracker = document.querySelectorAll("#trSteps .step").length; d.dashTab = tab;
+    const trProg = document.getElementById("trProg"); d.tracker = {steps: document.querySelectorAll("#trSteps .step").length, prog: trProg ? trProg.style.width : "", run: !!window.__trRun}; d.dashTab = tab;
     d.dnPin = (window.__pinTime && window.__pinTime.length === 2) ? window.__pinTime.join(":") : "auto";
     return d;
   };
@@ -4512,7 +4798,7 @@ window.__pond = () => {
   document.head.appendChild(css);
 
   const DEF = {x:0, y:0.5, z:0};
-  let glide = null, follow = null, followPending = null, sel = null;
+  let glide = null, follow = null, followPending = null, sel = null, orbit = null;
   const cur = () => camC || DEF;
 
   // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
@@ -4520,12 +4806,16 @@ window.__pond = () => {
     if (x == null){ follow = null; followPending = null; glide = null; camC = null; return; }
     follow = null; followPending = null;
     const c = cur();
-    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: 900};
+    const dxy = Math.hypot(x - c.x, z - c.z);
+    const dur = Math.round(700 + Math.min(700, dxy * 40));
+    const amp = 0.35 + Math.min(2.2, dxy * 0.07);
+    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur, arcAmp: amp};
   };
 
   // Pointer: Linkes Ziehen = Pan, rechtes Ziehen = Rotate, Rad/Pinch = Zoom
   let dragMode = null, px = 0, py = 0, moved = 0;
-  const pointers = new Map(); let pinchD0 = 0, pinchDist0 = 0;
+  const pointers = new Map(); let pinchD0 = 0, pinchDist0 = 0, pinchMid0 = null, pinchAng0 = 0;
+  const pinchFlags = {pan: false, twist: false};
   const UI = "#panel,#toggle,#dashTop,#dashKpis,#dashTracker,#dashTable,#hint";
   addEventListener("pointerdown", e => {
     if (e.target.closest && e.target.closest(UI)) return;
@@ -4533,10 +4823,13 @@ window.__pond = () => {
     if (pointers.size === 2){
       const ps = [...pointers.values()];
       pinchD0 = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
+      pinchMid0 = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
+      pinchAng0 = Math.atan2(ps[1].y - ps[0].y, ps[1].x - ps[0].x);
+      pinchFlags.pan = false; pinchFlags.twist = false;
       pinchDist0 = dist; dragMode = "pinch"; return;
     }
     dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
-    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null;
+    px = e.clientX; py = e.clientY; moved = 0; follow = null; followPending = null; orbit = null;
   });
   addEventListener("pointermove", e => {
     if (!pointers.has(e.pointerId)) return;
@@ -4545,6 +4838,22 @@ window.__pond = () => {
       const ps = [...pointers.values()];
       const d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
       if (pinchD0 > 0) dist = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d)));
+      // Beta 115: Zwei-Finger-Pan (Mittelpunkt bewegt die Kamera) + Twist (Winkel dreht)
+      if (pinchMid0){
+        const mid = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
+        const mdx = mid.x - pinchMid0.x, mdy = mid.y - pinchMid0.y;
+        if (Math.abs(mdx) + Math.abs(mdy) > 2){
+          const k = dist * 0.002, c = cur(), cy = Math.cos(rotY), sy = Math.sin(rotY);
+          c.x += (-mdx * cy - mdy * sy) * k;
+          c.z += ( mdx * sy - mdy * cy) * k;
+          camC = c; pinchMid0 = mid; pinchFlags.pan = true;
+        }
+        const ang = Math.atan2(ps[1].y - ps[0].y, ps[1].x - ps[0].x);
+        let da = ang - pinchAng0;
+        if (da > Math.PI) da -= 2 * Math.PI;
+        if (da < -Math.PI) da += 2 * Math.PI;
+        if (Math.abs(da) > 0.02){ rotY += da; pinchAng0 = ang; pinchFlags.twist = true; }
+      }
       return;
     }
     if (!dragMode) return;
@@ -4569,8 +4878,17 @@ window.__pond = () => {
   };
   addEventListener("pointerup", endPtr);
   addEventListener("pointercancel", endPtr);
-  addEventListener("wheel", e => { dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02)); }, {passive:true});
+  addEventListener("wheel", e => {
+    if (orbit){ orbit.dist = Math.max(4.5, Math.min(16, orbit.dist + e.deltaY * 0.02)); if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; } return; }
+    dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02));
+  }, {passive:true});
   addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
+  // Beta 115: Escape hebt die Auswahl auf und fliegt zurueck zur Uebersicht
+  addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (e.target && e.target.closest && e.target.closest("input,textarea,#panel,#dashTop,#dashTable")) return;
+    if (sel){ deselect(); window.__look(null); }
+  });
 
   // Live-Rows für das Auswahl-Panel (Fuchs = Kira, Häuser = Service)
   function buildRows(obj){
@@ -4629,11 +4947,37 @@ window.__pond = () => {
   }
   window.__selActive = () => !!sel;
   window.__selBuilding = select;
+  window.__orbitState = () => orbit ? {on: true, ang: +orbit.ang.toFixed(3), dist: +orbit.dist.toFixed(1), target: objName(orbit.obj)} : null;
   function deselect(){
     if (!sel) return;
     scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
-    sel = null; follow = null;
+    sel = null; follow = null; orbit = null;
   }
+  // Stufe 04 / Beta 109: Block 2 INTERACTION Pass 4 - Hover-Highlight auf klickbaren Objekten
+  let hover = null, lastHoverT = 0;
+  function setHover(obj){
+    if (hover && hover.obj === obj) return;
+    if (hover){ hover.obj.scale.set(hover.sx, hover.sy, hover.sz); }
+    hover = null;
+    document.body.style.cursor = "";
+    if (obj){
+      hover = {obj, sx: obj.scale.x, sy: obj.scale.y, sz: obj.scale.z};
+      obj.scale.set(hover.sx * 1.03, hover.sy * 1.03, hover.sz * 1.03);
+      document.body.style.cursor = "pointer";
+    }
+  }
+  addEventListener("mousemove", e => {
+    if (dragMode) { setHover(null); return; }
+    if (e.target && e.target.closest && e.target.closest(UI)) { setHover(null); return; }
+    const now = performance.now();
+    if (now - lastHoverT < 70) return;
+    lastHoverT = now;
+    ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+    ray.setFromCamera(ndc, camera);
+    let hit = ray.intersectObject(fox, true)[0] ? fox : null;
+    if (!hit){ for (const b of BUILDINGS){ if (ray.intersectObject(b, true)[0]){ hit = b; break; } } }
+    setHover(hit);
+  });
   addEventListener("click", e => {
     if (e.target.closest && e.target.closest(UI)) return;
     if (moved > 6) return;
@@ -4644,6 +4988,19 @@ window.__pond = () => {
     deselect();
     if (window.__panelOverview) window.__panelOverview(true);
   });
+  // Stufe 115 / Beta 121: Block 2 INTERACTION Pass 6 - Doppelklick: enger Fokus + Orbit-Modus (Auto-Rotation)
+  addEventListener("dblclick", e => {
+    if (e.target.closest && e.target.closest(UI)) return;
+    if (moved > 6) return;
+    ndc.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+    ray.setFromCamera(ndc, camera);
+    let hit = ray.intersectObject(fox, true)[0] ? fox : null;
+    if (!hit){ for (const b of BUILDINGS){ if (ray.intersectObject(b, true)[0]){ hit = b; break; } } }
+    if (!hit) return;
+    select(hit);
+    const o = hit.position, c = cur();
+    orbit = {obj: hit, ang: Math.atan2(c.x - o.x, c.z - o.z), dist: Math.max(4.5, Math.min(14, Math.hypot(c.x - o.x, c.z - o.z))), h: hit === fox ? 1.7 : 2.4};
+  });
 
   // Tick-Kette: Glide, Follow, Ring-Puls, Label-Projektion, Live-Panel
   let lastPanel = 0;
@@ -4653,9 +5010,16 @@ window.__pond = () => {
     if (glide){
       const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
       const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
-      const arc = Math.sin(p * Math.PI) * 0.5;
+      const arc = Math.sin(p * Math.PI) * (glide.arcAmp || 0.5);
       camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
       if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
+    } else if (orbit && orbit.obj){
+      const o = orbit.obj.position, c = cur();
+      orbit.ang += Math.min(dt, 0.1) * 0.35;
+      const tx = o.x + Math.sin(orbit.ang) * orbit.dist, tz = o.z + Math.cos(orbit.ang) * orbit.dist, ty = (o.y || 0) + orbit.h;
+      const f = 1 - Math.pow(0.005, Math.min(dt, 0.1));
+      camC = {x: c.x + (tx - c.x) * f, y: c.y + (ty - c.y) * f, z: c.z + (tz - c.z) * f};
+      if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; }
     } else if (follow && follow.obj){
       const o = follow.obj.position, c = cur();
       const ny = (o.y || 0) + 0.5;
@@ -4680,7 +5044,9 @@ window.__pond = () => {
     const d = dp ? dp() : {};
     const cc2 = cur();
     d.inter = {pan: true, rotate: "right", pinch: true, follow: !!(follow && follow.obj),
-      sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode,
+      sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode, hover: hover ? objName(hover.obj) : null,
+      glideAmp: glide ? (glide.arcAmp || 0.5) : null,
+      pinchPan: pinchFlags.pan, pinchTwist: pinchFlags.twist, escReset: true,
       cam: {x: +cc2.x.toFixed(2), y: +cc2.y.toFixed(2), z: +cc2.z.toFixed(2)}, rotY: +rotY.toFixed(2)};
     return d;
   };
