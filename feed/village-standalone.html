@@ -4651,7 +4651,8 @@ window.__pond = () => {
 
   // Pointer: Linkes Ziehen = Pan, rechtes Ziehen = Rotate, Rad/Pinch = Zoom
   let dragMode = null, px = 0, py = 0, moved = 0;
-  const pointers = new Map(); let pinchD0 = 0, pinchDist0 = 0;
+  const pointers = new Map(); let pinchD0 = 0, pinchDist0 = 0, pinchMid0 = null, pinchAng0 = 0;
+  const pinchFlags = {pan: false, twist: false};
   const UI = "#panel,#toggle,#dashTop,#dashKpis,#dashTracker,#dashTable,#hint";
   addEventListener("pointerdown", e => {
     if (e.target.closest && e.target.closest(UI)) return;
@@ -4659,6 +4660,9 @@ window.__pond = () => {
     if (pointers.size === 2){
       const ps = [...pointers.values()];
       pinchD0 = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
+      pinchMid0 = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
+      pinchAng0 = Math.atan2(ps[1].y - ps[0].y, ps[1].x - ps[0].x);
+      pinchFlags.pan = false; pinchFlags.twist = false;
       pinchDist0 = dist; dragMode = "pinch"; return;
     }
     dragMode = (e.button === 2 || e.button === 1) ? "rotate" : "pan";
@@ -4671,6 +4675,22 @@ window.__pond = () => {
       const ps = [...pointers.values()];
       const d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
       if (pinchD0 > 0) dist = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d)));
+      // Beta 115: Zwei-Finger-Pan (Mittelpunkt bewegt die Kamera) + Twist (Winkel dreht)
+      if (pinchMid0){
+        const mid = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
+        const mdx = mid.x - pinchMid0.x, mdy = mid.y - pinchMid0.y;
+        if (Math.abs(mdx) + Math.abs(mdy) > 2){
+          const k = dist * 0.002, c = cur(), cy = Math.cos(rotY), sy = Math.sin(rotY);
+          c.x += (-mdx * cy - mdy * sy) * k;
+          c.z += ( mdx * sy - mdy * cy) * k;
+          camC = c; pinchMid0 = mid; pinchFlags.pan = true;
+        }
+        const ang = Math.atan2(ps[1].y - ps[0].y, ps[1].x - ps[0].x);
+        let da = ang - pinchAng0;
+        if (da > Math.PI) da -= 2 * Math.PI;
+        if (da < -Math.PI) da += 2 * Math.PI;
+        if (Math.abs(da) > 0.02){ rotY += da; pinchAng0 = ang; pinchFlags.twist = true; }
+      }
       return;
     }
     if (!dragMode) return;
@@ -4697,6 +4717,12 @@ window.__pond = () => {
   addEventListener("pointercancel", endPtr);
   addEventListener("wheel", e => { dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02)); }, {passive:true});
   addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
+  // Beta 115: Escape hebt die Auswahl auf und fliegt zurueck zur Uebersicht
+  addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (e.target && e.target.closest && e.target.closest("input,textarea,#panel,#dashTop,#dashTable")) return;
+    if (sel){ deselect(); window.__look(null); }
+  });
 
   // Live-Rows für das Auswahl-Panel (Fuchs = Kira, Häuser = Service)
   function buildRows(obj){
@@ -4833,6 +4859,7 @@ window.__pond = () => {
     d.inter = {pan: true, rotate: "right", pinch: true, follow: !!(follow && follow.obj),
       sel: sel ? objName(sel.obj) : null, glide: !!glide, drag: dragMode, hover: hover ? objName(hover.obj) : null,
       glideAmp: glide ? (glide.arcAmp || 0.5) : null,
+      pinchPan: pinchFlags.pan, pinchTwist: pinchFlags.twist, escReset: true,
       cam: {x: +cc2.x.toFixed(2), y: +cc2.y.toFixed(2), z: +cc2.z.toFixed(2)}, rotY: +rotY.toFixed(2)};
     return d;
   };
