@@ -62,6 +62,15 @@
   #dashAlertsMenu .alRow b{font-weight:600}
   #dashAlertsMenu .alRow span{color:#8fa3b8;font-size:10px}
   #dashAlertsMenu .alRow:hover{background:rgba(255,255,255,.08)}
+  #dashUserMenu{position:fixed;top:46px;right:10px;z-index:30;min-width:210px;padding:10px;border-radius:12px;color:#e8ecf4;font-size:12px}
+  #dashUserMenu .uName{font-weight:700;font-size:13px}
+  #dashUserMenu .uRole{color:#8fa3b8;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  #dashUserMenu .uRow{display:flex;justify-content:space-between;gap:10px;padding:5px 6px;border-radius:8px;color:#c8d0dc;font-size:11px}
+  #dashUserMenu .uRow span:last-child{color:#9b9ba6}
+  #dashUserMenu button{width:100%;margin-top:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#e8ecf4;border-radius:8px;font-size:11px;padding:5px 8px;cursor:pointer}
+  #dashUserMenu button:hover{background:rgba(240,160,64,.16)}
+  #dashUser{cursor:pointer}
+  #dashUserMenu .uDiv{border-top:1px solid rgba(255,255,255,.12);margin:6px 0}
   #dashAreas,#dashWeather,#dashSeason{display:flex;gap:4px}
   #dashAreas button,#dashWeather button,#dashSeason button{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
@@ -4351,6 +4360,28 @@ window.__pond = () => {
     '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
     '<span id="dashUser">KZ</span>';
   document.body.appendChild(top);
+  // Stufe 114 / Beta 120: Block 1 DASHBOARD Pass 10 - User-Menue (dashUser ist jetzt interaktiv)
+  const um = document.createElement("div"); um.id = "dashUserMenu"; um.className = "glass"; um.style.display = "none";
+  um.innerHTML =
+    '<div class="uName">Konstantin Zenk</div>' +
+    '<div class="uRole">Admin</div>' +
+    '<div class="uDiv"></div>' +
+    '<div class="uRow"><span>Dorf</span><span>Hermes Village</span></div>' +
+    '<div class="uRow"><span>Version</span><span>v1.2</span></div>' +
+    '<div class="uRow"><span>Agenten</span><span>' + BUILDINGS.length + ' geladen</span></div>' +
+    '<button id="dashUserReload">Demo neu laden</button>';
+  document.body.appendChild(um);
+  const uBtn = document.getElementById("dashUser");
+  uBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    const open = um.style.display !== "none";
+    um.style.display = open ? "none" : "block";
+    window.__userMenuOpen = !open;
+  });
+  um.addEventListener("click", e => e.stopPropagation());
+  um.querySelector("#dashUserReload").addEventListener("click", () => location.reload());
+  document.addEventListener("click", () => { if (um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
   // Stufe 84 / Beta 86: Tag/Nacht-Toggle (Auto -> Tag -> Nacht), pinnt die Dorfzeit
   const dnB = document.getElementById("dashDN");
   if (dnB){ dnB.addEventListener("click", () => {
@@ -4457,7 +4488,7 @@ window.__pond = () => {
         return '<div class="r"><span>' + (b.userData.name || "Haus") + '</span><span class="' + cls(mode) + '">' + mode + '</span></div>';
       }).join("") || '<div class="r"><span>keine Agenten geladen</span><span></span></div>';
     } else if (tab === "jobs"){
-      html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>Job</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
+      html = (feed.jobs || []).slice(0, 9).map(j => '<div class="r"><span>' + (j.job_name || j.name || "Job") + '</span><span>' + (j.cron || j.schedule || j.status || "Job") + '</span></div>').join("") || '<div class="r"><span>keine Jobs</span><span></span></div>';
     } else {
       const rr = (feed.runs || []).filter(r => (!failedOnly || r.state === "failed") && (!activeOnly || r.state === "running"));
       html = rr.slice(0, 9).map(r => '<div class="r"><span>' + (r.job_name || "Lauf") + '</span><span class="' + cls(r.state) + '">' + (r.state || "") + (r.started_at ? " · " + relTime2(r.started_at) : "") + '</span></div>').join("") || '<div class="r"><span>' + (failedOnly ? "keine Fehlerläufe" : activeOnly ? "keine aktiven Läufe" : "keine Läufe") + '</span><span></span></div>';
