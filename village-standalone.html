@@ -49,6 +49,13 @@
   #dashAlerts{cursor:pointer}
   @keyframes alertFlash{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
   #dashAlerts.flash{animation:alertFlash .6s ease 2}
+  /* Stufe 96 / Beta 102: Block 1 DASHBOARD Pass 5 - Alerts-Menue */
+  #dashAlertsMenu{position:fixed;top:46px;right:60px;z-index:30;min-width:230px;padding:8px;border-radius:12px;color:#e8ecf4;font-size:12px}
+  #dashAlertsMenu .alTitle{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8fa3b8;margin-bottom:6px}
+  #dashAlertsMenu .alRow{display:flex;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer}
+  #dashAlertsMenu .alRow b{font-weight:600}
+  #dashAlertsMenu .alRow span{color:#8fa3b8;font-size:10px}
+  #dashAlertsMenu .alRow:hover{background:rgba(255,255,255,.08)}
   #dashAreas,#dashWeather,#dashSeason{display:flex;gap:4px}
   #dashAreas button,#dashWeather button,#dashSeason button{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
@@ -4069,7 +4076,7 @@ window.__pond = () => {
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
     '<button id="dashDN" data-m="auto">Auto</button>' +
     '<span id="dashClock">--:--</span>' +
-    '<span id="dashAlerts" class="badge" style="display:none;color:#ff453a;border-color:rgba(255,69,58,.4)"></span>' +
+    '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
     '<span id="dashUser">KZ</span>';
   document.body.appendChild(top);
   // Stufe 84 / Beta 86: Tag/Nacht-Toggle (Auto -> Tag -> Nacht), pinnt die Dorfzeit
@@ -4206,17 +4213,38 @@ window.__pond = () => {
     const row = e.target.closest(".s"); if (!row) return;
     const hit = searchHits(inp.value.trim())[+row.dataset.i]; if (hit) jumpTo(hit);
   });
-  // Alerts interaktiv: Klick filtert die Tabelle auf Fehlerlaeufe (Beta 90)
+  // Stufe 96 / Beta 102: Block 1 DASHBOARD Pass 5 - Alerts-Menue mit echten Alerts (Beta 90-Filter bleibt)
   const alBtn = document.getElementById("dashAlerts");
-  if (alBtn){
-    alBtn.title = "Klicken: Fehlerläufe anzeigen";
-    alBtn.addEventListener("click", () => {
-      failedOnly = !failedOnly;
-      tab = "runs";
-      tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "runs"));
-      alBtn.classList.toggle("flash", failedOnly);
-      renderTable();
+  let alMenu = null;
+  function buildAlertsMenu(){
+    if (alMenu){ alMenu.remove(); alMenu = null; return; }
+    alMenu = document.createElement("div"); alMenu.id = "dashAlertsMenu"; alMenu.className = "glass";
+    const today = new Date(); today.setHours(0,0,0,0);
+    const items = [];
+    (feed.runs || []).forEach(r => {
+      if (r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime()){
+        const tt = new Date((r.started_at || 0) * 1000);
+        items.push({label: (r.service || r.agent || r.kind || "Lauf") + " · " + (tt.getHours() < 10 ? "0" : "") + tt.getHours() + ":" + (tt.getMinutes() < 10 ? "0" : "") + tt.getMinutes(), sub: "fehlgeschlagen"});
+      }
     });
+    const l50 = (feed.runs || []).slice(0, 50);
+    const fin = l50.filter(r => r.state === "finished").length, fl = l50.filter(r => r.state === "failed").length;
+    if (l50.length && fl > 0 && fin < fl) items.push({label: "Erfolgsquote unter 50%", sub: "letzte 50 Läufe"});
+    if (!(feed.runs || []).length) items.push({label: "Noch keine Läufe", sub: "Feed leer"});
+    if (!items.length) items.push({label: "Alles ruhig", sub: "keine Fehler heute"});
+    alMenu.innerHTML = '<div class="alTitle">Alerts</div>' + items.slice(0, 6).map(i =>
+      '<div class="alRow" data-q="' + (i.sub === "fehlgeschlagen" ? "1" : "") + '"><b>' + i.label + '</b><span>' + i.sub + '</span></div>').join("");
+    document.body.appendChild(alMenu);
+    alMenu.querySelectorAll(".alRow[data-q='1']").forEach(row => row.addEventListener("click", () => {
+      failedOnly = true; tab = "runs";
+      tb.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "runs"));
+      renderTable(); buildAlertsMenu();
+    }));
+  }
+  if (alBtn){
+    alBtn.title = "Alerts anzeigen";
+    alBtn.addEventListener("click", buildAlertsMenu);
+    document.addEventListener("mousedown", e => { if (alMenu && !alMenu.contains(e.target) && e.target !== alBtn && !alBtn.contains(e.target)) buildAlertsMenu(); });
   }
   // Live-Tick (Kette): Uhr, KPIs, Alerts, Tracker, Tabelle
   let lastTick = 0;
@@ -4238,7 +4266,7 @@ window.__pond = () => {
     const today = new Date(); today.setHours(0,0,0,0);
     const failedToday = (feed.runs || []).filter(r => r.state === "failed" && (r.started_at || 0) * 1000 >= today.getTime());
     const al = document.getElementById("dashAlerts");
-    if (al){ al.style.display = failedToday.length ? "" : "none"; al.textContent = failedToday.length + " Fehler"; }
+    if (al){ al.textContent = failedToday.length ? failedToday.length + " Fehler" : "0 Fehler"; al.style.color = failedToday.length ? "#ff453a" : "#8fa3b8"; al.style.borderColor = failedToday.length ? "rgba(255,69,58,.4)" : "rgba(255,255,255,.25)"; }
     setTracker((feed.runs || [])[0]);
     renderTable();
     if (window.__panelOverview) window.__panelOverview();

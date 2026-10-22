@@ -1542,3 +1542,12 @@ Block 3 LIFE Pass 3 (Give-way verstaerkt):
 - Review rv109/rv110 (Port 9034-9036): rv109 zeigte transient gap 0.26 -> Hard-Clamp nachgezogen; rv110 Tag gap 5.57-5.65, Nacht gap 1.45 mit 10 yields, 0 JS-Fehler. Screenshots rv110_tag14/nacht geprueft: Figuren verteilt, keine Ueberlappungen, Nachtszene mit Lampen ok. (rv110-Tag-Screenshot-Timeout auf Port 9035, Retry 9036 ok.)
 - village.html 1.475.708 -> 1.476.634 B. Zip beta101.
 - Naechster Baustein: DASHBOARD Pass 5 (Suche-Feinschliff / Alerts-Menue mit echten Alerts) oder LIFE Pass 4 (Idle-Verhalten ausbauen: Gruppenbildung, kurze Gespraeche), je nach naechster Abnahme.
+
+## M108 / Beta 102 (07:00-07:11, 22.10.)
+Block 1 DASHBOARD Pass 5 (Alerts-Menue mit echten Alerts):
+- Badge immer sichtbar: "0 Fehler" grau, bei Fehlern rot mit Anzahl (Farbe/Bordern im Tick umgeschaltet).
+- Klick oeffnet Glass-Dropdown #dashAlertsMenu mit echten Eintraegen aus dem Feed: Fehlerlaeufe heute (Service + Uhrzeit + "fehlgeschlagen", Klick filtert die Runs-Tabelle auf Fehler, Beta-90-Verhalten bleibt), Erfolgsquote-Abfall-Alarm ("letzte 50 Laeufe", wenn Fehler > Erfolge), "Noch keine Laeufe" bei leerem Feed, sonst "Alles ruhig / keine Fehler heute".
+- Schliessen per zweitem Klick oder Klick ausserhalb (document mousedown).
+- Review rv111 (Port 9037): Badge sichtbar + grau, Menue oeffnet/schliesst, Eintraege korrekt ("Alles ruhig"), Tag+Nacht ok, 0 JS-Fehler. Screenshots rv111_alerts/tag14/nacht geprueft.
+- village.html 1.476.634 -> 1.479.192 B. Zip beta102.
+- Naechster Baustein: LIFE Pass 4 (Idle-Verhalten ausbauen: Gruppenbildung, kurze Gespraech-Spawns) oder EXTRAS Pass 3 (Wetter-Verbesserung: Blitz/Gewitter + Pfuetzen), je nach naechster Abnahme.
