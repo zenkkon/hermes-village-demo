@@ -1483,3 +1483,14 @@ durchs Gras; Endstueck bleibt der reale Zielpunkt. Robots unveraendert.
 Review rv102 (Port 9020): pathNodes=85/pathEdges=101, Villager-Route aktiv (Probe),
 0 JS-Fehler, Tag/Nacht intakt. Screenshots rv102_tag14/rv102_nacht angesehen.
 1.469.281 -> 1.471.790 B.
+
+## M102 / Beta 96 (04:00-04:15, 22.10.)
+Block 4 EXTRAS Pass 2 (Regen-Verfeinerung + Saison-Wetterkopplung): Regen faellt
+jetzt mit Winddrift (wx 2.2, wz 0.9, Wrap bei +/-17); Saison koppelt das Auto-Wetter:
+Herbst = lange Schauer (40-62s), Sommer = kurze (20-32s), Fruehling wie bisher,
+Winter = Auto-Regen bleibt aus (Schneesystem uebernimmt), manueller Regen rendert
+als Sleet (langsamer Fall 5.5, hellere grobere Tropfen 0.13/0xe4eef4). dbg.weather
+meldet season + winterSleet. Review rv103 (Port 9021): herbst-Regen steigt (w 0.17
+nach 8s Ramp), winter auto target 0, manuell winterSleet=true, life 6 Villager auf
+Routen (pathNodes 85/edges 101), 0 JS-Fehler. Screenshots rv103_regen/rv103_winter/
+rv103_tag14 angesehen. 1.471.790 -> 1.472.686 B.
