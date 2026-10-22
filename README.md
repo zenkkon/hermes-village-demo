@@ -1522,3 +1522,13 @@ Block 1 DASHBOARD Pass 4 (Detail-Panel-Live-Stats):
 - Review rv106 (Port 9028, 14:00 + 22:30): Übersicht zeigt Erfolgsquote/Services/Saison, Auswahl-Panel "Läufe heute", Follow-Kamera + Label ok, Villager 6 auf Wegen, 0 JS-Fehler. Screenshots rv106_sel/tag14/nacht geprüft.
 - village.html 1.473.769 -> 1.475.346 B. Zip beta99.
 - Naechster Baustein: finaler Headless-Look-Vergleich gegen kanzie-referenz.png (Kanzie-Abnahme) oder Block 2 INTERACTION Nachzieh-Feinschliff, falls der Vergleich Lücken zeigt.
+
+## M106 / Beta 100 (06:00-06:28, 22.10.)
+Block 5 WORLD Pass 6 (Kanzie-Abnahme + Umsetzung):
+- Kanzie-Abnahme (rv107 + Probe): Tag-Himmel bei 14:00 korrekt (tod "14:00 · Tag", stars 0, dusk 0); die dunkle Umrandung ist das Meer (seasonal sea), kein Sky-Bug. Vergleich rv107_default/close/nacht gegen /workspace/kanzie-referenz.png: verbleibende Luecken = Kamera-Abstand, Rim-Kontrast, Rahmung.
+- Kamera: dist 33 -> 30, rotX 0.78 -> 0.74 (naeher am Diorama, Kanzie-Nahsicht; Insel bleibt komplett).
+- Erdschichten-Rim dunkler (Kanzie-Querschnitt): 0x8a6649 -> 0x74543c, 0xa8876a -> 0x8f6f52, 0x6f6961 -> 0x5b554e.
+- Vignette #vig (radial-gradient, z-index 3, pointer-events:none) wie im Kanzie-Original.
+- Review rv108 (Port 9033, 14:00 + 22:30): Insel komplett im Rahmen, naeher und diorama-artiger, Vignette aktiv, 0 JS-Fehler. Screenshots rv108_tag14/nacht geprueft.
+- village.html 1.475.346 -> 1.475.708 B. Zip beta100.
+- Naechster Baustein: LIFE Pass 3 (Give-way-Logik bei Villager-Begegnungen verstaerken) oder DASHBOARD Pass 5, je nach naechster Abnahme.
