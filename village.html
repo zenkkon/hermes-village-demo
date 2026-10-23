@@ -1546,14 +1546,21 @@ window.__ffTick = (dt, t) => {
     b.castShadow = true; b.receiveShadow = true; scene.add(b);
   }
   function crateStack(x, z){
+    const seed = (x * 13.7 + z * 7.3) % 10; // B164 W21: deterministische Variation
     for (let i = 0; i < 3; i++){
-      const c = new THREE.Mesh(rboxGeo(0.42, 0.34, 0.42, 0.05), i % 2 ? woodM : woodD);
-      c.position.set(x + (i % 2) * 0.05, 0.18 + (i === 2 ? 0.36 : 0), z + (i - 1) * 0.08);
-      c.rotation.y = i * 0.5; c.castShadow = true; c.receiveShadow = true; scene.add(c);
+      const r1 = Math.sin(seed * 9.1 + i * 3.7), r2 = Math.cos(seed * 6.3 + i * 2.1);
+      const sc = 1 + r1 * 0.05, hh = 0.34 * sc;
+      const c = new THREE.Mesh(rboxGeo(0.42 * sc, hh, 0.42 * sc, 0.05), i % 2 ? woodM : woodD);
+      const yy = 0.18 * sc + (i === 2 ? 0.36 : 0);
+      c.position.set(x + (i % 2) * 0.05, yy, z + (i - 1) * 0.08);
+      c.rotation.y = i * 0.5 + r2 * 0.25;
+      c.rotation.z = r1 * 0.045; c.rotation.x = r2 * 0.04; // B164 W21: handgestapelt statt exakt
+      c.castShadow = true; c.receiveShadow = true; scene.add(c);
+      window.__crateTilts = (window.__crateTilts || 0) + 1; // B164 W21
       for (const sz of [-0.12, 0.12]){
-        const slat = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.012, 0.05), woodD);
-        slat.position.set(c.position.x, c.position.y + 0.176, c.position.z + sz);
-        slat.rotation.y = c.rotation.y; scene.add(slat);
+        const slat = new THREE.Mesh(new rboxGeo(0.42 * sc, 0.012, 0.05, 0.004), woodD); // B164 W21: weiche Leiste
+        slat.position.set(c.position.x, yy + hh * 0.52, c.position.z + sz);
+        slat.rotation.y = c.rotation.y; slat.rotation.z = c.rotation.z; scene.add(slat);
         window.__pol17n = (window.__pol17n || 0) + 1;
       }
     }
@@ -4262,6 +4269,7 @@ tick(); setInterval(tick, 30000);
     window.__p41 = () => ({softRoofs: 2, pass: 41}); // B161 X19
     window.__p42 = () => ({dist: +dist.toFixed(1), distT: +distT.toFixed(1), aim: zoomAim, pass: 42}); // B162 I4
     window.__p43 = () => ({awnings: window.__awnings || 0, pass: 43}); // B163 W20
+    window.__p44 = () => ({crateTilts: window.__crateTilts || 0, pass: 44}); // B164 W21
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt

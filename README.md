@@ -1740,3 +1740,9 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe `window.__p43()` -> `{awnings, pass: 43}`.
 - Review: rv163_tag.png (12:00, awnings 3, Tuch haengt organisch, umbN 2 up 0) + rv163_nacht.png (22:30, Regen erzwungen, umbN 5 up 5, puddleOp 0.42), beide 0 JS-Fehler, frisch via mtime, beide angesehen.
 - 1,549,446 B, md5 6d8ead6656b45bb33c64fad5f434b698. beta163.zip. Nächster Baustein: Beta 164, WORLD Pass 21 (Rest-Blocky: Kistenstapel-Kanten weicher / Kran-Seile) oder INTERACTION Pass 5 (Tour-Übergänge + Follow-Label-Schatten).
+### M170 - Beta 164 (WORLD Pass 21: handgestapelte Kisten statt exakter Stapel) - 24.10.2026 00:49 CEST
+- crateStack(): deterministische Variation pro Kiste (Seed aus x/z): Groesse 0.95-1.05x, Neigung rotation.z/x bis 0.045 rad, Rotation.y um bis zu 0.25 rad variiert - wirkt handgestapelt statt maschinell exakt.
+- Leisten (slats) von BoxGeometry auf rboxGeo(…, 0.004) gerundet, folgen nun der Kisten-Neigung.
+- Probe `window.__p44()` -> `{crateTilts, pass: 44}` (15 geneigte Kisten bei 5 Stapeln).
+- Review: rv164_tag.png (12:00, crateTilts 15, awnings 3) + rv164_nacht.png (22:30, Regen erzwungen, umbN 4 up 4), beide 0 JS-Fehler, frisch via mtime, beide angesehen.
+- 1,550,030 B, md5 5f093f037be60ca989f368ce20199dcf. beta164.zip. Nächster Baustein: Beta 165, WORLD Pass 22 (Rest-Blocky: Fass-Ringe weicher / Bootssteg-Detail) oder INTERACTION Pass 5 (Tour-Übergänge + Follow-Label-Schatten).
