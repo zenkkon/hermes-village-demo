@@ -1714,3 +1714,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe window.__p39() -> {rippleN, ripOp, on, pass:39}
 - Review ueber finale Bytes mit dem neuen Wetter-Rezept (weatherSet(1) + weatherForce(1), sofort w=1): rv189_regen.png (12:00, puddleOp 0.42, ripOp 0.308) + rv189_nacht.png (22:30, ripOp 0.278, Pfuetzen beleuchtet), beide 0 JS-Fehler, Shots angesehen
 - 1,545,900 B, md5 fb39df1e69ec65c99f3587174ead494d; beta159.zip (nur village.html)
+
+## M166 - Beta 160: LIFE x EXTRAS Pass 18 - Schirme bei Regen
+- Im Boden-Wetter-Block: jede Agentin/jeder Agent bekommt einen Regenschirm (Group: Cone 0.34/0.14 in 5 Farbrationen + Griff-Zylinder), local y 1.5, leicht gekippt; Nachzieh-Logik, weil Agenten nach und nach spawnen (v.umb-Marker, window.__umbs-Liste)  // B160 X18
+- Pro Frame: Schirme auf bei w > 0.4 UND winterW < 0.5 (bei Schnee keine Schirme), sonst zu
+- Zwei Fehlstarts im Lauf korrigiert: (1) forEach-Throw bevor __umbs existierte (Guard), (2) einmalige Erzeugung fand 0-1 Agenten vor -> Nachziehen pro Frame
+- Probe window.__p40() -> {umbN, up, rain, pass:40}
+- Review ueber finale Bytes: rv160_tag.png (12:00, trocken, umbN 1, up 0, rain false) + rv160_nacht.png (22:30, weatherSet(1)+weatherForce(1), umbN 2, up 2, rain true, puddleOp 0.42), beide 0 JS-Fehler, Shots angesehen
+- 1,547,131 B, md5 f655d7c0a974c6054474d321625ab8f8; beta160.zip (nur village.html)

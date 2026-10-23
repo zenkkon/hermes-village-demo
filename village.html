@@ -4242,6 +4242,21 @@ tick(); setInterval(tick, 30000);
       rr.material.opacity = rOn ? Math.max(0, (1 - u.ph) * 0.5 * gfx.pMat.opacity / 0.42) : 0;
       rr.visible = rOn;
     });
+    // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
+    if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
+    villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
+      if (v.umb) return;
+      const um = new THREE.Group();
+      const top = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.14, 12), new THREE.MeshLambertMaterial({color: window.__umbCols[window.__umbs.length % window.__umbCols.length]}));
+      const st = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 6), new THREE.MeshLambertMaterial({color: 0x5b4633}));
+      top.position.y = 0.36; st.position.y = 0.21;
+      um.add(top); um.add(st);
+      um.position.y = 1.5; um.rotation.z = 0.06; um.visible = false;
+      v.g.add(um); v.umb = um; window.__umbs.push(um);
+    });
+    if (!window.__p40) window.__p40 = () => ({umbN: window.__umbs.length, up: window.__umbs.filter(x => x.visible).length, rain: w > 0.4, pass: 40}); // B160 X18
+    const umbUp = w > 0.4 && winterW < 0.5; // bei Schnee keine Schirme
+    window.__umbs.forEach(um => { um.visible = umbUp; });
     if (raining){
       const arr = geo.attributes.position.array;
       const fallR = 16 + 6 * stormW, fallS = 5.5 + 5.8 * stormW; // B150 X8
