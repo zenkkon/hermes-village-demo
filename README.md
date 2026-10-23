@@ -1667,3 +1667,10 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - 16x "B153 X11"; 1,539,471 B, md5 72dd815a44aaaf9193e9732e54150904
 - Review: Tag-Shot rv178_tag.png ueber finale Bytes sauber (0 JS-Fehler); Nacht-Gate gemessen (nf 0.93, metN 5, active via Hook 1, 0 JS-Fehler); Nacht-Look-Shot ueber finale Bytes offen (Workspace-Restart, langsam, Spieluhr laeuft Captures davon) - Nachholtermin naechste Phase
 - beta153.zip (nur village.html)
+
+## M160 - Beta 154: EXTRAS Pass 12 - Tag/Nacht-Boot-Fix
+- Fix: frueher updateDayNight()-Aufruf direkt nach der Licht-Initialisierung (try/catch, Marker B154 X12) - der gepinnte Nacht-Zustand gilt ab Erstframe, nicht erst wenn der Sim-Loop nach dem Daten-Boot startet
+- Ursachenanalyse: Pin-Injection wurde vom Modul-Boot zurueckgesetzt (window.__pinTime = null, Zeile 183); verlaesslicher Override ist der URL-Parameter ?time=HH:MM (timeOverride, Zeile 181). Tag-Look in frueheren Nachtschuss-Versuchen war der statische Erstframe vor Loop-Start
+- Review ueber finale Bytes mit URL-Zeit: rv184_nacht.png (?time=22:30, tod "22:30 - Nacht", nf 0.81, Lampen an, dunklere Szene) und rv184_tag.png (?time=12:00, tod "12:00 - Tag", nf 0, helles Taglicht), beide 0 JS-Fehler
+- 1x "B154 X12"; 1,539,489 B, md5 a1cc50c0b509b53e5571f82457112ade
+- beta154.zip (nur village.html)

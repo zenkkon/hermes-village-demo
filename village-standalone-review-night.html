@@ -175,6 +175,7 @@ moonHalo.renderOrder = -6; scene.add(moonHalo);
 window.__moonDisc = () => moonDiscMat.opacity;
 // Stufe 99 / Beta 106: WORLD Pass 7 Rim-Kontrast (Kanzie-Gap: Kantenglanz) - kuehles Gegenlicht
 const rimL = new THREE.DirectionalLight(0xbfd8ff, 0.25); rimL.position.set(-14, 10, -18); scene.add(rimL);
+  try { updateDayNight(); } catch(e) { /* B154 X12: Frueh-Aufruf - Nachtpin/URL-Zeit gilt ab Erstframe, nicht erst ab Sim-Loop */ }
 const skyDay = new THREE.Color(0x8fc3ea), skyNight = new THREE.Color(0x14203d), skyDawn = new THREE.Color(0xe8946a);
 const seaDay = new THREE.Color(0x2c5f86), seaNight = new THREE.Color(0x0a1830);
 const grassNight = new THREE.Color(0x27524a), pathDay = 0xe8dab4, pathNight = 0x8a7f66;
