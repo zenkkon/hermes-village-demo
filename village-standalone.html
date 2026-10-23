@@ -776,7 +776,7 @@ for (const zz of [-1.05, 0.75]){
   strip.position.set(0, 0.421, zz); dock.add(strip);
 }
 // Anlegepfahl + Tauring
-const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.35, 8), new THREE.MeshStandardMaterial({color: 0x5a4430, roughness: 0.9}));
+const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.35, 12), new THREE.MeshStandardMaterial({color: 0x5a4430, roughness: 0.9})); // B136 P19
 bollard.position.set(0.45, 0.55, -1.5); bollard.castShadow = true; dock.add(bollard);
 const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 6, 12), new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1}));
 rope.rotation.x = Math.PI / 2; rope.position.set(0.45, 0.74, -1.5); dock.add(rope);
@@ -851,7 +851,7 @@ function stall(x, z, ry, c1, c2){
   }
   const gstring = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1.62, 4), matWall(0x4a4a4a));
   gstring.rotation.z = Math.PI / 2; gstring.position.set(0, 1.78, 0.62); g.add(gstring);
-  const basket = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.12, 0.2, 8), matWall(0xb08d5e));
+  const basket = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.12, 0.2, 12), matWall(0xb08d5e)); // B136 P19
   basket.position.set(1.15, 0.1, 0.35); basket.castShadow = true; g.add(basket);
   g.position.set(x, 0, z); g.rotation.y = ry || 0;
   scene.add(g);
@@ -1027,7 +1027,7 @@ window.__roofFix = roofFix;
     g.userData.col = col; parasols.push(g);
   }
   function stool(x, z){
-    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.36, 8), matWall(0x8a6a48));
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.36, 12), matWall(0x8a6a48)); // B136 P19
     st.position.set(x, 0.18, z); st.castShadow = true; scene.add(st);
     stools.push(st);
   }
@@ -1122,7 +1122,7 @@ window.__lampions = () => 5;
     g.parasols.push(u);
   }
   function stool60(x, z){
-    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.36, 8), matWall(0x8a6a48));
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.36, 12), matWall(0x8a6a48)); // B136 P19
     st.position.set(x, 0.18, z); st.castShadow = true; scene.add(st);
     g.stools.push(st);
   }
@@ -1655,7 +1655,7 @@ window.__ffTick = (dt, t) => {
     plank.castShadow = true;
     dg.add(plank);
     if (i === 2 || i === 5 || i === 8) {
-      const pile = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 6.0, 8), postMat);
+      const pile = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 6.0, 12), postMat); // B136 P19
       pile.position.set(plank.position.x, -2.85, plank.position.z);
       dg.add(pile);
     }
@@ -3095,9 +3095,9 @@ tick(); setInterval(tick, 30000);
 (function(){
   // 1) Windmuehle am Westrand
   const millG = new THREE.Group();
-  const mtower = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.45, 4.2, 8), matWall(0xe8dcc0));
+  const mtower = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.45, 4.2, 16), matWall(0xe8dcc0)); // B136 P19
   mtower.position.y = 2.1; mtower.castShadow = true; millG.add(mtower);
-  const mcap = new THREE.Mesh(new THREE.ConeGeometry(1.25, 1.0, 8), matWall(0x8a4a3a));
+  const mcap = new THREE.Mesh(new THREE.ConeGeometry(1.25, 1.0, 16), matWall(0x8a4a3a)); // B136 P19
   mcap.position.y = 4.7; mcap.castShadow = true; millG.add(mcap);
   const mdoor = new THREE.Mesh(new rboxGeo(0.55, 0.9, 0.08, 0.05), matWall(0x5a3c28));
   mdoor.position.set(0, 0.45, 1.42); millG.add(mdoor);
@@ -3121,9 +3121,9 @@ tick(); setInterval(tick, 30000);
 
   // 2) Teleskop vor der Sternwarte (Observatory: 7,-3)
   const scope = new THREE.Group();
-  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.9, 8), matWall(0x4a5568));
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.9, 16), matWall(0x4a5568)); // B136 P19
   tube.rotation.x = 0.5; tube.position.set(0, 1.6, 0.55); scope.add(tube);
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.12, 8), matWall(0x9fc4ff));
+  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.12, 16), matWall(0x9fc4ff)); // B136 P19
   lens.rotation.x = 0.5; lens.position.set(0, 2.43, 1.0); scope.add(lens);
   const tripodM = matWall(0x3c3c44);
   const t1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.1, 8), tripodM);
@@ -4181,6 +4181,7 @@ tick(); setInterval(tick, 30000);
   window.__p16 = () => ({nb: sun.shadow.normalBias, bias: sun.shadow.bias, pass: 16}); // Stufe 118 / Beta 133: WORLD Pass 16 Probe
   window.__p17 = () => ({trunkSeg: 10, pass: 17}); // Stufe 118 / Beta 134: WORLD Pass 17 Probe
   window.__p18 = () => ({bunting: 8, miniRoof: 10, pass: 18}); // Stufe 118 / Beta 135: WORLD Pass 18 Probe
+  window.__p19 = () => ({millTower: 16, millCap: 16, pierPile: 12, bollard: 12, basket: 12, tube: 16, lens: 16, stool: 12, pass: 19}); // Stufe 118 / Beta 136: WORLD Pass 19 Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
