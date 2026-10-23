@@ -4458,6 +4458,31 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
   renderer.render(scene, camera);
 }
 loop();
+// Stufe 118 / Beta 139: Block 2 INTERACTION Pass 2 - Hover-Cursor ueber klickbaren Objekten (B139 I2)
+(function(){
+  let hoverX = -1, hoverY = -1, hoverOk = false, hoverN = 0;
+  addEventListener("pointermove", e => {
+    hoverX = e.clientX; hoverY = e.clientY;
+    hoverOk = (e.buttons === 0) && (e.target === renderer.domElement);
+  }, {passive: true});
+  const hovList = [];
+  if (Array.isArray(BUILDINGS)) for (const b of BUILDINGS) hovList.push(b);
+  if (typeof fox !== "undefined" && fox) hovList.push(fox);
+  window.__hoverCursor = () => {
+    const cv = renderer.domElement;
+    if (!hoverOk){ if (cv.style.cursor === "pointer") cv.style.cursor = ""; return false; }
+    if (hoverN++ % 5) return cv.style.cursor === "pointer";
+    ndc.x = (hoverX / innerWidth) * 2 - 1; ndc.y = -(hoverY / innerHeight) * 2 + 1;
+    ray.setFromCamera(ndc, camera);
+    const hit = hovList.length ? ray.intersectObjects(hovList, true).length > 0 : false;
+    cv.style.cursor = hit ? "pointer" : "";
+    return hit;
+  };
+  window.__p22 = () => ({hoverOk, cursor: renderer.domElement.style.cursor, targets: hovList.length, pass: 22}); // Stufe 118 / Beta 139: INTERACTION Pass 2 Probe
+  window.__hoverBld = i => { const b = hovList[i]; if (!b) return null; const v = b.position.clone(); v.y = 1.5; v.project(camera); const x = (v.x*0.5+0.5)*innerWidth, y = (-v.y*0.5+0.5)*innerHeight; hoverX = x; hoverY = y; hoverOk = true; window.__hoverCursor(); return {p: window.__p22(), x: Math.round(x), y: Math.round(y), name: b.userData.name}; }; // B139 I2
+  window.__hoverOff = () => { hoverOk = false; window.__hoverCursor(); return window.__p22(); }; // B139 I2
+  (function hoverTick(){ try { window.__hoverCursor(); } catch(e){} requestAnimationFrame(hoverTick); })();
+})();
 addEventListener("resize", () => {
   camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
