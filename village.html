@@ -4104,6 +4104,19 @@ tick(); setInterval(tick, 30000);
   };
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
+  // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)
+  const autumnW = {v: 0};
+  const leafCols = [0xd97a2b, 0xc75d2a, 0xe0a13c, 0x8f4b1f];
+  const leaves = [];
+  for (let i = 0; i < 90; i++){
+    const lm = new THREE.MeshBasicMaterial({color: leafCols[i % 4], side: THREE.DoubleSide, transparent: true, opacity: 0}); // B152 X10
+    const lf = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.16), lm);
+    lf.position.set((Math.random() - 0.5) * 30, 0.4 + Math.random() * 8, (Math.random() - 0.5) * 30);
+    lf.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    lf.userData = {fy: 0.45 + Math.random() * 0.5, ph: Math.random() * Math.PI * 2, sr: 0.6 + Math.random() * 1.2}; // B152 X10
+    scene.add(lf); leaves.push(lf);
+  }
+  window.__p33 = () => ({leafN: leaves.length, autumnW: +autumnW.v.toFixed(2), leafY: +leaves[0].position.y.toFixed(2), pass: 33}); // B152 X10
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -4112,6 +4125,17 @@ tick(); setInterval(tick, 30000);
     const se = window.__season ? window.__season() : "sommer";
     lastSe = se; lastWinter = se === "winter";
     winterW += ((lastWinter ? 1 : 0) - winterW) * Math.min(1, dt * 1.0); // B144 E2: Winter-Uebergang gleitet
+    autumnW.v += ((lastSe === "herbst" ? 1 : 0) - autumnW.v) * Math.min(1, dt * 0.8); // B152 X10: Herbst-Uebergang gleitet
+    leaves.forEach(lf => { // B152 X10: Laub faellt mit Wind und Drall
+      lf.material.opacity = 0.92 * autumnW.v;
+      lf.visible = autumnW.v > 0.02;
+      if (!lf.visible) return;
+      lf.position.y -= dt * lf.userData.fy;
+      lf.position.x += dt * 1.6; // Wind wie der Regen (+x) // B152 X10
+      if (lf.position.x > 16) lf.position.x = -16;
+      lf.rotation.x += dt * lf.userData.sr; lf.rotation.z += dt * lf.userData.sr * 0.7; // B152 X10
+      if (lf.position.y < 0.05){ lf.position.y = 8 + Math.random() * 3; lf.position.z = (Math.random() - 0.5) * 30; }
+    });
     if (now >= nextSwitch){
       if (storm){ nextSwitch = now + 180000; }
       else if (lastWinter){ target = 0; nextSwitch = now + 60000; }
