@@ -1682,3 +1682,12 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review ueber finale Bytes: rv185_tag.png (?time=12:00, Tour aktiv, Kamera nach Tour-Schritt auf Wohnviertel, "Tour"-Button an) + rv185_nacht.png (?time=22:30, Tour aktiv, dunkle Szene mit Lampengluehen und Gluehwuermchen), beide 0 JS-Fehler
 - 4x "B155 X13"; 1,540,986 B, md5 a5346a66cd5614800fd0073e95b07975
 - beta155.zip (nur village.html)
+
+## M162 - Beta 156: EXTRAS Pass 14 - Tierwelt: Moewen ueber dem Hafen
+- 7 Moewen (Group mit Cone-Koerper + 2 Fluegel-Planes, MeshBasic 0xf2f5ff), kreisen um den Hafen (Zentrum 11.6/-11.6, Radius 2.2-5.4, Hoehe 3.2-5.6, Eigengeschwindigkeit 0.3-0.65), Fluegelschlag sin(t*9+ph)*0.55, Ausrichtung in Flugrichtung
+- Eingehaengt im Sim-Loop nach __extraTick, Initialisierung lazy im ersten Frame, komplett try/catch (window.__birdErr als Diagnose-Hook)
+- Hooks: Probe window.__p36() -> {birdN, flap, pass:36}
+- Bug-Fund beim Review: erster Hook-Name window.__birds kollidierte mit dem BESTEHENDEN alten Bird-System (Zeilen 3198/3211/3643, kreist hoch auf h 7.2) - der neue Block lief dadurch nie und warf pro Frame "reading 'a'". Fix: altes System bleibt window.__birds, der neue Hafen-Block heisst window.__moewen (5 refs)
+- Review ueber finale Bytes: rv186_tag.png (?time=12:00, birdErr null, p36 {birdN:7, flap:0.362}) + rv186_nacht.png (?time=22:30, Moewen ueber dem beleuchteten Hafen, p36 flap 0.388), beide 0 JS-Fehler
+- 4x "B156 X14"; 1,542,598 B, md5 16867b5f85fe18fdf95e2e8cba76e9dd
+- beta156.zip (nur village.html)

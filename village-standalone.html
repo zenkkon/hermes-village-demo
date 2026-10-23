@@ -4569,6 +4569,29 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
   window.__foxTarget = (x, z) => { homePos.set(x, 0, z); }; // B142 I3 Debug-Hook (inert ohne Aufruf)
   updateDayNight();
   if (window.__extraTick) window.__extraTick(dt, t);
+  // Stufe 120 / Beta 156: Block 4 EXTRAS Pass 14 - Tierwelt: Moewen kreisen ueber dem Hafen  // B156 X14
+  try {
+  if (!window.__moewen){
+    const bN = 7, birds = []; const bMat = new THREE.MeshBasicMaterial({color: 0xf2f5ff, side: THREE.DoubleSide});
+    for (let i = 0; i < bN; i++){
+      const g = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.42, 5), bMat); body.rotation.x = Math.PI / 2; g.add(body);
+      const wg = new THREE.PlaneGeometry(0.5, 0.15);
+      const wL = new THREE.Mesh(wg, bMat); wL.position.x = -0.28; g.add(wL);
+      const wR = new THREE.Mesh(wg, bMat); wR.position.x = 0.28; g.add(wR);
+      g.userData = {cx: 11.6 + (Math.random() * 8 - 4), cz: -11.6 + (Math.random() * 8 - 4), r: 2.2 + Math.random() * 3.2, a: Math.random() * Math.PI * 2, h: 3.2 + Math.random() * 2.4, spd: 0.3 + Math.random() * 0.35, ph: Math.random() * Math.PI * 2, wL, wR};
+      scene.add(g); birds.push(g);
+    }
+    window.__moewen = birds;
+    window.__p36 = () => ({birdN: window.__moewen.length, flap: +Math.abs(window.__moewen[0].userData.wL.rotation.z).toFixed(3), pass: 36}); // B156 X14
+  }
+  for (const bd of window.__moewen){ const u = bd.userData;
+    u.a += u.spd * dt; const flap = Math.sin(t * 9 + u.ph) * 0.55;
+    u.wL.rotation.z = flap; u.wR.rotation.z = -flap;
+    bd.position.set(u.cx + Math.cos(u.a) * u.r, u.h + Math.sin(t * 0.9 + u.ph) * 0.35, u.cz + Math.sin(u.a) * u.r);
+    bd.rotation.y = -u.a + Math.PI / 2;
+  }
+  } catch (e) { if (!window.__birdErr) window.__birdErr = (e && e.stack) ? String(e.stack).slice(0, 500) : String(e); } // B156 X14 diag
   // Kaminrauch: mehr, wenn laufende Runs
   smokeClock += dt;
   const runningCount = Object.keys(seenRunning).length;
