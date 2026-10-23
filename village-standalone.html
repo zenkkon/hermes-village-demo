@@ -4217,8 +4217,31 @@ tick(); setInterval(tick, 30000);
       window.__groundFx = {pd: gx, sMat, pMat};
       window.__p38 = () => ({puddleN: window.__groundFx.pd.length, puddleOp: +window.__groundFx.pMat.opacity.toFixed(3), snowOp: +window.__groundFx.sMat.opacity.toFixed(3), pass: 38}); // B158 X16
     }
-    window.__groundFx.pMat.opacity = Math.max(0, w * 0.42 * (1 - winterW * 0.8));
-    window.__groundFx.sMat.opacity = winterW * 0.55;
+    const gfx = window.__groundFx;
+    if (!gfx.rip){
+      gfx.rip = []; // 2 Ripple-Ringe je Pfuetze, poolen und recyceln
+      gfx.pd.forEach(pd => {
+        for (let k = 0; k < 2; k++){
+          const rr = new THREE.Mesh(new THREE.RingGeometry(0.14, 0.2, 20),
+            new THREE.MeshBasicMaterial({color: 0xbfd8ee, transparent: true, opacity: 0, side: THREE.DoubleSide}));
+          rr.rotation.x = -Math.PI / 2;
+          pd.add(rr); rr.userData = {ph: k * 0.5 + Math.random() * 0.4};
+          gfx.rip.push(rr);
+        }
+      });
+      window.__p39 = () => ({rippleN: gfx.rip.length, ripOp: +gfx.rip[0].material.opacity.toFixed(3), on: gfx.pMat.opacity > 0.05, pass: 39}); // B159 X17
+    }
+    gfx.pMat.opacity = Math.max(0, w * 0.42 * (1 - winterW * 0.8));
+    gfx.sMat.opacity = winterW * 0.55;
+    const rOn = gfx.pMat.opacity > 0.05; // Ripple nur bei sichtbarem Wasser
+    gfx.rip.forEach(rr => {
+      const u = rr.userData;
+      u.ph = (u.ph + dt * 0.55) % 1;
+      const sc = 0.4 + u.ph * 2.2;
+      rr.scale.set(sc, sc, 1);
+      rr.material.opacity = rOn ? Math.max(0, (1 - u.ph) * 0.5 * gfx.pMat.opacity / 0.42) : 0;
+      rr.visible = rOn;
+    });
     if (raining){
       const arr = geo.attributes.position.array;
       const fallR = 16 + 6 * stormW, fallS = 5.5 + 5.8 * stormW; // B150 X8

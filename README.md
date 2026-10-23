@@ -1707,3 +1707,10 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review ueber finale Bytes: rv188_regen.png (?time=12:00, __weatherSet(1), p38 puddleOp 0.072, w 0.17) + rv188_winter.png (?time=12:00, __weatherSet(1) + __seasonSet('winter'), Dashboard zeigt "Winter", p38 snowOp 0.055, winterW 0.1), beide 0 JS-Fehler, Shots angesehen
 - BEFUND: Kopplung exakt (0.42*w, 0.55*winterW nachweisbar), aber w bleibt im Shot bei ~0.17 statt Richtung 1 zu laufen - Regen-/Pfuetzen-Schwaeche ist eine Vorgaenger-Frage des Wetter-Schedulers (nextSwitch/Target-Verhalten), naechster Lauf klaert das
 - 1,544,861 B, md5 6e8c4e12810b26438e3d5281edc6b47f; beta158.zip (nur village.html)
+
+## M165 - Beta 159: EXTRAS Pass 17 - Regentropfen-Ripples in den Pfuetzen
+- Im Boden-Wetter-Block (B158) lazy erzeugt: 16 Ripple-Ringe (2 je Pfuetze, RingGeometry 0.14/0.2, MeshBasic 0xbfd8ee, DoubleSide, transparent), an die jeweilige Pfuetze gehaengt, Pool recycled per Phase u.ph  // B159 X17
+- Pro Frame: nur bei sichtbarem Wasser (pMat.opacity > 0.05), Skalierung 0.4 -> 2.6, Opazitaet (1-ph)*0.5 skaliert mit Pfuetzen-Opazitaet/0.42; im Winter automatisch aus
+- Probe window.__p39() -> {rippleN, ripOp, on, pass:39}
+- Review ueber finale Bytes mit dem neuen Wetter-Rezept (weatherSet(1) + weatherForce(1), sofort w=1): rv189_regen.png (12:00, puddleOp 0.42, ripOp 0.308) + rv189_nacht.png (22:30, ripOp 0.278, Pfuetzen beleuchtet), beide 0 JS-Fehler, Shots angesehen
+- 1,545,900 B, md5 fb39df1e69ec65c99f3587174ead494d; beta159.zip (nur village.html)
