@@ -4052,6 +4052,7 @@ tick(); setInterval(tick, 30000);
   rain.visible = false;
   scene.add(rain);
 
+  const winterRainCol = new THREE.Color(0xe4eef4); // B144 E2
   const rainTint = new THREE.Color(0x5f6b7a);
   const wTint = new THREE.Color(); // B143 E1: Arbeitsfarbe fuer den gleitenden Tint
   const stormTint = new THREE.Color(0x39414d);
@@ -4059,7 +4060,7 @@ tick(); setInterval(tick, 30000);
   // Stufe 94 / Beta 96: Regen-Verfeinerung (Winddrift) + Saison-Wetterkopplung
   // Stufe 99 / Beta 104: Gewitter-Modus + Blitz + Pfuetzen
   let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
-  let storm = false, stormW = 0, flashT = 0; // B143 E1: stormW lerpt den Sturm-Uebergang
+  let storm = false, stormW = 0, winterW = 0, flashT = 0; // B144 E2: winterW lerpt die Saison-Wetterkopplung // B143 E1: stormW lerpt den Sturm-Uebergang
   let rbT = 0;
   window.__weather = () => w > 0.5;
   window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
@@ -4069,7 +4070,7 @@ tick(); setInterval(tick, 30000);
     const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
   };
-  window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, pass: 26}); // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
+  window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -4077,6 +4078,7 @@ tick(); setInterval(tick, 30000);
     const now = Date.now();
     const se = window.__season ? window.__season() : "sommer";
     lastSe = se; lastWinter = se === "winter";
+    winterW += ((lastWinter ? 1 : 0) - winterW) * Math.min(1, dt * 1.0); // B144 E2: Winter-Uebergang gleitet
     if (now >= nextSwitch){
       if (storm){ nextSwitch = now + 180000; }
       else if (lastWinter){ target = 0; nextSwitch = now + 60000; }
@@ -4091,8 +4093,8 @@ tick(); setInterval(tick, 30000);
     const raining = w > 0.02;
     rain.visible = raining;
     mat.opacity = w * 0.8;
-    mat.size = lastWinter ? 0.13 : 0.1;
-    mat.color.setHex(lastWinter ? 0xe4eef4 : 0x9fc8e8);
+    mat.size = 0.1 + 0.03 * winterW; // B144 E2: Schneegroesse gleitet
+    mat.color.setHex(0x9fc8e8).lerp(winterRainCol, winterW); // B144 E2: Regen-/Schneefarbe gleitet
     if (raining){
       const arr = geo.attributes.position.array;
       const baseF = lastWinter ? 5.5 : 16, fall = baseF + (22 - baseF) * stormW, wx = 2.2 + 2.0 * stormW, wz = 0.9 + 0.9 * stormW; // B143 E1: weiche Uebergaenge
@@ -4174,7 +4176,7 @@ tick(); setInterval(tick, 30000);
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, stormW: +stormW.toFixed(2), flash: flashT > 0, season: lastSe, winterSleet: lastWinter && w > 0.5, puddles: puddles.length}; // B143 E1
+    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, stormW: +stormW.toFixed(2), flash: flashT > 0, season: lastSe, winterSleet: winterW > 0.5 && w > 0.5, puddles: puddles.length}; // B143 E1
     return d;
   };
 })();
