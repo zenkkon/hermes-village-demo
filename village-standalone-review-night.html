@@ -75,6 +75,7 @@
   #dashAreas button,#dashWeather button,#dashSeason button,#dashSound{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
   #dashAreas button.on{background:rgba(240,160,64,.18);color:#f0a040;border-color:rgba(240,160,64,.4)}
+  #dashTour{border:1px solid rgba(255,255,255,.14);background:transparent;color:#9b9ba6;font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}  #dashTour.on{background:rgba(88,86,214,.22);color:#8f8fff;border-color:rgba(88,86,214,.5)} // B155 X13
   #dashWeather button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
   #dashSeason button.on{background:rgba(52,199,89,.16);color:#34c759;border-color:rgba(52,199,89,.4)}
   #dashSound.on{background:rgba(88,86,214,.18);color:#7d7aff;border-color:rgba(125,122,255,.4)}
@@ -135,7 +136,6 @@
 <div id="vig"></div>
 <div id="hint">Ziehen: Kamera · Scrollen: zoom · Klick: wählen · Doppelklick: Orbit</div>
 <button id="toggle">Weiche Schatten: an</button>
-<script>window.__pinTime=[22,30];</script>
 <script type="module">
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -4699,6 +4699,7 @@ window.__pond = () => {
     '<div id="dashAreas">' +
       ["Plaza","Hafen","Wohnviertel","Werkstatt"].map(a => '<button data-a="' + a + '">' + a + '</button>').join("") +
     '</div>' +
+    '<button id="dashTour" title="Kamera-Autotour">Tour</button>' + // B155 X13
     '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button><button data-w="2">Gewitter</button></div>' +
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
     '<button id="dashSound" title="Wettersound an/aus">Ton</button>' +
@@ -4917,6 +4918,16 @@ window.__pond = () => {
     top.querySelectorAll("#dashAreas button").forEach(x => x.classList.toggle("on", x === b));
     const p = AREAS[b.dataset.a]; if (p && window.__look) window.__look(p[0], p[1], p[2]);
   });
+  // Stufe 119 / Beta 155: Block 4 EXTRAS Pass 13 - Kamera-Autotour: Tour-Button kreist alle 14 s durch die 4 Bereiche  // B155 X13
+  const tourB = top.querySelector("#dashTour");
+  const tourKeys = Object.keys(AREAS); let tourOn = false, tourIdx = 0;
+  const tourFly = () => { const tp = AREAS[tourKeys[tourIdx]]; if (tp && window.__look) window.__look(tp[0], tp[1], tp[2]);
+    top.querySelectorAll("#dashAreas button").forEach(x => x.classList.toggle("on", x.dataset.a === tourKeys[tourIdx])); };
+  if (tourB){ tourB.addEventListener("click", () => { tourOn = !tourOn; tourB.classList.toggle("on", tourOn); if (tourOn){ tourIdx = 0; tourFly(); } }); }
+  window.__tourSet = on => { tourOn = !!on; if (tourB) tourB.classList.toggle("on", tourOn); if (tourOn){ tourIdx = 0; tourFly(); } };
+  window.__tourStep = () => { if (!tourOn) return {tour: false}; tourIdx = (tourIdx + 1) % tourKeys.length; tourFly(); return {tour: true, idx: tourIdx, area: tourKeys[tourIdx]}; };
+  window.__p35 = () => ({tour: tourOn, idx: tourIdx, areas: tourKeys.length, pass: 35}); // B155 X13
+  setInterval(() => { if (tourOn) window.__tourStep(); }, 14000);
   // Wetter-Menü (nutzt das bestehende Regensystem)
   top.querySelector("#dashWeather").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;

@@ -1674,3 +1674,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review ueber finale Bytes mit URL-Zeit: rv184_nacht.png (?time=22:30, tod "22:30 - Nacht", nf 0.81, Lampen an, dunklere Szene) und rv184_tag.png (?time=12:00, tod "12:00 - Tag", nf 0, helles Taglicht), beide 0 JS-Fehler
 - 1x "B154 X12"; 1,539,489 B, md5 a1cc50c0b509b53e5571f82457112ade
 - beta154.zip (nur village.html)
+
+## M161 - Beta 155: EXTRAS Pass 13 - Kamera-Autotour
+- Neues Topbar-BUTTON "Tour" (CSS #dashTour, lila akzentuiert): schaltet die Kamera-Autotour ein/aus
+- Logik (Marker B155 X13, nach dem Area-Switcher): Tour an -> Flug zum ersten Bereich, alle 14 s naechster Bereich im Kreis (Plaza/Hafen/Wohnviertel/Werkstatt ueber AREAS + __look), Area-Buttons folgen dem aktiven Ziel
+- Hooks: window.__tourSet(on), window.__tourStep() (manuell einen Bereich weiterschalten), Probe window.__p35() -> {tour, idx, areas, pass:35}
+- Review ueber finale Bytes: rv185_tag.png (?time=12:00, Tour aktiv, Kamera nach Tour-Schritt auf Wohnviertel, "Tour"-Button an) + rv185_nacht.png (?time=22:30, Tour aktiv, dunkle Szene mit Lampengluehen und Gluehwuermchen), beide 0 JS-Fehler
+- 4x "B155 X13"; 1,540,986 B, md5 a5346a66cd5614800fd0073e95b07975
+- beta155.zip (nur village.html)
