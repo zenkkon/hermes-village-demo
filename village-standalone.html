@@ -78,6 +78,14 @@
   #dashWeather button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
   #dashSeason button.on{background:rgba(52,199,89,.16);color:#34c759;border-color:rgba(52,199,89,.4)}
   #dashSound.on{background:rgba(88,86,214,.18);color:#7d7aff;border-color:rgba(125,122,255,.4)}
+  /* B147 E5: Kompass im Topbar */
+  #dashCompass{position:relative;width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);flex:0 0 auto;overflow:hidden}
+  #dashCompass .dial{position:absolute;inset:0;will-change:transform}
+  #dashCompass .cN{position:absolute;left:50%;top:1px;transform:translateX(-50%);font-size:8px;font-weight:800;color:#f0a040}
+  #dashCompass .cS{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);font-size:8px;color:#9b9ba6}
+  #dashCompass .cE{position:absolute;right:3px;top:50%;transform:translateY(-50%);font-size:7px;color:#9b9ba6}
+  #dashCompass .cW{position:absolute;left:3px;top:50%;transform:translateY(-50%);font-size:7px;color:#9b9ba6}
+  #dashCompass .cneedle{position:absolute;left:50%;top:50%;width:2px;height:8px;background:#ff453a;border-radius:1px;transform-origin:50% 100%;transform:translate(-50%,-100%)}
   #dashDN{border:1px solid rgba(255,255,255,.14);background:transparent;color:#9b9ba6;font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
   #dashDN.on{background:rgba(240,160,64,.18);color:#f0a040;border-color:rgba(240,160,64,.4)}
   #dashDN.nacht{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
@@ -4589,6 +4597,7 @@ window.__pond = () => {
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
     '<button id="dashSound" title="Wettersound an/aus">Ton</button>' +
     '<button id="dashDN" data-m="auto">Auto</button>' +
+    '<span id="dashCompass" title="Kamera-Ausrichtung"><span class="dial"><span class="cN">N</span><span class="cS">S</span><span class="cE">E</span><span class="cW">W</span></span><span class="cneedle"></span></span>' + // B147 E5
     '<span id="dashClock">--:--</span>' +
     '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
     '<span id="dashUser">KZ</span>';
@@ -4615,6 +4624,23 @@ window.__pond = () => {
   um.querySelector("#dashUserReload").addEventListener("click", () => location.reload());
   document.addEventListener("click", () => { if (um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && um.style.display !== "none"){ um.style.display = "none"; window.__userMenuOpen = false; } });
+
+// Stufe 122 / Beta 147: Block 4 EXTRAS Pass 5 - Kompass (Kamera-Ausrichtung dreht mit) (B147 E5)
+(function(){
+  const cEl = document.getElementById("dashCompass");
+  if (!cEl) return;
+  const dial = cEl.querySelector(".dial");
+  window.__compassSet = y => { rotY = y; }; // B147 E5: Debug-Hook
+  window.__compass = () => ({rotY: +rotY.toFixed(3), deg: +(cEl.dataset.deg || 0), pass: 28}); // B147 E5
+  window.__p28 = () => ({live: cEl.dataset.live === "1", deg: +(cEl.dataset.deg || 0), pass: 28}); // B147 E5
+  (function compassTick(){
+    const deg = ((rotY * 180 / Math.PI) % 360 + 360) % 360;
+    dial.style.transform = "rotate(" + deg.toFixed(1) + "deg)";
+    cEl.dataset.deg = deg.toFixed(1);
+    cEl.dataset.live = "1";
+    requestAnimationFrame(compassTick);
+  })();
+})();
   // Stufe 84 / Beta 86: Tag/Nacht-Toggle (Auto -> Tag -> Nacht), pinnt die Dorfzeit
   const dnB = document.getElementById("dashDN");
   if (dnB){ dnB.addEventListener("click", () => {
