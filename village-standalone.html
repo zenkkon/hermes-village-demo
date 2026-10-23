@@ -3383,6 +3383,48 @@ tick(); setInterval(tick, 30000);
   const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 2.6, transparent: true, opacity: 0, sizeAttenuation: false, fog: false});
   scene.add(new THREE.Points(starGeo, starMat));
   window.__night = () => starMat.opacity;
+  // B153 X11: Sternschnuppen (nachts, Gegenstueck zu den Sternen)
+  const meteors = [];
+  for (let i = 0; i < 5; i++){
+    const g = new THREE.Group();
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 6), new THREE.MeshBasicMaterial({color: 0xfff6d8, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, fog: false})); // B153 X11
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.05, 2.4, 6), new THREE.MeshBasicMaterial({color: 0xdce8ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, fog: false}));
+    tail.rotation.x = Math.PI / 2; tail.position.z = -1.2; g.add(head); g.add(tail); // B153 X11: Schweif hinter der Spitze
+    g.visible = false; scene.add(g);
+    meteors.push({g, t: 0, life: 0, cd: 1.5 + Math.random() * 6, vx: 0, vy: 0, vz: 0}); // B153 X11
+  }
+  window.__p34 = () => ({metN: meteors.length, active: meteors.filter(m => m.g.visible).length, nf: +starMat.opacity.toFixed(2), pass: 34}); // B153 X11
+  window.__meteorTest = () => { // B153 X11: Test-Hook - Meteor 0 sofort aktiv
+    const m = meteors[0]; m.g.position.set(30, 45, -10); m.vx = 0; m.vy = -0.707; m.vz = 0.707;
+    m.life = 8; m.t = 0.8; m.g.visible = true;
+    m.g.lookAt(m.g.position.x + m.vx, m.g.position.y + m.vy, m.g.position.z + m.vz); m.g.rotateY(Math.PI);
+    return {ok: true, t: m.t, life: m.life};
+  }; // B153 X11
+  const prevMet = window.__extraTick;
+  window.__extraTick = function(dt, t){ // B153 X11
+    if (prevMet) prevMet(dt, t);
+    const nf = window.__night ? window.__night() : 0;
+    meteors.forEach(m => {
+      if (!m.g.visible){
+        m.cd -= dt;
+        if (m.cd <= 0 && nf > 0.4){ // B153 X11: nur nachts
+          const a = Math.random() * Math.PI * 2, r = 50 + Math.random() * 20, h = 40 + Math.random() * 30;
+          m.g.position.set(Math.cos(a) * r, h, Math.sin(a) * r); // B153 X11
+          const dx = -Math.cos(a), dz = -Math.sin(a), dy = -0.5 - Math.random() * 0.3;
+          const dl = Math.hypot(dx, dy, dz); m.vx = dx / dl; m.vy = dy / dl; m.vz = dz / dl; // B153 X11: seitlich abwaerts
+          m.life = 0.8 + Math.random() * 0.6; m.t = 0; m.g.visible = true;
+          m.g.lookAt(m.g.position.x + m.vx, m.g.position.y + m.vy, m.g.position.z + m.vz); // B153 X11
+          m.g.rotateY(Math.PI); // B153 X11: Schweif hinter der Bewegung
+        }
+      } else {
+        m.t += dt;
+        m.g.position.x += m.vx * dt * 34; m.g.position.y += m.vy * dt * 34; m.g.position.z += m.vz * dt * 34; // B153 X11
+        const ph = m.t / m.life, op = Math.sin(ph * Math.PI) * 0.95;
+        m.g.children.forEach(c => c.material.opacity = op); // B153 X11
+        if (m.t >= m.life){ m.g.visible = false; m.cd = 4 + Math.random() * 9; } // B153 X11
+      }
+    });
+  };
 
   // --- Ente auf dem Teich ---
   const duck = new THREE.Group();

@@ -1659,3 +1659,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 
 **Blitzeinschlag-Sound.** Lautet der Ton-Button und loest das Wetter einen Blitz aus, faehrt ein Donner-Burst hoch: braunes Rauschen mit gedrosselter Abspielrate, tiefpass-gefiltert, Gain-Enveloppe 0.5 -> 0.01 ueber 2 Sekunden (exponentiell), zufaellige Variation pro Blitz. Start nur bei aktivem Ton (kein Burst im Stummschalten), getriggert von der Blitzkante im Wetter-Tick. Probe __p27 um thunderN erweitert. Marker "B146 E4".
 
+
+## M159 - Beta 153: EXTRAS Pass 11 - Sternschnuppen
+- 5 Meteore (Kopf SphereGeometry 0.14, 0xfff6d8; Schweif Cone 0.05x2.4, 0xdce8ff, beide AdditiveBlending, fog:false), nur nachts (nf > 0.4)
+- Cooldown initial 1.5-7.5 s, danach 4-13 s; Speed 34 u/s, Life 0.8-1.4 s, Opacity sin(ph*pi)*0.95; lookAt + rotateY(PI) - Schweif hinter der Bewegung
+- Probe __p34 -> {metN, active, nf, pass:34}; Test-Hook __meteorTest() (Meteor 0 sofort aktiv, life 8)
+- 16x "B153 X11"; 1,539,471 B, md5 72dd815a44aaaf9193e9732e54150904
+- Review: Tag-Shot rv178_tag.png ueber finale Bytes sauber (0 JS-Fehler); Nacht-Gate gemessen (nf 0.93, metN 5, active via Hook 1, 0 JS-Fehler); Nacht-Look-Shot ueber finale Bytes offen (Workspace-Restart, langsam, Spieluhr laeuft Captures davon) - Nachholtermin naechste Phase
+- beta153.zip (nur village.html)
