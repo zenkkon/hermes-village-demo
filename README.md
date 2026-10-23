@@ -1722,3 +1722,9 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe window.__p40() -> {umbN, up, rain, pass:40}
 - Review ueber finale Bytes: rv160_tag.png (12:00, trocken, umbN 1, up 0, rain false) + rv160_nacht.png (22:30, weatherSet(1)+weatherForce(1), umbN 2, up 2, rain true, puddleOp 0.42), beide 0 JS-Fehler, Shots angesehen
 - 1,547,131 B, md5 f655d7c0a974c6054474d321625ab8f8; beta160.zip (nur village.html)
+
+## M167 - Beta 161: WORLD Pass 19 - weiche Lehm-Daecher (23.10.2026 23:20)
+- Die letzten beiden 4-Segment-Pyramiden-Daecher (Haus 0xd97e3f, Werkstatt-Dach 0x7a4b3a) auf lumpyCone(..., 12 Segmente, Jitter 0.08) umgebaut: weiche, organische Dacherkanten statt harter Pyramiden.
+- Probe window.__p41() -> {softRoofs: 2, pass: 41}; Marker B161 X19 (3x).
+- Review: rv161_tag.png (12:00, softRoofs 2, Schirme zu, 0 Fehler) + rv161_nacht.png (22:30 + Regen erzwungen, Schirme oben, Pfuetzen 0.42, 0 Fehler), beide via view_workspace_image geprueft.
+- Dateigroesse 1,547,301 B, md5 4f748990cf4f6d369c4c64fcf0cfa934.

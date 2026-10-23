@@ -563,7 +563,7 @@ function stiltHouse(x, z, ry){
   }
   const body = new THREE.Mesh(new rboxGeo(1.7, 1.1, 1.5, 0.05), matWall(0xf2e3c9));
   body.name = "wh_body"; body.position.y = 1.85; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(1.45, 0.85, 4), matWall(0xd97e3f));
+  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 12), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide
   roof.name = "wh_roof"; roof.position.y = 2.82; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const win = winPlane(0.4, 0.42); win.position.set(0, 1.95, 0.78); g.add(win);
   const lamp = new THREE.PointLight(0xffb340, 0.3, 6); lamp.position.set(0, 2.0, 1.2); g.add(lamp);
@@ -2970,7 +2970,7 @@ tick(); setInterval(tick, 30000);
     body.position.y = 1.1; body.castShadow = true; body.receiveShadow = true; g.add(body);
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.65, 0.3, 4), matWall(0x7a4b3a));
     cap.position.y = 2.35; cap.rotation.y = Math.PI/4; g.add(cap);
-    const top = new THREE.Mesh(new THREE.ConeGeometry(1.65, 1.3, 4), matWall(0x7a4b3a));
+    const top = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.65, 1.3, 12), 11.7, 0.08), matWall(0x7a4b3a)); // B161 X19
     top.position.y = 3.15; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
     const door = new THREE.Mesh(new rboxGeo(0.5, 1.0, 0.08, 0.05), matWall(0x5a3c28));
     door.position.set(0, 0.5, 0.92); g.add(door);
@@ -4242,6 +4242,7 @@ tick(); setInterval(tick, 30000);
       rr.material.opacity = rOn ? Math.max(0, (1 - u.ph) * 0.5 * gfx.pMat.opacity / 0.42) : 0;
       rr.visible = rOn;
     });
+    window.__p41 = () => ({softRoofs: 2, pass: 41}); // B161 X19
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
