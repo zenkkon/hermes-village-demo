@@ -746,7 +746,7 @@ function buildBoathouse(x, z, ry){
   const g = new THREE.Group();
   const body = new THREE.Mesh(new rboxGeo(2.0, 1.4, 1.8, 0.05), matWall(0x7a94b8));
   body.position.y = 0.7; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 4), matWall(0x34528a));
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 12), matWall(0x34528a)); // B140 P21
   roof.position.y = 1.85; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const door = new THREE.Mesh(new rboxGeo(0.8, 0.9, 0.08, 0.05), matWall(0x2a3648));
   door.position.set(0, 0.45, 0.92); g.add(door);
@@ -1423,7 +1423,7 @@ window.__ffTick = (dt, t) => {
     for (let k = 0; k < 8; k++){
       const ang = k * 0.785 + ci, rr = 0.5 + (k % 3) * 0.28;
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
-      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 4), matWall(0x3f7f36));
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
         new THREE.MeshStandardMaterial({color: patchCols[(ci + k) % 3]}));
@@ -1443,7 +1443,7 @@ window.__ffTick = (dt, t) => {
     for (let k = 0; k < 14; k++){
       const ang = k * 1.13 + ci, rr = 0.3 + (k % 5) * 0.26;
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
-      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.15 + (k % 3) * 0.05, 4), matWall(0x3f7f36));
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.15 + (k % 3) * 0.05, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.7, fz); scene.add(stem);
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.06 + (k % 2) * 0.02, 10, 8), // B137 P20
         new THREE.MeshStandardMaterial({color: cols[(ci + k) % 5], roughness: 0.7}));
@@ -1619,7 +1619,7 @@ window.__ffTick = (dt, t) => {
     for (let k = 0; k < 8; k++){
       const ang = k * 0.785 + ci * 0.4, rr = 0.45 + (k % 3) * 0.26;
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
-      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 4), matWall(0x3f7f36));
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
         new THREE.MeshStandardMaterial({color: pc2[(ci + k) % 3]}));
@@ -1714,7 +1714,7 @@ const greens3 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
     for (let k = 0; k < 8; k++){
       const ang = k * 0.785 + ci * 0.7, rr = 0.45 + (k % 3) * 0.26;
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
-      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 4), matWall(0x3f7f36));
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
         new THREE.MeshStandardMaterial({color: pc3[(ci + k) % 3]}));
@@ -1742,7 +1742,7 @@ for (let i = 0; i < 46; i++){
   const a = (i * 2.399) % (Math.PI * 2), r = 3.2 + ((i * 53) % 140) / 10;
   const fx = Math.cos(a) * r, fz = Math.sin(a) * r;
   if (Math.hypot(fx, fz) > 17.5) continue;
-  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 4), matWall(0x3f7f36));
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
   stem.position.set(fx, 0.08, fz); scene.add(stem);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 10),
     new THREE.MeshStandardMaterial({color: flowerCols[i % 5], roughness: 0.7}));
@@ -4479,6 +4479,7 @@ loop();
     return hit;
   };
   window.__p22 = () => ({hoverOk, cursor: renderer.domElement.style.cursor, targets: hovList.length, pass: 22}); // Stufe 118 / Beta 139: INTERACTION Pass 2 Probe
+  window.__p23 = () => ({stemSeg: 8, boatRoof: 12, pass: 21}); // Stufe 118 / Beta 140: WORLD Pass 21 Probe
   window.__hoverBld = i => { const b = hovList[i]; if (!b) return null; const v = b.position.clone(); v.y = 1.5; v.project(camera); const x = (v.x*0.5+0.5)*innerWidth, y = (-v.y*0.5+0.5)*innerHeight; hoverX = x; hoverY = y; hoverOk = true; window.__hoverCursor(); return {p: window.__p22(), x: Math.round(x), y: Math.round(y), name: b.userData.name}; }; // B139 I2
   window.__hoverOff = () => { hoverOk = false; window.__hoverCursor(); return window.__p22(); }; // B139 I2
   (function hoverTick(){ try { window.__hoverCursor(); } catch(e){} requestAnimationFrame(hoverTick); })();
