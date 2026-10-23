@@ -4066,6 +4066,14 @@ tick(); setInterval(tick, 30000);
   const rain = new THREE.Points(geo, mat);
   rain.visible = false;
   scene.add(rain);
+  // B150 X8: Regen-Streaks (LineSegments) statt runder Punkte // B150 X8
+  const lPos = new Float32Array(N * 6);
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute("position", new THREE.BufferAttribute(lPos, 3));
+  const lineMat = new THREE.LineBasicMaterial({color: 0x9fc8e8, transparent: true, opacity: 0, depthWrite: false});
+  const rainLines = new THREE.LineSegments(lineGeo, lineMat);
+  rainLines.visible = false;
+  scene.add(rainLines);
 
   const winterRainCol = new THREE.Color(0xe4eef4); // B144 E2
   const rainTint = new THREE.Color(0x5f6b7a);
@@ -4077,6 +4085,7 @@ tick(); setInterval(tick, 30000);
   let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
   let storm = false, stormW = 0, winterW = 0, flashT = 0; // B144 E2: winterW lerpt die Saison-Wetterkopplung // B143 E1: stormW lerpt den Sturm-Uebergang
   let rbT = 0;
+  let fallCur = 0; // B150 X8
   window.__weather = () => w > 0.5;
   window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
   window.__weatherForce = v => { w = +v; };
@@ -4086,6 +4095,7 @@ tick(); setInterval(tick, 30000);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
   };
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
+  window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -4107,20 +4117,33 @@ tick(); setInterval(tick, 30000);
     stormW += ((storm ? 1 : 0) - stormW) * Math.min(1, dt * 1.2); // B143 E1: Sturm-Parameter gleiten
     const raining = w > 0.02;
     rain.visible = raining;
-    mat.opacity = w * 0.8;
-    mat.size = 0.1 + 0.03 * winterW; // B144 E2: Schneegroesse gleitet
+    rainLines.visible = raining; // B150 X8
+    mat.opacity = w * 0.85 * winterW; // B150 X8: Punkte sind jetzt nur Schnee
+    mat.size = 0.12 + 0.04 * winterW; // B150 X8: Schneegroesse (B144 E2-Basis)
     mat.color.setHex(0x9fc8e8).lerp(winterRainCol, winterW); // B144 E2: Regen-/Schneefarbe gleitet
+    lineMat.opacity = w * 0.55 * (1 - winterW); // B150 X8: Streaks nur bei Regen
+    lineMat.color.setHex(0x9fc8e8).lerp(stormTint, stormW * 0.4); // B150 X8
     if (raining){
       const arr = geo.attributes.position.array;
-      const baseF = lastWinter ? 5.5 : 16, fall = baseF + (22 - baseF) * stormW, wx = 2.2 + 2.0 * stormW, wz = 0.9 + 0.9 * stormW; // B143 E1: weiche Uebergaenge
+      const fallR = 16 + 6 * stormW, fallS = 5.5 + 5.8 * stormW; // B150 X8
+      const fall = fallS + (fallR - fallS) * (1 - winterW), wx = 2.2 + 2.0 * stormW, wz = 0.9 + 0.9 * stormW; // B150 X8: Winter gleitet stetig
+      fallCur = fall; // B150 X8
       for (let i = 0; i < N; i++){
         arr[i*3+1] -= dt * fall;
-        arr[i*3] += dt * wx; arr[i*3+2] += dt * wz;
+        arr[i*3] += dt * wx + Math.sin(t * 1.1 + i * 0.73) * dt * 0.4 * winterW; // B150 X8: Schnee-Wobbel
+        arr[i*3+2] += dt * wz;
         if (arr[i*3+1] < 0) arr[i*3+1] = 13 + Math.random() * 2;
         if (arr[i*3] > 17) arr[i*3] = -17; else if (arr[i*3] < -17) arr[i*3] = 17;
         if (arr[i*3+2] > 17) arr[i*3+2] = -17; else if (arr[i*3+2] < -17) arr[i*3+2] = 17;
       }
       geo.attributes.position.needsUpdate = true;
+      const larr = lineGeo.attributes.position.array, k = 0.05; // B150 X8: Streak-Schwaenze hinter der Bewegung
+      for (let i = 0; i < N; i++){
+        const x = arr[i*3], y = arr[i*3+1], z = arr[i*3+2];
+        larr[i*6] = x; larr[i*6+1] = y; larr[i*6+2] = z;
+        larr[i*6+3] = x - wx * k; larr[i*6+4] = y + fall * k; larr[i*6+5] = z - wz * k;
+      }
+      lineGeo.attributes.position.needsUpdate = true; // B150 X8
     }
     // Licht und Himmel daempfen (Basis setzt pro Frame zurueck, kein Aufstauen)
     sun.intensity *= (1 - 0.35 * w);
