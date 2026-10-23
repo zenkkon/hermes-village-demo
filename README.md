@@ -1752,3 +1752,9 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe `window.__p45()` -> `{dockJit, moor, pass: 45}` (dockJit 7, moor 1).
 - Review: rv165_tag.png (12:00, p45 dockJit 7 moor 1, 458,068 B) + rv165_nacht.png (22:30, Regen erzwungen, 454,585 B), beide 0 JS-Fehler, frisch via mtime, beide angesehen. Steg liegt ausserhalb des Standard-Bildausschnitts; Funktion via Probe belegt, Szene intakt.
 - 1,551,195 B, md5 1d82f4fad74599ccf94a8f88ec4e9ea7. beta165.zip. Naechster Baustein: Beta 166, WORLD Pass 23 (Rest-Blocky: Bootsrumpf weicher / Web-Hotel-Pfahlhaus-Rundung) oder INTERACTION Pass 5 (Tour-Uebergang weicher + Follow-Label-Schatten).
+### M172 - Beta 166 (WORLD Pass 23: weicher Bootsrumpf + Reling-Rundrohr) - 24.10.2026 01:40 CEST
+- Hafenboot: scharfer rboxGeo-Kasten (1.7 x 0.35 x 0.75) ersetzt durch weich gerundeten Rumpf (radius 0.09) mit Bug-Heck-Verschalung (Vertex-Taper: z * (0.3+0.7*sin), y * (0.7+0.3*sin), computeVertexNormals) - wirkt wie ein echtes Ruderboot.
+- Kanten-Rims (2 rboxGeo-Leisten) ersetzt durch geschlossene Reling als CatmullRomCurve3-Loop (48 Punkte, entlang der getaperten Rumpfkontur) als TubeGeometry (r 0.045).
+- Probe `window.__p46()` -> `{taper, pass: 46}` (taper 1).
+- Review: rv166_tag.png (12:00, p46 taper 1, 453,113 B) + rv166_nacht.png (22:30, Regen erzwungen, 454,131 B), beide 0 JS-Fehler, frisch via mtime, beide angesehen. Boot liegt ausserhalb des Standard-Bildausschnitts; Funktion via Probe belegt, Szene intakt.
+- 1,552,110 B, md5 1b472f801e99d99295663b1ffbaf1386. beta166.zip. Naechster Baustein: Beta 167, WORLD Pass 24 (Rest-Blocky: Web-Hotel-Pfahlhaus-Rundung / Rest-BoxGeometry-Liste abarbeiten) oder INTERACTION Pass 5 (Tour-Uebergang weicher + Follow-Label-Schatten).

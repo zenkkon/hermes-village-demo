@@ -1746,11 +1746,32 @@ window.__ffTick = (dt, t) => {
   const crate = new THREE.Mesh(new rboxGeo(0.5, 0.5, 0.5, 0.05), woodD);
   crate.position.set(11.4, 0.25, -9.9); crate.rotation.y = 0.4; crate.castShadow = true; hg.add(crate);
   const boat = new THREE.Group();
-  const hull = new THREE.Mesh(new rboxGeo(1.7, 0.35, 0.75, 0.05), new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
+  // B166 W23: weicher Bootsrumph mit Bug-Heck-Verschalung statt scharfer Kasten
+  const hullG = new rboxGeo(1.7, 0.35, 0.75, 0.09);
+  {
+    const pos = hullG.attributes.position;
+    for (let i = 0; i < pos.count; i++){
+      const x = pos.getX(i), tt = (x + 0.85) / 1.7, sc = Math.sin(Math.PI * tt);
+      pos.setZ(i, pos.getZ(i) * (0.3 + 0.7 * sc));
+      pos.setY(i, pos.getY(i) * (0.7 + 0.3 * sc));
+    }
+    hullG.computeVertexNormals();
+  }
+  const hull = new THREE.Mesh(hullG, new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
   hull.castShadow = true; boat.add(hull);
-  const rim1 = new THREE.Mesh(new rboxGeo(1.7, 0.12, 0.1, 0.05), woodD);
-  rim1.position.set(0, 0.2, 0.36); boat.add(rim1);
-  const rim2 = rim1.clone(); rim2.position.z = -0.36; boat.add(rim2);
+  // B166 W23: Reling als geschlossenes Rundrohr entlang der Rumpfkontur
+  {
+    const pts = [];
+    for (let i = 0; i < 48; i++){
+      const ang = (i / 48) * Math.PI * 2;
+      const x = 0.85 * Math.cos(ang), tt = (x + 0.85) / 1.7, sc = Math.sin(Math.PI * tt);
+      pts.push(new THREE.Vector3(x, 0.24, 0.38 * Math.sin(ang) * (0.3 + 0.7 * sc)));
+    }
+    const loop = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.4);
+    const rail = new THREE.Mesh(new THREE.TubeGeometry(loop, 96, 0.045, 8, true), woodD);
+    rail.castShadow = true; boat.add(rail);
+    window.__boatTaper = 1; // B166 W23
+  }
   boat.position.set(16.83, -5.15, -15.41); boat.rotation.y = Math.PI / 4;
   hg.add(boat);
   scene.add(hg);
@@ -4290,6 +4311,7 @@ tick(); setInterval(tick, 30000);
     window.__p43 = () => ({awnings: window.__awnings || 0, pass: 43}); // B163 W20
     window.__p44 = () => ({crateTilts: window.__crateTilts || 0, pass: 44}); // B164 W21
     window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
+    window.__p46 = () => ({taper: window.__boatTaper || 0, pass: 46}); // B166 W23
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
