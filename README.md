@@ -1728,3 +1728,10 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe window.__p41() -> {softRoofs: 2, pass: 41}; Marker B161 X19 (3x).
 - Review: rv161_tag.png (12:00, softRoofs 2, Schirme zu, 0 Fehler) + rv161_nacht.png (22:30 + Regen erzwungen, Schirme oben, Pfuetzen 0.42, 0 Fehler), beide via view_workspace_image geprueft.
 - Dateigroesse 1,547,301 B, md5 4f748990cf4f6d369c4c64fcf0cfa934.
+### M168 - Beta 162 (INTERACTION Pass 4: gedämpftes Zoomen + Zoom zum Cursor) - 23.10.2026 23:45 CEST
+- wheel-Zoom: Ziel-Distanz `distT` + exponentielle Dämpfung im Render-Loop (`dist += (distT - dist) * (1 - pow(0.002, dt))`), Pinch schreibt ebenfalls `distT`.
+- Zoom zum Cursor (B162 I4): Raycast vom Cursor auf die Bodenebene (y=0), Blickziel `camC` wandert beim Zoomen um 12% pro Notch Richtung Cursorpunkt, geclampt auf ±22; inaktiv während Glide/Follow/Orbit.
+- Probe `window.__p42()` → `{dist, distT, aim, pass: 42}`.
+- Funktionstest headless: 3x synthetic WheelEvent (deltaY -120, Cursor 620/420): dist 27 -> 23.7 -> 21.9 gegen distT 19.8 (Dämpfung sichtbar), aim {-2.64, 1.66} gesetzt, 0 JS-Fehler.
+- Review: rv162_tag.png (12:00 trocken, softRoofs 2, umbN 1 up 0) + rv162_nacht.png (22:30, Regen erzwungen, umbN 4 up 4, puddleOp 0.42), beide 0 JS-Fehler, angesehen.
+- 1,548,375 B, md5 5e3516cb7cecfddc1cc7841a63dfeeb6. beta162.zip. Nächster Baustein: Beta 163, WORLD Pass 20 (Rest-Blocky: Werkstatt-/Markt-Detail) oder INTERACTION Pass 5 (Tour-Übergänge weicher).

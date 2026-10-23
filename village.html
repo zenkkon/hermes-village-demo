@@ -2336,7 +2336,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand)
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27, distT = 27, zoomAim = null; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand); B162 I4: Ziel-Distanz + Cursor-Ziel // B162 I4
 let camC = null; // __look (Glide + Follow) kommt im INTERACTION-Block
 // Pointer-Steuerung kommt im INTERACTION-Block (Stufe 60): Links-Ziehen = Pan, Rechts-Ziehen = Rotate
 
@@ -4243,6 +4243,7 @@ tick(); setInterval(tick, 30000);
       rr.visible = rOn;
     });
     window.__p41 = () => ({softRoofs: 2, pass: 41}); // B161 X19
+    window.__p42 = () => ({dist: +dist.toFixed(1), distT: +distT.toFixed(1), aim: zoomAim, pass: 42}); // B162 I4
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
@@ -4717,6 +4718,7 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
     b.style.top = ((-v.y*0.5+0.5) * innerHeight) + "px";
   }
   const cc = camC || {x:0, y:0.5, z:0};
+  dist += (distT - dist) * (1 - Math.pow(0.002, Math.min(dt, 0.1))); // B162 I4: gedämpftes Zoomen
   camera.position.set(
     cc.x + dist*Math.sin(rotX)*Math.sin(rotY),
     cc.y + dist*Math.cos(rotX),
@@ -5289,7 +5291,7 @@ window.__pond = () => {
     if (dragMode === "pinch" && pointers.size === 2){
       const ps = [...pointers.values()];
       const d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
-      if (pinchD0 > 0) dist = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d)));
+      if (pinchD0 > 0) distT = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d))); // B162 I4
       // Beta 115: Zwei-Finger-Pan (Mittelpunkt bewegt die Kamera) + Twist (Winkel dreht)
       if (pinchMid0){
         const mid = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
@@ -5330,9 +5332,21 @@ window.__pond = () => {
   };
   addEventListener("pointerup", endPtr);
   addEventListener("pointercancel", endPtr);
+  const ray = new THREE.Raycaster(), gPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0), gHit = new THREE.Vector3(); // B162 I4
   addEventListener("wheel", e => {
     if (orbit){ orbit.dist = Math.max(4.5, Math.min(16, orbit.dist + e.deltaY * 0.02)); if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; } return; }
-    dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02));
+    distT = Math.max(9, Math.min(60, distT + e.deltaY * 0.02)); // B162 I4: Ziel-Distanz, im Loop gedämpft
+    if (!glide && !(follow && follow.obj) && !orbit){ // B162 I4: Zoom zum Cursor
+      ray.setFromCamera({x: (e.clientX / innerWidth) * 2 - 1, y: -(e.clientY / innerHeight) * 2 + 1}, camera);
+      if (ray.ray.intersectPlane(gPlane, gHit)){
+        const base = camC || DEF;
+        const k = e.deltaY < 0 ? 0.12 : -0.12;
+        const nx = Math.max(-22, Math.min(22, base.x + (gHit.x - base.x) * k));
+        const nz = Math.max(-22, Math.min(22, base.z + (gHit.z - base.z) * k));
+        camC = {x: nx, y: base.y, z: nz};
+        zoomAim = {x: +nx.toFixed(2), z: +nz.toFixed(2)};
+      }
+    }
   }, {passive:true});
   addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
   // Beta 115: Escape hebt die Auswahl auf und fliegt zurueck zur Uebersicht
