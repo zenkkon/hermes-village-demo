@@ -1735,3 +1735,8 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Funktionstest headless: 3x synthetic WheelEvent (deltaY -120, Cursor 620/420): dist 27 -> 23.7 -> 21.9 gegen distT 19.8 (Dämpfung sichtbar), aim {-2.64, 1.66} gesetzt, 0 JS-Fehler.
 - Review: rv162_tag.png (12:00 trocken, softRoofs 2, umbN 1 up 0) + rv162_nacht.png (22:30, Regen erzwungen, umbN 4 up 4, puddleOp 0.42), beide 0 JS-Fehler, angesehen.
 - 1,548,375 B, md5 5e3516cb7cecfddc1cc7841a63dfeeb6. beta162.zip. Nächster Baustein: Beta 163, WORLD Pass 20 (Rest-Blocky: Werkstatt-/Markt-Detail) oder INTERACTION Pass 5 (Tour-Übergänge weicher).
+### M169 - Beta 163 (WORLD Pass 20: haengende Markisen-Tuecher statt harten Streifen) - 24.10.2026 00:19 CEST
+- stall(): 6 starre Markisen-Streifen (rboxGeo, rotation.x 0.28) ersetzt durch ein haengendes Tuch: PlaneGeometry(2.35, 1.3, 14, 6), Vertices mit Katzen-artigem Durchhang (0.13 * e^2 an den Raendern) + sanfter Welle (0.035 * sin), CanvasTexture mit 8 Streifen (c1/c2), DoubleSide, roughness 0.9; Zaehler window.__awnings.
+- Probe `window.__p43()` -> `{awnings, pass: 43}`.
+- Review: rv163_tag.png (12:00, awnings 3, Tuch haengt organisch, umbN 2 up 0) + rv163_nacht.png (22:30, Regen erzwungen, umbN 5 up 5, puddleOp 0.42), beide 0 JS-Fehler, frisch via mtime, beide angesehen.
+- 1,549,446 B, md5 6d8ead6656b45bb33c64fad5f434b698. beta163.zip. Nächster Baustein: Beta 164, WORLD Pass 21 (Rest-Blocky: Kistenstapel-Kanten weicher / Kran-Seile) oder INTERACTION Pass 5 (Tour-Übergänge + Follow-Label-Schatten).
