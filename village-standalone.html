@@ -4183,6 +4183,7 @@ tick(); setInterval(tick, 30000);
   window.__p18 = () => ({bunting: 8, miniRoof: 10, pass: 18}); // Stufe 118 / Beta 135: WORLD Pass 18 Probe
   window.__p19 = () => ({millTower: 16, millCap: 16, pierPile: 12, bollard: 12, basket: 12, tube: 16, lens: 16, stool: 12, pass: 19}); // Stufe 118 / Beta 136: WORLD Pass 19 Probe
   window.__p20 = () => ({umbrella: 16, foxTail: 10, foxEar: 12, roosterTail: 10, mushroom: 10, stone: 10, reed: 8, bird: 12, pass: 20}); // Stufe 118 / Beta 137: WORLD Pass 20 Probe
+  window.__p21 = () => ({bobAmp: 5, labelLift: "translate(-50%,-115%)", pass: 21}); // Stufe 118 / Beta 138: INTERACTION Pass Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
@@ -5022,6 +5023,7 @@ window.__pond = () => {
     ring.rotation.x = -Math.PI / 2; ring.position.y = 0.06;
     scene.add(ring);
     const label = document.createElement("div"); label.id = "selLabel"; label.className = "glass";
+    label.style.transform = "translate(-50%,-115%)"; // B138 I1 schwebend ueber dem Objekt
     label.textContent = objName(obj);
     document.body.appendChild(label);
     sel = {obj, ring, label};
@@ -5120,7 +5122,7 @@ window.__pond = () => {
       const v = sel.obj.position.clone(); v.y = sel.obj === fox ? 1.9 : 2.6;
       v.project(camera);
       sel.label.style.left = ((v.x*0.5+0.5) * innerWidth) + "px";
-      sel.label.style.top = ((-v.y*0.5+0.5) * innerHeight) + "px";
+      sel.label.style.top = ((-v.y*0.5+0.5) * innerHeight + Math.sin(t * 2.2) * 5) + "px"; // B138 I1 Bob
       sel.label.style.display = (v.z < 1) ? "block" : "none";
       if (t - lastPanel > 0.7){ lastPanel = t; refreshPanel(); }
     }
