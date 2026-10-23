@@ -4053,12 +4053,13 @@ tick(); setInterval(tick, 30000);
   scene.add(rain);
 
   const rainTint = new THREE.Color(0x5f6b7a);
+  const wTint = new THREE.Color(); // B143 E1: Arbeitsfarbe fuer den gleitenden Tint
   const stormTint = new THREE.Color(0x39414d);
   const flashCol = new THREE.Color(0xdde6f2);
   // Stufe 94 / Beta 96: Regen-Verfeinerung (Winddrift) + Saison-Wetterkopplung
   // Stufe 99 / Beta 104: Gewitter-Modus + Blitz + Pfuetzen
   let w = 0, target = 0, nextSwitch = Date.now() + 45000, lastSe = "sommer", lastWinter = false;
-  let storm = false, flashT = 0;
+  let storm = false, stormW = 0, flashT = 0; // B143 E1: stormW lerpt den Sturm-Uebergang
   let rbT = 0;
   window.__weather = () => w > 0.5;
   window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
@@ -4068,6 +4069,7 @@ tick(); setInterval(tick, 30000);
     const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
   };
+  window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, pass: 26}); // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
 
   const prevTick = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -4085,6 +4087,7 @@ tick(); setInterval(tick, 30000);
       }
     }
     w += (target - w) * Math.min(1, dt * 0.9);
+    stormW += ((storm ? 1 : 0) - stormW) * Math.min(1, dt * 1.2); // B143 E1: Sturm-Parameter gleiten
     const raining = w > 0.02;
     rain.visible = raining;
     mat.opacity = w * 0.8;
@@ -4092,7 +4095,7 @@ tick(); setInterval(tick, 30000);
     mat.color.setHex(lastWinter ? 0xe4eef4 : 0x9fc8e8);
     if (raining){
       const arr = geo.attributes.position.array;
-      const fall = storm ? 22 : (lastWinter ? 5.5 : 16), wx = storm ? 4.2 : 2.2, wz = storm ? 1.8 : 0.9;
+      const baseF = lastWinter ? 5.5 : 16, fall = baseF + (22 - baseF) * stormW, wx = 2.2 + 2.0 * stormW, wz = 0.9 + 0.9 * stormW; // B143 E1: weiche Uebergaenge
       for (let i = 0; i < N; i++){
         arr[i*3+1] -= dt * fall;
         arr[i*3] += dt * wx; arr[i*3+2] += dt * wz;
@@ -4106,7 +4109,7 @@ tick(); setInterval(tick, 30000);
     sun.intensity *= (1 - 0.35 * w);
     hemi.intensity *= (1 - 0.25 * w);
     if (scene.background && scene.background.isColor){
-      scene.background.lerp(storm ? stormTint : rainTint, 0.3 * w);
+      wTint.copy(rainTint).lerp(stormTint, stormW); scene.background.lerp(wTint, 0.3 * w); // B143 E1: Tint gleitet
       if (scene.fog) scene.fog.color.copy(scene.background);
     }
     if (flashT > 0){
@@ -4117,7 +4120,7 @@ tick(); setInterval(tick, 30000);
       hemi.intensity += 1.1 * f;
       flashT -= dt;
     }
-    if (storm && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09) flashT = 0.32;
+    if (stormW > 0.5 && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09) flashT = 0.32; // B143 E1
     // Pfuetzen: erscheinen nach dem Regen, verblassen in ~40 s
     const rainNow = w > 0.5;
     if (rainNow) wasRain = true;
@@ -4171,7 +4174,7 @@ tick(); setInterval(tick, 30000);
   const dbgPrev = window.__dbg;
   window.__dbg = function(){
     const d = dbgPrev ? dbgPrev() : {};
-    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, flash: flashT > 0, season: lastSe, winterSleet: lastWinter && w > 0.5, puddles: puddles.length};
+    d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, stormW: +stormW.toFixed(2), flash: flashT > 0, season: lastSe, winterSleet: lastWinter && w > 0.5, puddles: puddles.length}; // B143 E1
     return d;
   };
 })();
