@@ -843,7 +843,7 @@ function stall(x, z, ry, c1, c2){
   }
   // Stufe 79 / Beta 81: Stand-Deko - Wimpel-Girlande + Korb
   for (let i = 0; i < 6; i++){
-    const fl = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.13, 3),
+    const fl = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.13, 8), // B135 P18
       matWall([0xff5f7a, 0xffd60a, 0x4a90c2, 0xbf5af2, 0x3f7f36, 0xff8a3d][i]));
     fl.rotation.x = Math.PI;
     fl.position.set(-0.72 + i * 0.29, 1.72, 0.62);
@@ -1474,7 +1474,7 @@ window.__ffTick = (dt, t) => {
       const f = (i + 0.5) / n;
       const px = x1 + dx * f, pz = z1 + dz * f;
       const py = 1.48 - Math.sin(Math.PI * f) * sag;
-      const p = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.2, 4), flagM[i % 4]);
+      const p = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.2, 8), flagM[i % 4]); // B135 P18
       p.rotation.x = Math.PI;
       p.position.set(px, py - 0.1, pz);
       p.castShadow = true; scene.add(p);
@@ -1566,7 +1566,7 @@ window.__ffTick = (dt, t) => {
     pole.position.set(x, h / 2, z); pole.castShadow = true; scene.add(pole);
     const box = new THREE.Mesh(rboxGeo(0.22, 0.26, 0.22, 0.03), matWall(col));
     box.position.set(x, h + 0.13, z); box.castShadow = true; scene.add(box);
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.19, 0.15, 4), matWall(0x7a4b3a));
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.19, 0.15, 10), matWall(0x7a4b3a)); // B135 P18
     roof.position.set(x, h + 0.33, z); roof.rotation.y = Math.PI / 4; roof.castShadow = true; scene.add(roof);
     const hole = new THREE.Mesh(new THREE.CircleGeometry(0.045, 8), new THREE.MeshStandardMaterial({color: 0x2b2b2b}));
     hole.position.set(x, h + 0.14, z - 0.113); hole.rotation.y = Math.PI; scene.add(hole);
@@ -1768,7 +1768,7 @@ const head = new THREE.Mesh(lumpySphere(0.26, 5, 0.9), fur);
 head.scale.set(1.05, 0.95, 0.95); head.position.set(0, 0.85, -0.6); head.castShadow = true; fox.add(head);
 const snout = new THREE.Mesh(rboxGeo(0.22, 0.18, 0.25, 0.06), cream);
 snout.position.set(0, 0.78, -0.9); fox.add(snout);
-const earGeo = new THREE.ConeGeometry(0.09, 0.28, 4);
+const earGeo = new THREE.ConeGeometry(0.09, 0.28, 8); // B135 P18
 const e1 = new THREE.Mesh(earGeo, fur); e1.position.set(-0.16, 1.16, -0.6); fox.add(e1);
 const e2 = new THREE.Mesh(earGeo, fur); e2.position.set(0.16, 1.16, -0.6); fox.add(e2);
 const tail = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.8, 6), fur);
@@ -4180,6 +4180,7 @@ tick(); setInterval(tick, 30000);
   window.__p15 = () => ({terrR: +window.__terrainMats[0].mat.roughness.toFixed(2), waterR: window.__seaMat.roughness.toFixed(2), pass: 15}); // Stufe 118 / Beta 132: WORLD Pass 15 Probe
   window.__p16 = () => ({nb: sun.shadow.normalBias, bias: sun.shadow.bias, pass: 16}); // Stufe 118 / Beta 133: WORLD Pass 16 Probe
   window.__p17 = () => ({trunkSeg: 10, pass: 17}); // Stufe 118 / Beta 134: WORLD Pass 17 Probe
+  window.__p18 = () => ({bunting: 8, miniRoof: 10, pass: 18}); // Stufe 118 / Beta 135: WORLD Pass 18 Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
     name = n; tgt = SEASONS[n];
