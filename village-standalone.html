@@ -191,6 +191,7 @@ function updateDayNight(){
   const day = Math.max(0, Math.min(1, elev));
   const dusk = Math.max(0, 1 - Math.abs(elev) * 2.2);       // Daemmerungsanteil
   window.__duskVal = dusk;
+  window.__dayHour = hour; // B157 X15
   const sky = skyNight.clone().lerp(skyDay, day).lerp(skyDawn, dusk * 0.85);
   scene.background = sky;
   scene.fog = new THREE.Fog(sky.getHex(), 55, 160);
@@ -4592,6 +4593,19 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
     bd.rotation.y = -u.a + Math.PI / 2;
   }
   } catch (e) { if (!window.__birdErr) window.__birdErr = (e && e.stack) ? String(e.stack).slice(0, 500) : String(e); } // B156 X14 diag
+  // Stufe 121 / Beta 157: Block 4 EXTRAS Pass 15 - Mond am Nachthimmel  // B157 X15
+  try {
+  if (!window.__moon){
+    const mm = new THREE.Mesh(new THREE.SphereGeometry(1.35, 24, 18), new THREE.MeshBasicMaterial({color: 0xf3efe0, transparent: true, opacity: 0, fog: false}));
+    scene.add(mm); window.__moon = mm;
+    window.__p37 = () => ({moonOp: +window.__moon.material.opacity.toFixed(2), hour: +(window.__dayHour || 0).toFixed(2), x: +window.__moon.position.x.toFixed(1), y: +window.__moon.position.y.toFixed(1), pass: 37}); // B157 X15
+  }
+  const _mh = (typeof window.__dayHour === 'number') ? window.__dayHour : 12;
+  const _mAng = (_mh - 18) / 12 * Math.PI; // 18 Uhr Aufgang, 6 Uhr Untergang
+  window.__moon.position.set(Math.cos(_mAng) * -58, Math.sin(_mAng) * 34 + 6, -34);
+  const _mNf = 1 - Math.max(0, Math.min(1, Math.sin((_mh - 6) / 12 * Math.PI)));
+  window.__moon.material.opacity = _mNf * 0.95;
+  } catch (e) { if (!window.__moonErr) window.__moonErr = String(e); } // B157 X15 diag
   // Kaminrauch: mehr, wenn laufende Runs
   smokeClock += dt;
   const runningCount = Object.keys(seenRunning).length;

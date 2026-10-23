@@ -1691,3 +1691,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review ueber finale Bytes: rv186_tag.png (?time=12:00, birdErr null, p36 {birdN:7, flap:0.362}) + rv186_nacht.png (?time=22:30, Moewen ueber dem beleuchteten Hafen, p36 flap 0.388), beide 0 JS-Fehler
 - 4x "B156 X14"; 1,542,598 B, md5 16867b5f85fe18fdf95e2e8cba76e9dd
 - beta156.zip (nur village.html)
+
+## M163 - Beta 157: EXTRAS Pass 15 - Mond am Nachthimmel
+- updateDayNight exportiert die Stunde neu: window.__dayHour = hour (Marker B157 X15)
+- Mond (SphereGeometry 1.35, 24x18, MeshBasic 0xf3efe0, fog:false, transparent) lazy im Sim-Loop nach dem Moewen-Block erzeugt; Position auf Bogen (18 Uhr Aufgang, 6 Uhr Untergang, Radius 58/34, z -34), Opazitaet = Nachtfaktor * 0.95; komplett try/catch (window.__moonErr als Diagnose)
+- Hooks: Probe window.__p37() -> {moonOp, hour, x, y, pass:37}
+- Review ueber finale Bytes: rv187_nacht.png (?time=22:30, p37 moonOp 0.95, x -22.2, y 37.4) + rv187_tag.png (?time=12:00, moonOp 0, y -28, unter dem Horizont), beide 0 JS-Fehler, Shots angesehen
+- 4x "B157 X15"; 1,543,648 B, md5 dd0ee5e5829a21cc76f14f986d1c9b4e
+- beta157.zip (nur village.html)
