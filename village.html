@@ -72,11 +72,12 @@
   #dashUser{cursor:pointer}
   #dashUserMenu .uDiv{border-top:1px solid rgba(255,255,255,.12);margin:6px 0}
   #dashAreas,#dashWeather,#dashSeason{display:flex;gap:4px}
-  #dashAreas button,#dashWeather button,#dashSeason button{border:1px solid transparent;background:transparent;color:#9b9ba6;
+  #dashAreas button,#dashWeather button,#dashSeason button,#dashSound{border:1px solid transparent;background:transparent;color:#9b9ba6;
     font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
   #dashAreas button.on{background:rgba(240,160,64,.18);color:#f0a040;border-color:rgba(240,160,64,.4)}
   #dashWeather button.on{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
   #dashSeason button.on{background:rgba(52,199,89,.16);color:#34c759;border-color:rgba(52,199,89,.4)}
+  #dashSound.on{background:rgba(88,86,214,.18);color:#7d7aff;border-color:rgba(125,122,255,.4)}
   #dashDN{border:1px solid rgba(255,255,255,.14);background:transparent;color:#9b9ba6;font-size:12px;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap}
   #dashDN.on{background:rgba(240,160,64,.18);color:#f0a040;border-color:rgba(240,160,64,.4)}
   #dashDN.nacht{background:rgba(10,132,255,.16);color:#0a84ff;border-color:rgba(10,132,255,.4)}
@@ -4179,6 +4180,38 @@ tick(); setInterval(tick, 30000);
     d.weather = {w: +w.toFixed(2), raining: w > 0.5, storm, stormW: +stormW.toFixed(2), flash: flashT > 0, season: lastSe, winterSleet: winterW > 0.5 && w > 0.5, puddles: puddles.length}; // B143 E1
     return d;
   };
+
+  // B145 E3: Wettersound-Option (WebAudio; Start erst auf Klick wegen Autoplay-Regeln)
+  {
+    let actx = null, master = null, filt = null, rumbleG = null, soundOn = false;
+    const ensure = () => {
+      if (actx || !soundOn) return;
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      actx = new AC();
+      master = actx.createGain(); master.gain.value = 0; master.connect(actx.destination);
+      filt = actx.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 900; filt.connect(master);
+      const len = actx.sampleRate * 2, buf = actx.createBuffer(1, len, actx.sampleRate), ch = buf.getChannelData(0);
+      let last = 0; for (let i = 0; i < len; i++){ const wh = Math.random()*2-1; last = (last + 0.02*wh)/1.02; ch[i] = last*3.5; }
+      const src = actx.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(filt); src.start();
+      rumbleG = actx.createGain(); rumbleG.gain.value = 0;
+      const rf = actx.createBiquadFilter(); rf.type = 'lowpass'; rf.frequency.value = 120;
+      const rs = actx.createBufferSource(); rs.buffer = buf; rs.loop = true; rs.connect(rf); rf.connect(rumbleG); rumbleG.connect(actx.destination); rs.start();
+    }; // B145 E3
+    window.__soundSet = on => { soundOn = !!on; if (soundOn){ ensure(); if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); } };
+    const sBtn = document.getElementById('dashSound');
+    if (sBtn) sBtn.addEventListener('click', () => { window.__soundSet(!soundOn); sBtn.classList.toggle('on', soundOn); });
+    window.__p27 = () => ({soundOn, gain: master ? +master.gain.value.toFixed(3) : 0, rumble: rumbleG ? +rumbleG.gain.value.toFixed(3) : 0, state: actx ? actx.state : 'none', pass: 27});
+    const prevST = window.__extraTick;
+    window.__extraTick = function(dt, t){
+      if (prevST) prevST(dt, t);
+      if (master){
+        const g = soundOn ? (0.05 + 0.16 * w) * (0.7 + 0.3 * stormW) : 0;
+        master.gain.value += (g - master.gain.value) * Math.min(1, dt * 3);
+        rumbleG.gain.value = soundOn ? 0.12 * stormW : 0;
+        filt.frequency.value = 650 + 2100 * w + 400 * stormW;
+      }
+    }; // B145 E3
+  }
 })();
 
 // EXTRAS (Stufe 62): Jahreszeiten + Schneefall + Licht-Feinschliff
@@ -4549,6 +4582,7 @@ window.__pond = () => {
     '</div>' +
     '<div id="dashWeather"><button data-w="0" class="on">Klar</button><button data-w="1">Regen</button><button data-w="2">Gewitter</button></div>' +
     '<div id="dashSeason"><button data-s="fruehling">Frühling</button><button data-s="sommer" class="on">Sommer</button><button data-s="herbst">Herbst</button><button data-s="winter">Winter</button></div>' +
+    '<button id="dashSound" title="Wettersound an/aus">Ton</button>' +
     '<button id="dashDN" data-m="auto">Auto</button>' +
     '<span id="dashClock">--:--</span>' +
     '<span id="dashAlerts" class="badge" style="color:#8fa3b8;border-color:rgba(255,255,255,.25)">0 Fehler</span>' +
