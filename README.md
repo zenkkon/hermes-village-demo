@@ -1699,3 +1699,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Review ueber finale Bytes: rv187_nacht.png (?time=22:30, p37 moonOp 0.95, x -22.2, y 37.4) + rv187_tag.png (?time=12:00, moonOp 0, y -28, unter dem Horizont), beide 0 JS-Fehler, Shots angesehen
 - 4x "B157 X15"; 1,543,648 B, md5 dd0ee5e5829a21cc76f14f986d1c9b4e
 - beta157.zip (nur village.html)
+
+## M164 - Beta 158: EXTRAS Pass 16 - Wetter am Boden: Pfuetzen + Schneedecke
+- Im Wetter-Update (nach den Regen-Streaks) lazy erzeugt: 8 Pfuetzen (CircleGeometry 0.5-1.1, MeshBasic 0x27455e, transparent, y 0.03, verstreut auf Plaza/Hafen-Areal) + Schneedecke (CircleGeometry 22, MeshBasic 0xf4f8ff, y 0.02)  // B158 X16 (4x)
+- Pro Frame: Pfuetzen-Opazitaet = w * 0.42 * (1 - winterW * 0.8) (im Winter zugefroren/bedeckt), Schneedecke = winterW * 0.55
+- Probe window.__p38() -> {puddleN, puddleOp, snowOp, pass:38}; diagnosefehler ueber window.__groundErr vorgesehen, fiel nicht an
+- Review ueber finale Bytes: rv188_regen.png (?time=12:00, __weatherSet(1), p38 puddleOp 0.072, w 0.17) + rv188_winter.png (?time=12:00, __weatherSet(1) + __seasonSet('winter'), Dashboard zeigt "Winter", p38 snowOp 0.055, winterW 0.1), beide 0 JS-Fehler, Shots angesehen
+- BEFUND: Kopplung exakt (0.42*w, 0.55*winterW nachweisbar), aber w bleibt im Shot bei ~0.17 statt Richtung 1 zu laufen - Regen-/Pfuetzen-Schwaeche ist eine Vorgaenger-Frage des Wetter-Schedulers (nextSwitch/Target-Verhalten), naechster Lauf klaert das
+- 1,544,861 B, md5 6e8c4e12810b26438e3d5281edc6b47f; beta158.zip (nur village.html)

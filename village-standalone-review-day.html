@@ -4200,6 +4200,25 @@ tick(); setInterval(tick, 30000);
     mat.color.setHex(0x9fc8e8).lerp(winterRainCol, winterW); // B144 E2: Regen-/Schneefarbe gleitet
     lineMat.opacity = w * 0.55 * (1 - winterW); // B150 X8: Streaks nur bei Regen
     lineMat.color.setHex(0x9fc8e8).lerp(stormTint, stormW * 0.4); // B150 X8
+    // Stufe 122 / Beta 158: Block 4 EXTRAS Pass 16 - Wetter am Boden: Pfuetzen bei Regen, Schneedecke im Winter  // B158 X16
+    if (!window.__groundFx){
+      const gx = [];
+      const pMat = new THREE.MeshBasicMaterial({color: 0x27455e, transparent: true, opacity: 0});
+      for (let i = 0; i < 8; i++){
+        const pd = new THREE.Mesh(new THREE.CircleGeometry(0.5 + Math.random() * 0.6, 16), pMat);
+        pd.rotation.x = -Math.PI / 2;
+        pd.position.set(-6 + Math.random() * 18, 0.03, -8 + Math.random() * 14);
+        scene.add(pd); gx.push(pd);
+      }
+      const sMat = new THREE.MeshBasicMaterial({color: 0xf4f8ff, transparent: true, opacity: 0});
+      const sb = new THREE.Mesh(new THREE.CircleGeometry(22, 40), sMat);
+      sb.rotation.x = -Math.PI / 2; sb.position.set(0, 0.02, 0);
+      scene.add(sb);
+      window.__groundFx = {pd: gx, sMat, pMat};
+      window.__p38 = () => ({puddleN: window.__groundFx.pd.length, puddleOp: +window.__groundFx.pMat.opacity.toFixed(3), snowOp: +window.__groundFx.sMat.opacity.toFixed(3), pass: 38}); // B158 X16
+    }
+    window.__groundFx.pMat.opacity = Math.max(0, w * 0.42 * (1 - winterW * 0.8));
+    window.__groundFx.sMat.opacity = winterW * 0.55;
     if (raining){
       const arr = geo.attributes.position.array;
       const fallR = 16 + 6 * stormW, fallS = 5.5 + 5.8 * stormW; // B150 X8
