@@ -782,10 +782,14 @@ boathouse.children[0].name = "bh_body"; boathouse.children[1].name = "bh_roof";
 const dock = new THREE.Group();
 // Beta 83: Dielenplanken - 7 einzelne Bohlen mit echten Fugen statt einer Platte
 const plankM = new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.85}); // B130 P14
+let dockJit = 0; // B165 W22
 for (let i = 0; i < 7; i++){
-  const plk = new THREE.Mesh(new rboxGeo(1.3, 0.14, 0.47, 0.05), plankM);
-  plk.position.set(0, 0.35, -1.53 + i * 0.51);
+  const j1 = Math.sin(i * 2.7) , j2 = Math.cos(i * 1.9); // B165 W22: handgenagelte Bohlen
+  const plk = new THREE.Mesh(new rboxGeo(1.3, 0.14 + j1 * 0.012, 0.47, 0.05), plankM);
+  plk.position.set(j2 * 0.018, 0.35 + j1 * 0.012, -1.53 + i * 0.51);
+  plk.rotation.y = j2 * 0.02; plk.rotation.z = j1 * 0.008;
   plk.castShadow = true; plk.receiveShadow = true; dock.add(plk);
+  dockJit++; window.__dockJitCount = (window.__dockJitCount || 0) + 1; // B165 W22
 }
 // Patina: zwei abgesetzte Dielenstreifen
 const stripM = new THREE.MeshStandardMaterial({color: 0x93724e, roughness: 0.85}); // B130 P14
@@ -796,8 +800,23 @@ for (const zz of [-1.05, 0.75]){
 // Anlegepfahl + Tauring
 const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.35, 12), new THREE.MeshStandardMaterial({color: 0x5a4430, roughness: 0.9})); // B136 P19
 bollard.position.set(0.45, 0.55, -1.5); bollard.castShadow = true; dock.add(bollard);
-const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 10, 24), new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1})); // B148 P22
+const ropeM = new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1}); // B148 P22
+const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 10, 24), ropeM);
 rope.rotation.x = Math.PI / 2; rope.position.set(0.45, 0.74, -1.5); dock.add(rope);
+// B165 W22: Leine mit Durchhang vom Tauring zum Anlegerstein am Ufer
+{
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0.45, 0.74, -1.5),
+    new THREE.Vector3(0.95, 0.42, -1.15),
+    new THREE.Vector3(1.35, 0.22, -0.6),
+    new THREE.Vector3(1.55, 0.1, 0.05)
+  ]);
+  const moor = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.022, 8, false), ropeM);
+  moor.castShadow = true; dock.add(moor);
+  const stone = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), new THREE.MeshStandardMaterial({color: 0x8a8578, roughness: 0.95}));
+  stone.position.set(1.55, 0.08, 0.05); stone.scale.y = 0.6; stone.castShadow = true; dock.add(stone);
+  window.__moorLines = (window.__moorLines || 0) + 1; // B165 W22
+}
 for (let i = -1; i <= 1; i += 2){
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.2, 10),
     new THREE.MeshStandardMaterial({color: 0x6e5238, roughness: 0.9}));
@@ -4270,6 +4289,7 @@ tick(); setInterval(tick, 30000);
     window.__p42 = () => ({dist: +dist.toFixed(1), distT: +distT.toFixed(1), aim: zoomAim, pass: 42}); // B162 I4
     window.__p43 = () => ({awnings: window.__awnings || 0, pass: 43}); // B163 W20
     window.__p44 = () => ({crateTilts: window.__crateTilts || 0, pass: 44}); // B164 W21
+    window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt

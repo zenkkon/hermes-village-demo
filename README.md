@@ -1746,3 +1746,9 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe `window.__p44()` -> `{crateTilts, pass: 44}` (15 geneigte Kisten bei 5 Stapeln).
 - Review: rv164_tag.png (12:00, crateTilts 15, awnings 3) + rv164_nacht.png (22:30, Regen erzwungen, umbN 4 up 4), beide 0 JS-Fehler, frisch via mtime, beide angesehen.
 - 1,550,030 B, md5 5f093f037be60ca989f368ce20199dcf. beta164.zip. Nächster Baustein: Beta 165, WORLD Pass 22 (Rest-Blocky: Fass-Ringe weicher / Bootssteg-Detail) oder INTERACTION Pass 5 (Tour-Übergänge + Follow-Label-Schatten).
+### M171 - Beta 165 (WORLD Pass 22: Steg-Organik, Leine mit Durchhang) - 24.10.2026 01:15 CEST
+- Steg-Dielen: 7 Bohlen mit handgenagelter Variation ( Hoehe +/-0.012, seitlicher Versatz +/-0.018, rotation.y +/-0.02, rotation.z +/-0.008 via sin/cos-Jitter).
+- Anlegeleine: Torus-Ring am Tauring bleibt, dazu CatmullRomCurve3-Leine (TubeGeometry r 0.022) mit Durchhang vom Ring zum neuen Anlegerstein (SphereGeometry 0.14, skaliert) am Ufer.
+- Probe `window.__p45()` -> `{dockJit, moor, pass: 45}` (dockJit 7, moor 1).
+- Review: rv165_tag.png (12:00, p45 dockJit 7 moor 1, 458,068 B) + rv165_nacht.png (22:30, Regen erzwungen, 454,585 B), beide 0 JS-Fehler, frisch via mtime, beide angesehen. Steg liegt ausserhalb des Standard-Bildausschnitts; Funktion via Probe belegt, Szene intakt.
+- 1,551,195 B, md5 1d82f4fad74599ccf94a8f88ec4e9ea7. beta165.zip. Naechster Baustein: Beta 166, WORLD Pass 23 (Rest-Blocky: Bootsrumpf weicher / Web-Hotel-Pfahlhaus-Rundung) oder INTERACTION Pass 5 (Tour-Uebergang weicher + Follow-Label-Schatten).
