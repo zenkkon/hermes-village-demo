@@ -4183,7 +4183,7 @@ tick(); setInterval(tick, 30000);
 
   // B145 E3: Wettersound-Option (WebAudio; Start erst auf Klick wegen Autoplay-Regeln)
   {
-    let actx = null, master = null, filt = null, rumbleG = null, soundOn = false;
+    let actx = null, master = null, filt = null, rumbleG = null, soundOn = false, bufRef = null, thunderG = null, thunderF = null, thunderN = 0, lastFlash = 0; // B146 E4
     const ensure = () => {
       if (actx || !soundOn) return;
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -4196,11 +4196,14 @@ tick(); setInterval(tick, 30000);
       rumbleG = actx.createGain(); rumbleG.gain.value = 0;
       const rf = actx.createBiquadFilter(); rf.type = 'lowpass'; rf.frequency.value = 120;
       const rs = actx.createBufferSource(); rs.buffer = buf; rs.loop = true; rs.connect(rf); rf.connect(rumbleG); rumbleG.connect(actx.destination); rs.start();
+      bufRef = buf;
+      thunderG = actx.createGain(); thunderG.gain.value = 0; thunderF = actx.createBiquadFilter(); thunderF.type = 'lowpass'; thunderF.frequency.value = 400; thunderF.connect(thunderG); thunderG.connect(actx.destination); // B146 E4: Donner-Kette
     }; // B145 E3
     window.__soundSet = on => { soundOn = !!on; if (soundOn){ ensure(); if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); } };
     const sBtn = document.getElementById('dashSound');
     if (sBtn) sBtn.addEventListener('click', () => { window.__soundSet(!soundOn); sBtn.classList.toggle('on', soundOn); });
-    window.__p27 = () => ({soundOn, gain: master ? +master.gain.value.toFixed(3) : 0, rumble: rumbleG ? +rumbleG.gain.value.toFixed(3) : 0, state: actx ? actx.state : 'none', pass: 27});
+    const triggerThunder = () => { if (!actx || !soundOn || !thunderG || !bufRef) return; const t0 = actx.currentTime; const bs = actx.createBufferSource(); bs.buffer = bufRef; bs.loop = false; bs.playbackRate.value = 0.3 + Math.random() * 0.25; bs.connect(thunderF); bs.start(t0, 0, 2.2); thunderG.gain.cancelScheduledValues(t0); thunderG.gain.setValueAtTime(0.5, t0); thunderG.gain.exponentialRampToValueAtTime(0.01, t0 + 2.0); thunderN++; }; // B146 E4: Donner-Burst
+    window.__p27 = () => ({soundOn, gain: master ? +master.gain.value.toFixed(3) : 0, rumble: rumbleG ? +rumbleG.gain.value.toFixed(3) : 0, thunderN, state: actx ? actx.state : 'none', pass: 27});
     const prevST = window.__extraTick;
     window.__extraTick = function(dt, t){
       if (prevST) prevST(dt, t);
@@ -4209,6 +4212,8 @@ tick(); setInterval(tick, 30000);
         master.gain.value += (g - master.gain.value) * Math.min(1, dt * 3);
         rumbleG.gain.value = soundOn ? 0.12 * stormW : 0;
         filt.frequency.value = 650 + 2100 * w + 400 * stormW;
+        if (flashT > 0 && lastFlash <= 0) triggerThunder(); // B146 E4: Blitz loest Donner aus
+        lastFlash = flashT;
       }
     }; // B145 E3
   }
