@@ -354,6 +354,21 @@ function rboxGeo(w, h, d, r){
   g.translate(0, -(h - 2 * r) / 2, 0);
   return weldGeo(g);
 }
+function softSlab(w, h, d, r){ // B167 X24: duenne Platten mit weicher Outline statt scharfer Box
+  r = Math.min(r, w * 0.49, d * 0.49);
+  const cx = w / 2 - r, cy = d / 2 - r;
+  const s = new THREE.Shape();
+  s.absarc(cx, cy, r, 0, Math.PI / 2);
+  s.absarc(-cx, cy, r, Math.PI / 2, Math.PI);
+  s.absarc(-cx, -cy, r, Math.PI, Math.PI * 1.5);
+  s.absarc(cx, -cy, r, Math.PI * 1.5, Math.PI * 2);
+  s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, {depth: Math.max(0.001, h), bevelEnabled: false, curveSegments: 5});
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, -h / 2, 0);
+  window.__softSlabN = (window.__softSlabN || 0) + 1;
+  return weldGeo(g);
+}
 function lumpyCone(g, seed, amt){
   const pa = g.attributes.position;
   for (let i = 0; i < pa.count; i++){
@@ -531,9 +546,9 @@ function clockTower(x, z){
   const rim = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.07, 12, 36), matWall(0x39414f));
   rim.position.copy(face.position); rim.rotation.copy(face.rotation); g.add(rim);
   const handM = matWall(0x22262e);
-  const hourH = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.4, 0.03), handM);
+  const hourH = new THREE.Mesh(softSlab(0.09, 0.03, 0.4, 0.03), handM); // B167 X24
   hourH.geometry.translate(0, 0.17, 0); hourH.position.set(0, 4.9, 1.27); g.add(hourH);
-  const minH = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.03), handM);
+  const minH = new THREE.Mesh(softSlab(0.06, 0.03, 0.6, 0.025), handM); // B167 X24
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
   const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
@@ -563,7 +578,7 @@ function stiltHouse(x, z, ry){
   }
   const body = new THREE.Mesh(new rboxGeo(1.7, 1.1, 1.5, 0.05), matWall(0xf2e3c9));
   body.name = "wh_body"; body.position.y = 1.85; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(1.45, 0.85, 4), matWall(0xd97e3f));
+  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 12), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide
   roof.name = "wh_roof"; roof.position.y = 2.82; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const win = winPlane(0.4, 0.42); win.position.set(0, 1.95, 0.78); g.add(win);
   const lamp = new THREE.PointLight(0xffb340, 0.3, 6); lamp.position.set(0, 2.0, 1.2); g.add(lamp);
@@ -660,7 +675,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   // Patina: Dielenfugen quer, zwei Stuetzbogen, Laterne an jedem Ende
   const seamM = new THREE.MeshStandardMaterial({color: 0x6b4f34, roughness: 0.85});
   for (let i = 0; i < 7; i++){
-    const seam = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.95), seamM);
+    const seam = new THREE.Mesh(softSlab(0.05, 0.02, 0.95, 0.02), seamM); // B167 X24
     seam.position.set(-0.95 + i * 0.32, 0.745, 0); bridge.add(seam);
   }
   for (const s of [-1, 1]){
@@ -746,7 +761,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   splash.scale.set(1.35, 1.35, 1); splash.material.opacity = 0.85;
   const foamM = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, depthWrite: false});
   for (let i = 0; i < 4; i++){
-    const st = new THREE.Mesh(new THREE.BoxGeometry(0.09, 5.4, 0.02), foamM);
+    const st = new THREE.Mesh(softSlab(0.09, 0.02, 5.4, 0.04), foamM); // B167 X24
     st.position.set((i - 1.5) * 0.42, 0.1, 0.13);
     fall.add(st);
   }
@@ -782,10 +797,14 @@ boathouse.children[0].name = "bh_body"; boathouse.children[1].name = "bh_roof";
 const dock = new THREE.Group();
 // Beta 83: Dielenplanken - 7 einzelne Bohlen mit echten Fugen statt einer Platte
 const plankM = new THREE.MeshStandardMaterial({color: 0x8a6a48, roughness: 0.85}); // B130 P14
+let dockJit = 0; // B165 W22
 for (let i = 0; i < 7; i++){
-  const plk = new THREE.Mesh(new rboxGeo(1.3, 0.14, 0.47, 0.05), plankM);
-  plk.position.set(0, 0.35, -1.53 + i * 0.51);
+  const j1 = Math.sin(i * 2.7) , j2 = Math.cos(i * 1.9); // B165 W22: handgenagelte Bohlen
+  const plk = new THREE.Mesh(new rboxGeo(1.3, 0.14 + j1 * 0.012, 0.47, 0.05), plankM);
+  plk.position.set(j2 * 0.018, 0.35 + j1 * 0.012, -1.53 + i * 0.51);
+  plk.rotation.y = j2 * 0.02; plk.rotation.z = j1 * 0.008;
   plk.castShadow = true; plk.receiveShadow = true; dock.add(plk);
+  dockJit++; window.__dockJitCount = (window.__dockJitCount || 0) + 1; // B165 W22
 }
 // Patina: zwei abgesetzte Dielenstreifen
 const stripM = new THREE.MeshStandardMaterial({color: 0x93724e, roughness: 0.85}); // B130 P14
@@ -796,8 +815,23 @@ for (const zz of [-1.05, 0.75]){
 // Anlegepfahl + Tauring
 const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.35, 12), new THREE.MeshStandardMaterial({color: 0x5a4430, roughness: 0.9})); // B136 P19
 bollard.position.set(0.45, 0.55, -1.5); bollard.castShadow = true; dock.add(bollard);
-const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 10, 24), new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1})); // B148 P22
+const ropeM = new THREE.MeshStandardMaterial({color: 0xb08a4a, roughness: 1}); // B148 P22
+const rope = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 10, 24), ropeM);
 rope.rotation.x = Math.PI / 2; rope.position.set(0.45, 0.74, -1.5); dock.add(rope);
+// B165 W22: Leine mit Durchhang vom Tauring zum Anlegerstein am Ufer
+{
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0.45, 0.74, -1.5),
+    new THREE.Vector3(0.95, 0.42, -1.15),
+    new THREE.Vector3(1.35, 0.22, -0.6),
+    new THREE.Vector3(1.55, 0.1, 0.05)
+  ]);
+  const moor = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.022, 8, false), ropeM);
+  moor.castShadow = true; dock.add(moor);
+  const stone = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), new THREE.MeshStandardMaterial({color: 0x8a8578, roughness: 0.95}));
+  stone.position.set(1.55, 0.08, 0.05); stone.scale.y = 0.6; stone.castShadow = true; dock.add(stone);
+  window.__moorLines = (window.__moorLines || 0) + 1; // B165 W22
+}
 for (let i = -1; i <= 1; i += 2){
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.2, 10),
     new THREE.MeshStandardMaterial({color: 0x6e5238, roughness: 0.9}));
@@ -840,10 +874,27 @@ function stall(x, z, ry, c1, c2){
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.9, 10), matWall(0x6e5238));
     pole.position.set(px, 0.95, pz); g.add(pole);
   }
-  for (let i = 0; i < 6; i++){
-    const stripe = new THREE.Mesh(new rboxGeo(0.34, 0.04, 1.15, 0.013),
-      matWall(i % 2 ? c2 : c1));
-    stripe.position.set(-0.85 + i*0.34, 1.92, 0.12); stripe.rotation.x = 0.28; stripe.castShadow = true; g.add(stripe);
+  // Stufe 130 / Beta 163: WORLD Pass 20 - harte Markisen-Streifen -> haengendes Tuch (sag + Canvas-Streifen)
+  {
+    const cnv = document.createElement('canvas'); cnv.width = 128; cnv.height = 64;
+    const cx = cnv.getContext('2d');
+    const c1s = '#' + c1.toString(16).padStart(6, '0'), c2s = '#' + c2.toString(16).padStart(6, '0');
+    for (let i = 0; i < 8; i++){ cx.fillStyle = i % 2 ? c2s : c1s; cx.fillRect(i * 16, 0, 16, 64); }
+    const tx = new THREE.CanvasTexture(cnv); tx.colorSpace = THREE.SRGBColorSpace;
+    const awnGeo = new THREE.PlaneGeometry(2.35, 1.3, 14, 6);
+    awnGeo.rotateX(-Math.PI / 2);
+    const posA = awnGeo.attributes.position;
+    for (let i = 0; i < posA.count; i++){
+      const vx = posA.getX(i), vz = posA.getZ(i);
+      const e = Math.abs(vx) / 1.175;
+      const sag = 0.13 * e * e + 0.035 * Math.sin(vz * 4.2 + vx * 1.8);
+      posA.setY(i, -sag);
+    }
+    awnGeo.computeVertexNormals();
+    const awn = new THREE.Mesh(awnGeo, new THREE.MeshStandardMaterial({map: tx, side: THREE.DoubleSide, roughness: 0.9}));
+    awn.position.set(0, 1.96, 0.12); awn.rotation.x = -0.26; awn.castShadow = true;
+    awn.name = 'awningCloth'; g.add(awn);
+    window.__awnings = (window.__awnings || 0) + 1; // B163 W20
   }
   // Ware auf dem Tisch
   for (let i = 0; i < 4; i++){
@@ -1103,7 +1154,7 @@ function lampionPost(x, z){
   ball.scale.set(1, 1.15, 1); ball.position.y = 1.1; g.add(ball);
   const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 8), matWall(0x3c3c44));
   cap.position.y = 1.26; g.add(cap);
-  const string = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.02), matWall(0x3c3c44));
+  const string = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8), matWall(0x3c3c44)); // B167 X24
   string.position.y = 1.19; g.add(string);
   g.position.set(x, 0, z); scene.add(g);
   window.__nightWins = window.__nightWins || [];
@@ -1230,9 +1281,9 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   body.position.y = 0.35; body.castShadow = true; coop.add(body);
   const roof = new THREE.Mesh(new rboxGeo(1.05, 0.06, 0.85, 0.05), woodD);
   roof.position.y = 0.66; roof.rotation.z = 0.08; roof.castShadow = true; coop.add(roof);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.03), woodD);
+  const door = new THREE.Mesh(softSlab(0.22, 0.03, 0.28, 0.05), woodD); // B167 X24
   door.position.set(0.15, 0.22, 0.36); coop.add(door);
-  const ramp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.02, 0.5), woodD);
+  const ramp = new THREE.Mesh(softSlab(0.22, 0.02, 0.5, 0.05), woodD); // B167 X24
   ramp.position.set(0.15, 0.09, 0.62); ramp.rotation.x = 0.35; coop.add(ramp);
   for (const s of [-1, 1]){
     const leg = new THREE.Mesh(new rboxGeo(0.06, 0.12, 0.06, 0.05), woodD);
@@ -1529,14 +1580,21 @@ window.__ffTick = (dt, t) => {
     b.castShadow = true; b.receiveShadow = true; scene.add(b);
   }
   function crateStack(x, z){
+    const seed = (x * 13.7 + z * 7.3) % 10; // B164 W21: deterministische Variation
     for (let i = 0; i < 3; i++){
-      const c = new THREE.Mesh(rboxGeo(0.42, 0.34, 0.42, 0.05), i % 2 ? woodM : woodD);
-      c.position.set(x + (i % 2) * 0.05, 0.18 + (i === 2 ? 0.36 : 0), z + (i - 1) * 0.08);
-      c.rotation.y = i * 0.5; c.castShadow = true; c.receiveShadow = true; scene.add(c);
+      const r1 = Math.sin(seed * 9.1 + i * 3.7), r2 = Math.cos(seed * 6.3 + i * 2.1);
+      const sc = 1 + r1 * 0.05, hh = 0.34 * sc;
+      const c = new THREE.Mesh(rboxGeo(0.42 * sc, hh, 0.42 * sc, 0.05), i % 2 ? woodM : woodD);
+      const yy = 0.18 * sc + (i === 2 ? 0.36 : 0);
+      c.position.set(x + (i % 2) * 0.05, yy, z + (i - 1) * 0.08);
+      c.rotation.y = i * 0.5 + r2 * 0.25;
+      c.rotation.z = r1 * 0.045; c.rotation.x = r2 * 0.04; // B164 W21: handgestapelt statt exakt
+      c.castShadow = true; c.receiveShadow = true; scene.add(c);
+      window.__crateTilts = (window.__crateTilts || 0) + 1; // B164 W21
       for (const sz of [-0.12, 0.12]){
-        const slat = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.012, 0.05), woodD);
-        slat.position.set(c.position.x, c.position.y + 0.176, c.position.z + sz);
-        slat.rotation.y = c.rotation.y; scene.add(slat);
+        const slat = new THREE.Mesh(new rboxGeo(0.42 * sc, 0.012, 0.05, 0.004), woodD); // B164 W21: weiche Leiste
+        slat.position.set(c.position.x, yy + hh * 0.52, c.position.z + sz);
+        slat.rotation.y = c.rotation.y; slat.rotation.z = c.rotation.z; scene.add(slat);
         window.__pol17n = (window.__pol17n || 0) + 1;
       }
     }
@@ -1703,11 +1761,32 @@ window.__ffTick = (dt, t) => {
   const crate = new THREE.Mesh(new rboxGeo(0.5, 0.5, 0.5, 0.05), woodD);
   crate.position.set(11.4, 0.25, -9.9); crate.rotation.y = 0.4; crate.castShadow = true; hg.add(crate);
   const boat = new THREE.Group();
-  const hull = new THREE.Mesh(new rboxGeo(1.7, 0.35, 0.75, 0.05), new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
+  // B166 W23: weicher Bootsrumph mit Bug-Heck-Verschalung statt scharfer Kasten
+  const hullG = new rboxGeo(1.7, 0.35, 0.75, 0.09);
+  {
+    const pos = hullG.attributes.position;
+    for (let i = 0; i < pos.count; i++){
+      const x = pos.getX(i), tt = (x + 0.85) / 1.7, sc = Math.sin(Math.PI * tt);
+      pos.setZ(i, pos.getZ(i) * (0.3 + 0.7 * sc));
+      pos.setY(i, pos.getY(i) * (0.7 + 0.3 * sc));
+    }
+    hullG.computeVertexNormals();
+  }
+  const hull = new THREE.Mesh(hullG, new THREE.MeshStandardMaterial({color: 0x7a5538, roughness: 0.9}));
   hull.castShadow = true; boat.add(hull);
-  const rim1 = new THREE.Mesh(new rboxGeo(1.7, 0.12, 0.1, 0.05), woodD);
-  rim1.position.set(0, 0.2, 0.36); boat.add(rim1);
-  const rim2 = rim1.clone(); rim2.position.z = -0.36; boat.add(rim2);
+  // B166 W23: Reling als geschlossenes Rundrohr entlang der Rumpfkontur
+  {
+    const pts = [];
+    for (let i = 0; i < 48; i++){
+      const ang = (i / 48) * Math.PI * 2;
+      const x = 0.85 * Math.cos(ang), tt = (x + 0.85) / 1.7, sc = Math.sin(Math.PI * tt);
+      pts.push(new THREE.Vector3(x, 0.24, 0.38 * Math.sin(ang) * (0.3 + 0.7 * sc)));
+    }
+    const loop = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.4);
+    const rail = new THREE.Mesh(new THREE.TubeGeometry(loop, 96, 0.045, 8, true), woodD);
+    rail.castShadow = true; boat.add(rail);
+    window.__boatTaper = 1; // B166 W23
+  }
   boat.position.set(16.83, -5.15, -15.41); boat.rotation.y = Math.PI / 4;
   hg.add(boat);
   scene.add(hg);
@@ -2020,9 +2099,9 @@ function proceduralRobot(){
   const body = new THREE.Mesh(new rboxGeo(0.55, 0.68, 0.48, 0.05),
     new THREE.MeshStandardMaterial({color: 0xe8c93e, roughness: 0.6}));
   body.position.y = 0.5; body.castShadow = true; g.add(body);
-  const eye = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.02),
-    new THREE.MeshStandardMaterial({color: 0x111114}));
-  eye.position.set(0, 0.62, -0.25); g.add(eye);
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 12), // B167 X24: gewoelbtes Visor statt flacher Kasten
+    new THREE.MeshStandardMaterial({color: 0x111114, roughness: 0.35}));
+  eye.scale.set(1, 0.72, 0.16); eye.position.set(0, 0.62, -0.23); g.add(eye);
   const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 4),
     new THREE.MeshStandardMaterial({color: 0x111114}));
   ant.position.y = 0.95; g.add(ant);
@@ -2327,7 +2406,7 @@ function robotSetAnim(rec, name){
 function confettiBurst(pos){
   const cols = [0xff453a, 0x30d158, 0x0a84ff, 0xffd60a, 0xff9f0a];
   for (let i = 0; i < 14; i++){
-    const c = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.02),
+    const c = new THREE.Mesh(softSlab(0.07, 0.02, 0.07, 0.02), // B167 X24
       new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.65}));
     c.position.copy(pos); c.position.y = 0.4;
     scene.add(c);
@@ -2336,7 +2415,7 @@ function confettiBurst(pos){
 }
 
 // Kamera-Steuerung
-let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand)
+let mx = 0, my = 0, down = false, rotY = -2.0, rotX = 0.72, dist = 27, distT = 27, zoomAim = null; // Stufe 99 / Beta 106: WORLD Pass 7 Kamera naeher (Kanzie-Gap: Abstand); B162 I4: Ziel-Distanz + Cursor-Ziel // B162 I4
 let camC = null; // __look (Glide + Follow) kommt im INTERACTION-Block
 // Pointer-Steuerung kommt im INTERACTION-Block (Stufe 60): Links-Ziehen = Pan, Rechts-Ziehen = Rotate
 
@@ -2970,7 +3049,7 @@ tick(); setInterval(tick, 30000);
     body.position.y = 1.1; body.castShadow = true; body.receiveShadow = true; g.add(body);
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.65, 0.3, 4), matWall(0x7a4b3a));
     cap.position.y = 2.35; cap.rotation.y = Math.PI/4; g.add(cap);
-    const top = new THREE.Mesh(new THREE.ConeGeometry(1.65, 1.3, 4), matWall(0x7a4b3a));
+    const top = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.65, 1.3, 12), 11.7, 0.08), matWall(0x7a4b3a)); // B161 X19
     top.position.y = 3.15; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
     const door = new THREE.Mesh(new rboxGeo(0.5, 1.0, 0.08, 0.05), matWall(0x5a3c28));
     door.position.set(0, 0.5, 0.92); g.add(door);
@@ -3105,7 +3184,7 @@ tick(); setInterval(tick, 30000);
   // radiale Fugensteine am Rand
   for (let i = 0; i < 12; i++){
     const a = i / 12 * Math.PI * 2 + 0.13;
-    const st = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.1), new THREE.MeshStandardMaterial({color: 0x9a988f, roughness: 0.95}));
+    const st = new THREE.Mesh(softSlab(0.16, 0.03, 0.1, 0.03), new THREE.MeshStandardMaterial({color: 0x9a988f, roughness: 0.95})); // B167 X24
     st.position.set(Math.cos(a) * 2.18, 0.622, Math.sin(a) * 2.18);
     st.rotation.y = -a; st.receiveShadow = true; scene.add(st);
   }
@@ -3202,7 +3281,7 @@ tick(); setInterval(tick, 30000);
     const bg = new THREE.Group();
     const body = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.5, 12), birdM); // B137 P20
     body.rotation.x = Math.PI / 2; bg.add(body);
-    const wingG = new THREE.BoxGeometry(0.55, 0.02, 0.18);
+    const wingG = softSlab(0.55, 0.02, 0.18, 0.05); // B167 X24
     const wl = new THREE.Group(), wr = new THREE.Group();
     const wlM = new THREE.Mesh(wingG, birdM); wlM.position.x = 0.3; wl.add(wlM);
     const wrM = new THREE.Mesh(wingG, birdM); wrM.position.x = -0.3; wr.add(wrM);
@@ -4242,6 +4321,13 @@ tick(); setInterval(tick, 30000);
       rr.material.opacity = rOn ? Math.max(0, (1 - u.ph) * 0.5 * gfx.pMat.opacity / 0.42) : 0;
       rr.visible = rOn;
     });
+    window.__p41 = () => ({softRoofs: 2, pass: 41}); // B161 X19
+    window.__p42 = () => ({dist: +dist.toFixed(1), distT: +distT.toFixed(1), aim: zoomAim, pass: 42}); // B162 I4
+    window.__p43 = () => ({awnings: window.__awnings || 0, pass: 43}); // B163 W20
+    window.__p44 = () => ({crateTilts: window.__crateTilts || 0, pass: 44}); // B164 W21
+    window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
+    window.__p46 = () => ({taper: window.__boatTaper || 0, pass: 46}); // B166 W23
+    window.__p47 = () => ({slabs: window.__softSlabN || 0, pass: 47}); // B167 X24
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
@@ -4716,6 +4802,7 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
     b.style.top = ((-v.y*0.5+0.5) * innerHeight) + "px";
   }
   const cc = camC || {x:0, y:0.5, z:0};
+  dist += (distT - dist) * (1 - Math.pow(0.002, Math.min(dt, 0.1))); // B162 I4: gedämpftes Zoomen
   camera.position.set(
     cc.x + dist*Math.sin(rotX)*Math.sin(rotY),
     cc.y + dist*Math.cos(rotX),
@@ -5288,7 +5375,7 @@ window.__pond = () => {
     if (dragMode === "pinch" && pointers.size === 2){
       const ps = [...pointers.values()];
       const d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
-      if (pinchD0 > 0) dist = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d)));
+      if (pinchD0 > 0) distT = Math.max(9, Math.min(60, pinchDist0 * pinchD0 / Math.max(20, d))); // B162 I4
       // Beta 115: Zwei-Finger-Pan (Mittelpunkt bewegt die Kamera) + Twist (Winkel dreht)
       if (pinchMid0){
         const mid = {x: (ps[0].x + ps[1].x) / 2, y: (ps[0].y + ps[1].y) / 2};
@@ -5329,9 +5416,21 @@ window.__pond = () => {
   };
   addEventListener("pointerup", endPtr);
   addEventListener("pointercancel", endPtr);
+  const ray = new THREE.Raycaster(), gPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0), gHit = new THREE.Vector3(); // B162 I4
   addEventListener("wheel", e => {
     if (orbit){ orbit.dist = Math.max(4.5, Math.min(16, orbit.dist + e.deltaY * 0.02)); if (window.__dbg){ window.__dbg.inter = window.__dbg.inter || {}; window.__dbg.inter.orbit = {on: true, target: objName(orbit.obj), dist: +orbit.dist.toFixed(1)}; } return; }
-    dist = Math.max(9, Math.min(60, dist + e.deltaY * 0.02));
+    distT = Math.max(9, Math.min(60, distT + e.deltaY * 0.02)); // B162 I4: Ziel-Distanz, im Loop gedämpft
+    if (!glide && !(follow && follow.obj) && !orbit){ // B162 I4: Zoom zum Cursor
+      ray.setFromCamera({x: (e.clientX / innerWidth) * 2 - 1, y: -(e.clientY / innerHeight) * 2 + 1}, camera);
+      if (ray.ray.intersectPlane(gPlane, gHit)){
+        const base = camC || DEF;
+        const k = e.deltaY < 0 ? 0.12 : -0.12;
+        const nx = Math.max(-22, Math.min(22, base.x + (gHit.x - base.x) * k));
+        const nz = Math.max(-22, Math.min(22, base.z + (gHit.z - base.z) * k));
+        camC = {x: nx, y: base.y, z: nz};
+        zoomAim = {x: +nx.toFixed(2), z: +nz.toFixed(2)};
+      }
+    }
   }, {passive:true});
   addEventListener("contextmenu", e => { if (!(e.target.closest && e.target.closest(UI))) e.preventDefault(); });
   // Beta 115: Escape hebt die Auswahl auf und fliegt zurueck zur Uebersicht

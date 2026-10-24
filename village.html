@@ -354,6 +354,21 @@ function rboxGeo(w, h, d, r){
   g.translate(0, -(h - 2 * r) / 2, 0);
   return weldGeo(g);
 }
+function softSlab(w, h, d, r){ // B167 X24: duenne Platten mit weicher Outline statt scharfer Box
+  r = Math.min(r, w * 0.49, d * 0.49);
+  const cx = w / 2 - r, cy = d / 2 - r;
+  const s = new THREE.Shape();
+  s.absarc(cx, cy, r, 0, Math.PI / 2);
+  s.absarc(-cx, cy, r, Math.PI / 2, Math.PI);
+  s.absarc(-cx, -cy, r, Math.PI, Math.PI * 1.5);
+  s.absarc(cx, -cy, r, Math.PI * 1.5, Math.PI * 2);
+  s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, {depth: Math.max(0.001, h), bevelEnabled: false, curveSegments: 5});
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, -h / 2, 0);
+  window.__softSlabN = (window.__softSlabN || 0) + 1;
+  return weldGeo(g);
+}
 function lumpyCone(g, seed, amt){
   const pa = g.attributes.position;
   for (let i = 0; i < pa.count; i++){
@@ -531,9 +546,9 @@ function clockTower(x, z){
   const rim = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.07, 12, 36), matWall(0x39414f));
   rim.position.copy(face.position); rim.rotation.copy(face.rotation); g.add(rim);
   const handM = matWall(0x22262e);
-  const hourH = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.4, 0.03), handM);
+  const hourH = new THREE.Mesh(softSlab(0.09, 0.03, 0.4, 0.03), handM); // B167 X24
   hourH.geometry.translate(0, 0.17, 0); hourH.position.set(0, 4.9, 1.27); g.add(hourH);
-  const minH = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.03), handM);
+  const minH = new THREE.Mesh(softSlab(0.06, 0.03, 0.6, 0.025), handM); // B167 X24
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
   const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
@@ -660,7 +675,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   // Patina: Dielenfugen quer, zwei Stuetzbogen, Laterne an jedem Ende
   const seamM = new THREE.MeshStandardMaterial({color: 0x6b4f34, roughness: 0.85});
   for (let i = 0; i < 7; i++){
-    const seam = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.95), seamM);
+    const seam = new THREE.Mesh(softSlab(0.05, 0.02, 0.95, 0.02), seamM); // B167 X24
     seam.position.set(-0.95 + i * 0.32, 0.745, 0); bridge.add(seam);
   }
   for (const s of [-1, 1]){
@@ -746,7 +761,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   splash.scale.set(1.35, 1.35, 1); splash.material.opacity = 0.85;
   const foamM = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, depthWrite: false});
   for (let i = 0; i < 4; i++){
-    const st = new THREE.Mesh(new THREE.BoxGeometry(0.09, 5.4, 0.02), foamM);
+    const st = new THREE.Mesh(softSlab(0.09, 0.02, 5.4, 0.04), foamM); // B167 X24
     st.position.set((i - 1.5) * 0.42, 0.1, 0.13);
     fall.add(st);
   }
@@ -1139,7 +1154,7 @@ function lampionPost(x, z){
   ball.scale.set(1, 1.15, 1); ball.position.y = 1.1; g.add(ball);
   const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 8), matWall(0x3c3c44));
   cap.position.y = 1.26; g.add(cap);
-  const string = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.02), matWall(0x3c3c44));
+  const string = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.14, 8), matWall(0x3c3c44)); // B167 X24
   string.position.y = 1.19; g.add(string);
   g.position.set(x, 0, z); scene.add(g);
   window.__nightWins = window.__nightWins || [];
@@ -1266,9 +1281,9 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
   body.position.y = 0.35; body.castShadow = true; coop.add(body);
   const roof = new THREE.Mesh(new rboxGeo(1.05, 0.06, 0.85, 0.05), woodD);
   roof.position.y = 0.66; roof.rotation.z = 0.08; roof.castShadow = true; coop.add(roof);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.03), woodD);
+  const door = new THREE.Mesh(softSlab(0.22, 0.03, 0.28, 0.05), woodD); // B167 X24
   door.position.set(0.15, 0.22, 0.36); coop.add(door);
-  const ramp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.02, 0.5), woodD);
+  const ramp = new THREE.Mesh(softSlab(0.22, 0.02, 0.5, 0.05), woodD); // B167 X24
   ramp.position.set(0.15, 0.09, 0.62); ramp.rotation.x = 0.35; coop.add(ramp);
   for (const s of [-1, 1]){
     const leg = new THREE.Mesh(new rboxGeo(0.06, 0.12, 0.06, 0.05), woodD);
@@ -2084,9 +2099,9 @@ function proceduralRobot(){
   const body = new THREE.Mesh(new rboxGeo(0.55, 0.68, 0.48, 0.05),
     new THREE.MeshStandardMaterial({color: 0xe8c93e, roughness: 0.6}));
   body.position.y = 0.5; body.castShadow = true; g.add(body);
-  const eye = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.02),
-    new THREE.MeshStandardMaterial({color: 0x111114}));
-  eye.position.set(0, 0.62, -0.25); g.add(eye);
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 12), // B167 X24: gewoelbtes Visor statt flacher Kasten
+    new THREE.MeshStandardMaterial({color: 0x111114, roughness: 0.35}));
+  eye.scale.set(1, 0.72, 0.16); eye.position.set(0, 0.62, -0.23); g.add(eye);
   const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 4),
     new THREE.MeshStandardMaterial({color: 0x111114}));
   ant.position.y = 0.95; g.add(ant);
@@ -2391,7 +2406,7 @@ function robotSetAnim(rec, name){
 function confettiBurst(pos){
   const cols = [0xff453a, 0x30d158, 0x0a84ff, 0xffd60a, 0xff9f0a];
   for (let i = 0; i < 14; i++){
-    const c = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.02),
+    const c = new THREE.Mesh(softSlab(0.07, 0.02, 0.07, 0.02), // B167 X24
       new THREE.MeshStandardMaterial({color: cols[i % 5], roughness: 0.65}));
     c.position.copy(pos); c.position.y = 0.4;
     scene.add(c);
@@ -3169,7 +3184,7 @@ tick(); setInterval(tick, 30000);
   // radiale Fugensteine am Rand
   for (let i = 0; i < 12; i++){
     const a = i / 12 * Math.PI * 2 + 0.13;
-    const st = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.1), new THREE.MeshStandardMaterial({color: 0x9a988f, roughness: 0.95}));
+    const st = new THREE.Mesh(softSlab(0.16, 0.03, 0.1, 0.03), new THREE.MeshStandardMaterial({color: 0x9a988f, roughness: 0.95})); // B167 X24
     st.position.set(Math.cos(a) * 2.18, 0.622, Math.sin(a) * 2.18);
     st.rotation.y = -a; st.receiveShadow = true; scene.add(st);
   }
@@ -3266,7 +3281,7 @@ tick(); setInterval(tick, 30000);
     const bg = new THREE.Group();
     const body = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.5, 12), birdM); // B137 P20
     body.rotation.x = Math.PI / 2; bg.add(body);
-    const wingG = new THREE.BoxGeometry(0.55, 0.02, 0.18);
+    const wingG = softSlab(0.55, 0.02, 0.18, 0.05); // B167 X24
     const wl = new THREE.Group(), wr = new THREE.Group();
     const wlM = new THREE.Mesh(wingG, birdM); wlM.position.x = 0.3; wl.add(wlM);
     const wrM = new THREE.Mesh(wingG, birdM); wrM.position.x = -0.3; wr.add(wrM);
@@ -4312,6 +4327,7 @@ tick(); setInterval(tick, 30000);
     window.__p44 = () => ({crateTilts: window.__crateTilts || 0, pass: 44}); // B164 W21
     window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
     window.__p46 = () => ({taper: window.__boatTaper || 0, pass: 46}); // B166 W23
+    window.__p47 = () => ({slabs: window.__softSlabN || 0, pass: 47}); // B167 X24
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
