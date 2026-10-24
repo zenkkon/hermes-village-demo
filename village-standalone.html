@@ -4339,6 +4339,7 @@ tick(); setInterval(tick, 30000);
   }; // B174 E8
   window.__weatherFlash = () => { flashT = 0.32; strikeBolt(); }; // B174 E8
   window.__p54 = () => ({boltN: window.__boltN || 0, boltVis: boltGroup.visible, pending: +(window.__boltPending || 0).toFixed(3), pass: 54}); // B174 E8
+  window.__p55 = () => ({reN: window.__reN || 0, reWait: +(window.__boltReStrike || 0).toFixed(3), pShiny: !!window.__groundFx && window.__groundFx.pMat.isMeshStandardMaterial, pass: 55}); // B175 E9
   window.__weatherSet = v => {
     const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
@@ -4399,7 +4400,7 @@ tick(); setInterval(tick, 30000);
     // Stufe 122 / Beta 158: Block 4 EXTRAS Pass 16 - Wetter am Boden: Pfuetzen bei Regen, Schneedecke im Winter  // B158 X16
     if (!window.__groundFx){
       const gx = [];
-      const pMat = new THREE.MeshBasicMaterial({color: 0x27455e, transparent: true, opacity: 0});
+      const pMat = new THREE.MeshStandardMaterial({color: 0x2f5a7a, transparent: true, opacity: 0, roughness: 0.18, metalness: 0.12}); // B175 E9: Pfuetzen-Glanz
       for (let i = 0; i < 8; i++){
         const pd = new THREE.Mesh(new THREE.CircleGeometry(0.5 + Math.random() * 0.6, 16), pMat);
         pd.rotation.x = -Math.PI / 2;
@@ -4502,7 +4503,8 @@ tick(); setInterval(tick, 30000);
       if (flashT <= 0.18) boltGroup.visible = false; // B174 E8
       flashT -= dt;
     }
-    if (stormW > 0.5 && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09){ flashT = 0.32; strikeBolt(); } // B143 E1 + B174 E8
+    if (stormW > 0.5 && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09){ flashT = 0.32; strikeBolt(); if (Math.random() < 0.35){ window.__boltReStrike = 0.25 + Math.random() * 0.4; window.__reN = (window.__reN || 0) + 1; } } // B143 E1 + B174 E8 + B175 E9: Doppelblitz
+    if (window.__boltReStrike > 0){ window.__boltReStrike -= dt; if (window.__boltReStrike <= 0){ window.__boltReStrike = 0; if (stormW > 0.5){ flashT = 0.32; strikeBolt(); } } } // B175 E9
     // Pfuetzen: erscheinen nach dem Regen, verblassen in ~40 s
     const rainNow = w > 0.5;
     if (rainNow) wasRain = true;
@@ -4546,7 +4548,7 @@ tick(); setInterval(tick, 30000);
       for (const ob of LIFE.obstacles){ if (Math.hypot(px - ob.x, pz - ob.z) < ob.r + 0.7){ ok = false; break; } }
       if (!ok) continue;
       const r = 0.45 + Math.random() * 0.65;
-      const m = new THREE.Mesh(new THREE.CircleGeometry(r, 20), new THREE.MeshBasicMaterial({color: 0x24455e, transparent: true, opacity: 0.42, depthWrite: false}));
+      const m = new THREE.Mesh(new THREE.CircleGeometry(r, 20), new THREE.MeshStandardMaterial({color: 0x2f5a7a, transparent: true, opacity: 0.42, depthWrite: false, roughness: 0.18, metalness: 0.12})); // B175 E9: Pfuetzen-Glanz
       m.rotation.x = -Math.PI / 2; m.position.set(px, 0.09, pz);
       pGroup.add(m); puddles.push({m, life: 38 + Math.random() * 10});
       return;
