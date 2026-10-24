@@ -1813,3 +1813,12 @@ Gewitter ausgebaut (B174 E8): (1) Sichtbarer Blitz-Bolt: pro Strike wird aus 7 P
 - Probe window.__p55() = {reN, reWait, pShiny, pass: 55}.
 - Tests: Funktionstest 30i (8849): reN 0 -> 1, boltN 1 -> 2 nach forciertem Re-Strike, pShiny true, p53/p49 unveraendert, ERRCOUNT 0. Shots rv199_tag (964 kB) + rv199_nacht (926 kB) via 31a/31b (8851/8853): Panel "Wetter Gewitter", Puetzen-Glanz sichtbar, ERRCOUNT 0.
 - Naechster Baustein: Beta 176 (WORLD Pass 26: Baum-Stamm-Rundungen + Krone-Subdivision oder LIFE Pass 11).
+
+## M182 - Beta 176: WORLD Pass 26 - Baum-Rundungen (2026-10-24, 08:00-Phase)
+
+- **B176 W26 Kronen-Subdivision**: lumpySphere 12x9 -> 18x13 Segmente (runde Kronen, Buesche, Sandhaufen, Kuerbisse, Pflanzen); Kegel-Kronen 14/12 -> 24/20 radial.
+- **B176 W26 vollere Silhouetten**: cone-Trees bekommen eine dritte Kegel-Stufe (0.26*s, 18 seg, y 2.0*s); round-Trees zwei lumpySphere-Sub-Blobs (0.4*s / 0.32*s), alle in cr[] und damit im Wind-Sway.
+- **B176 W26 Wurzelansatz**: gequetschte Rinden-Kugel (0.17-0.18*s, scale.y 0.45) an jedem Baum, Counter window.__flareN.
+- Probe window.__p56() = {treeN, crBlobs, flare, sway, pass: 56}.
+- Tests: Funktionstest 32a (8855, nach Debs-Neuextraktion): treeN 63, crBlobs 189, flare 63, sway aktiv, p53/p49/p55 unveraendert, Herbst- + Winter-Jump fehlerfrei, ERRCOUNT 0. Shots rv200_tag (895 kB) + rv200_nacht (877 kB) via 32b/32c (8857/8859): Kronen voller und weicher, Nacht-Licht intakt, ERRCOUNT 0.
+- Naechster Baustein: Beta 177 (LIFE Pass 11: Gruppierungs-Feinschliff oder WORLD Pass 27: Weg-Kanten weich).
