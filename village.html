@@ -4328,6 +4328,7 @@ tick(); setInterval(tick, 30000);
     window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
     window.__p46 = () => ({taper: window.__boatTaper || 0, pass: 46}); // B166 W23
     window.__p47 = () => ({slabs: window.__softSlabN || 0, pass: 47}); // B167 X24
+    window.__p48 = () => ({tourSoft: true, labelShadow: !!window.__shadowSelected, pass: 48}); // B168 I5
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
     villagers.forEach(v => { // Agenten koennen spaeter spawnen: Schirm nachziehen, solange fehlt
@@ -5102,7 +5103,7 @@ window.__pond = () => {
   // Stufe 119 / Beta 155: Block 4 EXTRAS Pass 13 - Kamera-Autotour: Tour-Button kreist alle 14 s durch die 4 Bereiche  // B155 X13
   const tourB = top.querySelector("#dashTour");
   const tourKeys = Object.keys(AREAS); let tourOn = false, tourIdx = 0;
-  const tourFly = () => { const tp = AREAS[tourKeys[tourIdx]]; if (tp && window.__look) window.__look(tp[0], tp[1], tp[2]);
+  const tourFly = () => { const tp = AREAS[tourKeys[tourIdx]]; if (tp && window.__look) window.__look(tp[0], tp[1], tp[2], {dur: 4600, arc: 1.4, smooth: true}); // B168 I5 weicher Tour-Flug
     top.querySelectorAll("#dashAreas button").forEach(x => x.classList.toggle("on", x.dataset.a === tourKeys[tourIdx])); };
   if (tourB){ tourB.addEventListener("click", () => { tourOn = !tourOn; tourB.classList.toggle("on", tourOn); if (tourOn){ tourIdx = 0; tourFly(); } }); }
   window.__tourSet = on => { tourOn = !!on; if (tourB) tourB.classList.toggle("on", tourOn); if (tourOn){ tourIdx = 0; tourFly(); } };
@@ -5332,7 +5333,7 @@ window.__pond = () => {
 // ===== Stufe 60 / Beta 63: INTERACTION-Block (Drag-Pan, Right-Drag-Rotate, Zoom/Pinch, Klick → Glide + Follow + Ring + Label + Live-Panel) =====
 (function(){
   const css = document.createElement("style");
-  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .28s ease;animation:sellBob 2.6s ease-in-out infinite}@keyframes sellBob{0%,100%{margin-top:0}50%{margin-top:-5px}}#selLabel::after{content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:6px;border-radius:50%;background:#f0a040;transform:translateX(-50%);box-shadow:0 0 8px rgba(240,160,64,.7)}';
+  css.textContent = 'html,body{touch-action:none}#selLabel{position:fixed;transform:translate(-50%,-100%);padding:3px 9px;font-size:11px;font-weight:700;color:#f0a040;z-index:5;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .28s ease;box-shadow:0 8px 26px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.35);text-shadow:0 1px 4px rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px); /* B168 I5 Label-Schatten */animation:sellBob 2.6s ease-in-out infinite}@keyframes sellBob{0%,100%{margin-top:0}50%{margin-top:-5px}}#selLabel::after{content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:6px;border-radius:50%;background:#f0a040;transform:translateX(-50%);box-shadow:0 0 8px rgba(240,160,64,.7)}';
   document.head.appendChild(css);
 
   const DEF = {x:0, y:0.5, z:0};
@@ -5340,14 +5341,15 @@ window.__pond = () => {
   const cur = () => camC || DEF;
 
   // __look: weicher Kamera-Flug (easeInOut) statt Sprung; null = zurücksetzen
-  window.__look = (x, y, z) => {
+  window.__look = (x, y, z, opts) => { // B168 I5: opts {dur, arc, smooth} fuer weiche Tour-Fluege
     if (x == null){ follow = null; followPending = null; glide = null; camC = null; return; }
     follow = null; followPending = null;
     const c = cur();
     const dxy = Math.hypot(x - c.x, z - c.z);
     const dur = Math.round(700 + Math.min(700, dxy * 40));
     const amp = 0.35 + Math.min(2.2, dxy * 0.07);
-    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur, arcAmp: amp};
+    const o3 = opts || {}; // B168 I5
+    glide = {fx: c.x, fy: c.y, fz: c.z, tx: x, ty: y, tz: z, t0: performance.now(), dur: (o3.dur != null ? o3.dur : dur), arcAmp: (o3.arc != null ? o3.arc : amp), smooth: !!o3.smooth};
   };
 
   // Pointer: Linkes Ziehen = Pan, rechtes Ziehen = Rotate, Rad/Pinch = Zoom
@@ -5485,11 +5487,22 @@ window.__pond = () => {
       new THREE.MeshBasicMaterial({color: 0xf0a040, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false}));
     ring.rotation.x = -Math.PI / 2; ring.position.y = 0.06;
     scene.add(ring);
+    // B168 I5: weicher Kontaktschatten unter dem gewaehlten Objekt
+    let shadow = null;
+    if (!select._shTex){ const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+      const g2 = cv.getContext('2d'), gr = g2.createRadialGradient(64,64,4,64,64,62);
+      gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(0.6, 'rgba(0,0,0,.22)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g2.fillStyle = gr; g2.fillRect(0,0,128,128); select._shTex = new THREE.CanvasTexture(cv); }
+    shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), new THREE.MeshBasicMaterial({map: select._shTex, transparent: true, opacity: 0.42, depthWrite: false}));
+    shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.02;
+    if (obj === fox){ shadow.scale.set(0.55, 0.55, 1); } else { shadow.scale.set(1.15, 1.15, 1); }
+    shadow.position.x = obj.position.x; shadow.position.z = obj.position.z;
+    scene.add(shadow); window.__shadowSelected = true; // B168 I5
     const label = document.createElement("div"); label.id = "selLabel"; label.className = "glass";
     label.style.transform = "translate(-50%,-115%)"; // B138 I1 schwebend ueber dem Objekt
     label.textContent = objName(obj);
     document.body.appendChild(label);
-    sel = {obj, ring, label};
+    sel = {obj, ring, label, shadow}; // B168 I5
     const c0 = cur();
     glide = {fx: c0.x, fy: c0.y, fz: c0.z, tx: obj.position.x, ty: (obj.position.y || 0) + 0.5, tz: obj.position.z, t0: performance.now(), dur: 900};
     followPending = obj;
@@ -5504,6 +5517,8 @@ window.__pond = () => {
   function deselect(){
     if (!sel) return;
     scene.remove(sel.ring); sel.ring.geometry.dispose(); sel.ring.material.dispose(); sel.label.remove();
+    if (sel.shadow){ scene.remove(sel.shadow); sel.shadow.geometry.dispose(); sel.shadow.material.dispose(); } // B168 I5
+    window.__shadowSelected = false; // B168 I5
     sel = null; follow = null; orbit = null;
   }
   // Stufe 04 / Beta 109: Block 2 INTERACTION Pass 4 - Hover-Highlight auf klickbaren Objekten
@@ -5562,7 +5577,7 @@ window.__pond = () => {
     if (pt) pt(dt, t);
     if (glide){
       const p = Math.min(1, (performance.now() - glide.t0) / glide.dur);
-      const e2 = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      const e2 = glide.smooth ? (p*p*p*(p*(p*6 - 15) + 10)) : (p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2); // B168 I5 smootherstep
       const arc = Math.sin(p * Math.PI) * (glide.arcAmp || 0.5);
       camC = {x: glide.fx + (glide.tx - glide.fx) * e2, y: glide.fy + (glide.ty - glide.fy) * e2 + arc, z: glide.fz + (glide.tz - glide.fz) * e2};
       if (p >= 1){ glide = null; if (followPending){ follow = {obj: followPending}; followPending = null; } }
@@ -5587,6 +5602,7 @@ window.__pond = () => {
       sel.ring.scale.set(s, s, 1);
       sel.ring.material.opacity = 0.55 + 0.3 * Math.sin(t * 5 + 1);
       sel.ring.position.x = sel.obj.position.x; sel.ring.position.z = sel.obj.position.z;
+      if (sel.shadow){ sel.shadow.position.x = sel.obj.position.x; sel.shadow.position.z = sel.obj.position.z; } // B168 I5
       const v = sel.obj.position.clone(); v.y = sel.obj === fox ? 1.9 : 2.6;
       v.project(camera);
       sel.label.style.left = ((v.x*0.5+0.5) * innerWidth) + "px";

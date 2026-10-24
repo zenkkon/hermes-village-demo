@@ -1758,3 +1758,11 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Probe `window.__p46()` -> `{taper, pass: 46}` (taper 1).
 - Review: rv166_tag.png (12:00, p46 taper 1, 453,113 B) + rv166_nacht.png (22:30, Regen erzwungen, 454,131 B), beide 0 JS-Fehler, frisch via mtime, beide angesehen. Boot liegt ausserhalb des Standard-Bildausschnitts; Funktion via Probe belegt, Szene intakt.
 - 1,552,110 B, md5 1b472f801e99d99295663b1ffbaf1386. beta166.zip. Naechster Baustein: Beta 167, WORLD Pass 24 (Rest-Blocky: Web-Hotel-Pfahlhaus-Rundung / Rest-BoxGeometry-Liste abarbeiten) oder INTERACTION Pass 5 (Tour-Uebergang weicher + Follow-Label-Schatten).
+### M174 - Beta 168 (INTERACTION Pass 5: weicher Tour-Flug + Follow-Label-Schatten) - 24.10.2026 03:35 CEST
+- __look(x, y, z, opts): optionaler 4. Parameter {dur, arc, smooth}, rueckwaerts kompatibel (alle bisherigen Aufrufe unveraendert).
+- Tour-Fluege (tourFly) jetzt cinematisch: dur 4600 ms, arc 1.4, smooth -> im Tick smootherstep-Easing (p^3(p(6p-15)+10)) statt quadratischem easeInOut; Tour-Intervall bleibt 14 s (4,6 s Flug + Verweilzeit).
+- Follow-Label-Schatten: #selLabel bekommt box-shadow (0 8px 26px rgba(0,0,0,.5) + 0 2px 8px rgba(0,0,0,.35)), text-shadow und eigenes blur(6px) ueber der .glass-Basis; plus weicher Kontaktschatten unterm gewaehlten Objekt (radialer CanvasGradient als PlaneGeometry, y 0.02, opacity 0.42, fox 0.55x / Gebaeude 1.15x, folgt im Tick, dispose in deselect). Flag window.__shadowSelected.
+- Probe `window.__p48()` -> `{tourSoft, labelShadow, pass: 48}` (labelShadow true, solange eine Auswahl laeuft); 12x Marker "B168 I5".
+- Funktionstest headless: __tourSet(true) -> glide aktiv, Kamera bewegt (TOURGLIDE glide true); __selFox -> LABELSHADOW rgba(0,0,0,0.5) 0px 8px 26px + shadowFlag true.
+- Review: rv191_tag.png (12:00 klar, 890,197 B) + rv191_nacht.png (22:30, Regen erzwungen, 891,639 B), beide angesehen: Dashboard/Tracker/Tabelle intakt, keine Layout-Breaks; Nacht-Lauf 0 JS-Fehler (nur bekannter 404 /api/village/stream).
+- 1,554,916 B, md5 3b878ccdd93bf12cd86dc4bc23644cab. beta168.zip. Naechster Baustein: Beta 169, LIFE Pass (Give-way-Verfeinerung: Ueberhol-Logik an Engstellen) oder WORLD Pass 25 (Rest-Rundungen nach Kanzie-Vergleich).
