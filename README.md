@@ -1968,3 +1968,12 @@ und geshippt.
 - Headless-Review Tag+Nacht (rv212, village-standalone.html): Tag ?time=14:00 (rv212_tag.png, 324.513 B) und Nacht ?time=22:30 (rv212_nacht.png, 311.439 B) angesehen: Topbar/KPI-Karten/Detail-Panel/tabbed Agenten-Tabelle (7 Agenten, idle)/Lauf-Tracker intakt, Tag hell mit Villager-Chat-Bubble, Nacht dunkel mit Laternen und schlafenden Villagern (sleep 6), keine JS-Fehler, kein UI-Bruch.
 - Sandbox-Hinweis: Capture-Pipeline ab ~22:35 stark verlangsamt (Frames ~100-200 s statt Sekunden); Aufnahme mit langem Budget (500 s) wieder moeglich. Weitere 12 Versuche (pg.screenshot fonts-hang, CDP fromSurface true/false, beginFrame, Chrome-CLI virtual-time-budget, --disable-dev-shm-usage) haengten.
 - SHIP: beta188.zip (village.html + village-standalone.html), README M195, Commit B188 L19.
+
+## M196 - Beta 189: WORLD Pass 20 - Weiches Licht + glattere Kronen/Graspatches (B189 L20)
+- Ziel: reste Blocky-Anmutung weiter senken (Kanzie-Optik): Licht weicher, Formen runder.
+- Aenderungen (beide Dateien identisch, md5 37289d636d..., 1.581.003 B):
+  1) lumpySphere (Kronen/Buesche/Felsen) Segment-Bump 18x13 -> 26x19 (B176 W26-Basis bleibt, Tags intakt).
+  2) Graspatches: CircleGeometry 16 -> 40 Segmente, Opacity 0.22 -> 0.19 (weichere Tonabstufungen, keine Polygonkanten mehr).
+  3) Licht: hemi 0.82 -> 0.88 (weicheres Fuelllicht), sun 1.0 -> 0.94 (sanftere Sonne, geringere Kontraste).
+- Headless-Review Tag+Nacht (rv213, village-standalone.html, 800x450): Tag ?time=14:00 (rv213_tag.png, 322.341 B, t=224) und Nacht ?time=22:30 (rv213_nacht.png, 291.095 B, t=363) angesehen: UI komplett (Topbar, KPI, Detail-Panel, tabbed Agenten-Tabelle 7 Agenten idle, Lauf-Tracker, v1.2), Szene sauber, Kronen/glattere Patches sichtbar, Nacht mit Laternen + Fensterlicht, perr=[] in beiden Laeufen (0 JS-Fehler), lifeStat aktiv (Tag: chat 3/overtake 12; Nacht: overlap 2).
+- SHIP: beta189.zip (village.html + village-standalone.html), README M196, Commit B189 L20.
