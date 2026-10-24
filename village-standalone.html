@@ -4720,7 +4720,7 @@ window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: w
   window.__p21 = () => ({bobAmp: 5, labelLift: "translate(-50%,-115%)", pass: 21}); // Stufe 118 / Beta 138: INTERACTION Pass Probe
   window.__seasonJump = n => {
     if (!SEASONS[n]) return false;
-    name = n; tgt = SEASONS[n];
+    name = n; tgt = SEASONS[n]; window.__seasonName = n; // B182 E12
     cur.grass.set(tgt.grass); cur.leaf.set(tgt.leaf); if (tgt.sea) cur.sea.set(tgt.sea);
     cur.gK = tgt.gK; cur.lK = tgt.lK; cur.sK = tgt.sK; cur.snow = tgt.snow;
     return true;
@@ -4965,11 +4965,60 @@ function loop(){
   const dt = Math.min(0.1, clock.getDelta());
   const t = clock.getElapsedTime();
   // Stufe 116 / Beta 123: Block 5 WORLD Pass 11 - Wind-Sway: Kronen schwingen weich
+  // B182 E12: EXTRAS Pass 6 - Wind-Streuung: Boeen modulieren die Sway, Partikel treiben saisonabhaengig
+  const wm6 = (window.__weatherMode && window.__weatherMode()) || "klar";
+  const W6 = window.__wind || (window.__wind = {ph: Math.random()*6.28, gust: 0, str: 0.35, mode: wm6});
+  W6.ph += dt * 0.4;
+  W6.gust = Math.max(0, Math.sin(t * 0.23 + W6.ph * 0.1) * 0.6 + Math.sin(t * 0.71 + 1.7) * 0.4);
+  W6.str = (wm6 === "gewitter" ? 1.0 : (wm6 === "regen" ? 0.65 : 0.35)) * (0.5 + 0.6 * W6.gust);
+  W6.mode = wm6;
+  const amp6 = 0.035 * (0.55 + W6.str * 2.2);
   for (const tr of treeReg){
     if (!tr.cr) continue;
-    const s0 = Math.sin(t * 0.8 + tr.rot * 2.1) * 0.035, s1 = Math.cos(t * 0.6 + tr.rot * 1.3) * 0.022;
+    const s0 = Math.sin(t * 0.8 + tr.rot * 2.1 + W6.ph) * amp6, s1 = Math.cos(t * 0.6 + tr.rot * 1.3 + W6.ph * 0.7) * amp6 * 0.6;
     for (const c of tr.cr){ c.rotation.z = s0; c.rotation.x = s1; }
   }
+  // B182 E12: Drift-Partikel je Saison (Winter ueberlaesst dem Schnee-System)
+  const sn6 = window.__seasonName || "sommer";
+  if (!window.__drift6){
+    const dcol = sn6 === "herbst" ? [0xc9802e, 0xb5651d, 0xd9a441] : (sn6 === "fruehling" ? [0xe8b4d8, 0xf3d9ec, 0xffffff] : [0xe8d44a, 0xf0e07a, 0xd9c23a]);
+    const DN = 56, dg = new THREE.BufferGeometry();
+    const dp = new Float32Array(DN*3), dc = new Float32Array(DN*3), dv = [];
+    for (let i = 0; i < DN; i++){
+      dp[i*3] = (Math.random()-0.5)*34; dp[i*3+1] = Math.random()*8 + 0.4; dp[i*3+2] = (Math.random()-0.5)*34;
+      const c6 = new THREE.Color(dcol[(Math.random()*dcol.length)|0]);
+      dc[i*3] = c6.r; dc[i*3+1] = c6.g; dc[i*3+2] = c6.b;
+      dv.push({vy: 0.35 + Math.random()*0.55, ph: Math.random()*6.28});
+    }
+    dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+    dg.setAttribute('color', new THREE.BufferAttribute(dc, 3));
+    const dpts = new THREE.Points(dg, new THREE.PointsMaterial({size: 0.16, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false}));
+    scene.add(dpts);
+    window.__drift6 = {pts: dpts, dv, n: DN, season: sn6};
+  }
+  if (window.__drift6 && sn6 !== "winter"){
+    if (window.__drift6.season !== sn6){
+      const dcol2 = sn6 === "herbst" ? [0xc9802e, 0xb5651d, 0xd9a441] : (sn6 === "fruehling" ? [0xe8b4d8, 0xf3d9ec, 0xffffff] : [0xe8d44a, 0xf0e07a, 0xd9c23a]);
+      const dca = window.__drift6.pts.geometry.attributes.color.array;
+      for (let i = 0; i < window.__drift6.n; i++){
+        const c6 = new THREE.Color(dcol2[(Math.random()*dcol2.length)|0]);
+        dca[i*3] = c6.r; dca[i*3+1] = c6.g; dca[i*3+2] = c6.b;
+      }
+      window.__drift6.pts.geometry.attributes.color.needsUpdate = true;
+      window.__drift6.season = sn6;
+    }
+    window.__drift6.pts.visible = true;
+    const dpa = window.__drift6.pts.geometry.attributes.position.array;
+    for (let i = 0; i < window.__drift6.n; i++){
+      const v = window.__drift6.dv[i];
+      dpa[i*3] += (0.6 + W6.str * 2.4) * dt * (0.7 + 0.6 * Math.sin(t * 1.1 + v.ph));
+      dpa[i*3+1] -= v.vy * dt;
+      dpa[i*3+2] += Math.sin(t * 0.5 + v.ph) * dt * 0.5;
+      if (dpa[i*3+1] < 0.05 || dpa[i*3] > 19){ dpa[i*3] = -18 + Math.random()*4; dpa[i*3+1] = 7 + Math.random()*3; dpa[i*3+2] = (Math.random()-0.5)*34; }
+    }
+    window.__drift6.pts.geometry.attributes.position.needsUpdate = true;
+  } else if (window.__drift6){ window.__drift6.pts.visible = false; }
+  window.__p63 = () => ({wind: +window.__wind.str.toFixed(3), gust: +window.__wind.gust.toFixed(3), drift: window.__drift6 ? window.__drift6.n : 0, driftOn: window.__drift6 ? window.__drift6.pts.visible : null, pass: 63}); // B182 E12
   window.__ffTick && window.__ffTick(dt, t);
 window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] && treeReg[0].cr ? +treeReg[0].cr[0].rotation.z.toFixed(4) : null, ff: +ffMat.opacity.toFixed(2)});
   tail.rotation.y = Math.sin(t*3)*0.4;

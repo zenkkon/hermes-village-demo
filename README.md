@@ -1868,3 +1868,20 @@ Agenten -> grp:2, danach 40 s Persistenz, 4 Checks in Folge alle grp:2.
 Vorher: Gruppe nach ~4 s weg. Gruppierte Paare bleiben also bestehend und
 wandern koordiniert weiter. Probes p49/p56/p57 gruen, 0 JS-Fehler,
 Tag+Nacht-Shots rv205 geprueft.
+
+## M188 - Beta 182: EXTRAS Pass 6 - Wind-Streuung (2026-10-24, 14:05)
+
+B182 E12: Globales Wind-System mit Boeen-Zyklen koppelt an die bestehende
+Baum-Kronen-Sway (Amplitude skaliert mit Windstaerke + Böe, gemeinsame
+Wind-Phase ueber alle Kronen). Basis-Windstaerke nach Wettermodus:
+klar 0.35, regen 0.65, gewitter 1.0, moduliert durch Boeen (0.5 + 0.6*gust).
+Dazu Drift-Partikel (56) je Saison: herbst Laub (orange/braun),
+fruehling Blueten (rosa/weiss), sommer Pollen (gelb); Winter blendet die
+Drift aus (Schnee-System uebernimmt) und bei Season-Wechsel werden die
+Partikel-Farben live neu eingefaerbt. window.__seasonName exportiert.
+Probe __p63 = {wind, gust, drift, driftOn}.
+Funktionstest (Headless cdp41a/b): klar wind 0.373 mit Boee 0.94, herbst
+seasonName + Recoloring aktiv, regen Basis hoeher, winter driftOn false.
+Probes p49/p56/p57 gruen, 0 JS-Fehler, keine Exceptions. Tag- und
+Nacht-Shots rv206 (Tag im Regen-Modus mit sichtbarem Laub-Drift, Nacht
+klar mit Laternen) geprueft.
