@@ -1822,3 +1822,10 @@ Gewitter ausgebaut (B174 E8): (1) Sichtbarer Blitz-Bolt: pro Strike wird aus 7 P
 - Probe window.__p56() = {treeN, crBlobs, flare, sway, pass: 56}.
 - Tests: Funktionstest 32a (8855, nach Debs-Neuextraktion): treeN 63, crBlobs 189, flare 63, sway aktiv, p53/p49/p55 unveraendert, Herbst- + Winter-Jump fehlerfrei, ERRCOUNT 0. Shots rv200_tag (895 kB) + rv200_nacht (877 kB) via 32b/32c (8857/8859): Kronen voller und weicher, Nacht-Licht intakt, ERRCOUNT 0.
 - Naechster Baustein: Beta 177 (LIFE Pass 11: Gruppierungs-Feinschliff oder WORLD Pass 27: Weg-Kanten weich).
+
+## M183 - Beta 177: WORLD Pass 27 - Weg-Kanten weich (2026-10-24, 08:30-Phase)
+
+- **B177 W27 Kanten-Fringe**: Jedes Wegband (8 pathRibbons) bekommt unter seiner Kante einen breiteren (Faktor 1.45), transparenten Sand-Fringe (y 0.008, Opacity 0.34, depthWrite off), der die harte Schnittkante weich ins Gras ueberblaendet. Eigener Counter window.__fringeN, pathRibbons-Liste unveraendert.
+- Probe window.__p57() = {pathN, fringe, pass: 57}.
+- Tests: Funktionstest 33a (8861, nach Debs-Neuextraktion): pathN 8, fringe 8, p56 (treeN 63, crBlobs 189, flare 63) / p53 / p49 unveraendert, Winter-Jump fehlerfrei, ERRCOUNT 0. Shots rv201_tag (905 kB) + rv201_nacht (877 kB) via 33b/33c (8863/8865): Kanten weich uebergeblendet, Nacht-Szene intakt, ERRCOUNT 0.
+- Naechster Baustein: Beta 178 (LIFE Pass 11: Gruppierungs-Feinschliff oder EXTRAS Pass 5: Nebel-Morgen-Modus).
