@@ -2495,10 +2495,10 @@ function lifeStep(rb, dt, t, crowd){
       for (const o of crowd){
         if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
         const ddx = o.g.position.x - p.x, ddz = o.g.position.z - p.z, dd2 = Math.hypot(ddx, ddz);
-        if (dd2 > 1.1 && dd2 < 8 && dd2 < bd){ bd = dd2; best = o; }
+        if (dd2 > 1.1 && dd2 < 12 && dd2 < bd){ bd = dd2; best = o; } // B183 L13 Radius 12
       }
       // B172 L10: Drift zu Trifts - ohne Partner gelegentlich zu einem laufenden Chat-Paar hin
-      if (!best && Math.random() < 0.3){
+      if (!best && Math.random() < 0.5){ // B183 L13 Drift 50%
         let gp = null, gd = 1e9;
         for (const o of crowd){
           if (o === rb || !o.villager || !o.life || !o.life.chat || !o.g || !o.life.chat.g) continue;
@@ -2513,7 +2513,21 @@ function lifeStep(rb, dt, t, crowd){
           window.__lifeStat && (window.__lifeStat.drift = (window.__lifeStat.drift || 0) + 1);
         }
       } // B172 L10
-      if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); }
+      if (!best && !L.chatSeek && Math.random() < 0.35){ // B183 L13: Sozialer Stroll - auf einen anderen Villager zulaufen, Begegnungen erzeugen
+        let cand = null, cd3 = 1e9;
+        for (const o of crowd){
+          if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
+          const ddx = o.g.position.x - p.x, ddz = o.g.position.z - p.z, dd2 = Math.hypot(ddx, ddz);
+          if (dd2 > 6 && dd2 < 26 && dd2 < cd3){ cd3 = dd2; cand = o; }
+        }
+        if (cand){
+          rb.target.set(cand.g.position.x + (Math.random()-0.5)*2, 0, cand.g.position.z + (Math.random()-0.5)*2);
+          rb.route = lifeRoute(p.x, p.z, rb.target.x, rb.target.z);
+          L.mode = "walk"; L.hold = 4 + Math.random()*3;
+          window.__lifeStat && (window.__lifeStat.stroll = (window.__lifeStat.stroll || 0) + 1);
+        }
+      }
+      if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); } // B183 L13
     }
     L.hold -= dt;
     if (L.sleep){
@@ -4439,6 +4453,7 @@ tick(); setInterval(tick, 30000);
   };
 window.__p60 = function(){ let g = 0; for (const c of (window.__crowd || [])){ if (c.life && c.life.grp) g++; } return {grp: g, pass: 60}; }; // B180 L11
 window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: window.__grpForms || 0, regroup: (window.__lifeStat && window.__lifeStat.regroup) || 0, pass: 62}; }; // B181 L12
+window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, pass: 64}; }; // B183 L13
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)

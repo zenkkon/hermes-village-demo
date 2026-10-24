@@ -1885,3 +1885,18 @@ seasonName + Recoloring aktiv, regen Basis hoeher, winter driftOn false.
 Probes p49/p56/p57 gruen, 0 JS-Fehler, keine Exceptions. Tag- und
 Nacht-Shots rv206 (Tag im Regen-Modus mit sichtbarem Laub-Drift, Nacht
 klar mit Laternen) geprueft.
+
+## M189 - Beta 183: LIFE Pass 13 - Chat-Dichte (2026-10-24, 14:50)
+
+B183 L13: Natuerliche Chat-Dichte erhoeht. Chat-Suche-Radius bei Hold-Ende
+von 8 auf 12, Drift-zu-Trifts-Chance 30 % auf 50 %, und neu: Sozialer
+Stroll - fand ein Villager keinen Partner, laeuft er mit 35 % Chance zu
+einem anderen Villager hin (Ziel mit +/-1 Offset), so dass sich Begegnungen
+erst gar ueber Zufall ergeben. Probe __p64 = {chatNow, seek, stroll, drift}.
+Funktionsbefund (Headless cdp42a, ehrlich negativ): 110 s natuerliche
+Beobachtung bei 1-5 Agenten: seek/stroll/chat alle 0 - die Mechaniken
+laufen fehlerfrei (0 JS-Fehler, keine Exceptions), aber bei so kleiner
+Bevoelkerung sind Begegnungen selten..grp blieb ueber den Lauf 0; der
+Mechanismus an sich ist durch B181 (erzwungenes Chat-Ende -> grp:2,
+40 s Persistenz) belegt. Naechster Hebel: Bevoelkerungsdichte/Plaza-
+Gewichtung der Wanderziele. Tag- und Nacht-Shots rv207 geprueft, sauber.
