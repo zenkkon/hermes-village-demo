@@ -691,6 +691,7 @@ window.__iceMat = iceMat; window.__iceMesh = iceMesh;
   bridge.position.set(mid[0], 0, mid[1]);
   bridge.rotation.y = Math.atan2(px, pz);
   scene.add(bridge);
+  window.__bridgeChoke = {x: bridge.position.x, z: bridge.position.z, w: 1.1}; // B169 L9
   // sanfte Ripples am Wasserfall-Basis-Punkt
   const ptW = window.__extraTick;
   window.__extraTick = function(dt, t){
@@ -2149,6 +2150,16 @@ const LIFE = {
   obstacles: [], chains: [], chainEnds: [], nodes: [], edges: []
 };
 BUILDINGS.forEach(bb => LIFE.obstacles.push({x: bb.position.x, z: bb.position.z, r: 2.1}));
+  // B169 L9: Engstellen (Chokepoints) einmalig ableiten - Hindernispaare mit Luecke < 1.7
+  LIFE.chokes = [];
+  for (let i = 0; i < LIFE.obstacles.length; i++) for (let j = i + 1; j < LIFE.obstacles.length; j++){
+    const a = LIFE.obstacles[i], b = LIFE.obstacles[j];
+    const dd = Math.hypot(a.x - b.x, a.z - b.z), gap = dd - a.r - b.r;
+    if (gap < 1.7) LIFE.chokes.push({x: (a.x + b.x) / 2, z: (a.z + b.z) / 2, w: gap});
+  }
+  if (window.__bridgeChoke) LIFE.chokes.push(window.__bridgeChoke); // B169 L9 Bruecke
+  LIFE.chokes.push({x: 0.35, z: -5.3, w: 1.3}); // B169 L9 Gate-Durchgang (Plaza -> Cron Gatehouse)
+  window.__lifeChokes = LIFE.chokes; // B169 L9 Export fuer Probe
 function spawnVillager(){
   if (!robotProto) return;
   const g = SkeletonUtils.clone(robotProto.scene);
@@ -2316,6 +2327,38 @@ function lifeStep(rb, dt, t, crowd){
       const ox = p.x - fox.position.x, oz = p.z - fox.position.z, od = Math.hypot(ox, oz);
       if (od > 0.001 && od < 1.1){ const push = (1.1 - od)/1.1; vx += (ox/od)*push*2.0; vz += (oz/od)*push*2.0; }
     }
+    // Stufe 123 / Beta 169: LIFE Pass 9 (B169 L9) - Ueberhol-Logik: gleiche Richtung,
+    // jemand voraus -> stabil seitlich vorbeigleiten statt von hinten zu schieben
+    if (rb.ovSide == null) rb.ovSide = ((rb.wob || 0) + (rb.g.position.x || 0)) % 2 < 1 ? 1 : -1;
+    let ovN = 0;
+    for (const o of crowd){
+      if (o === rb || !o.g) continue;
+      const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z, od = Math.hypot(ox, oz);
+      if (od < 0.05 || od > 2.4) continue;
+      const along = (bx * ox + bz * oz) / od;
+      if (along < 0.35) continue;
+      const ovn = Math.hypot(o.pvx || 0, o.pvz || 0) || 1;
+      if (((o.pvx || 0) * bx + (o.pvz || 0) * bz) / ovn > 0.6){
+        const s = (2.4 - od) / 2.4;
+        vx += bz * s * rb.ovSide * 1.3; vz += -bx * s * rb.ovSide * 1.3; // B169 L9
+        ovN++;
+      }
+    }
+    if (ovN) window.__lifeStat && (window.__lifeStat.overtake = (window.__lifeStat.overtake || 0) + 1);
+    // B169 L9: Engstellen-Regel - Rechtsverkehr an Engstellen, wer weiter weg ist, bremst
+    let chokeWait = false;
+    for (const ch of (LIFE.chokes || [])){
+      const ox = ch.x - p.x, oz = ch.z - p.z, od = Math.hypot(ox, oz);
+      if (od < 0.05 || od > 2.6 || (bx * ox + bz * oz) / od < 0.5) continue;
+      let otherCloser = false;
+      for (const o of crowd){
+        if (o === rb || !o.g) continue;
+        const qx = o.g.position.x - ch.x, qz = o.g.position.z - ch.z, qd = Math.hypot(qx, qz);
+        if (qd < od && qd < 2.2){ otherCloser = true; break; }
+      }
+      if (otherCloser){ chokeWait = true; vx += bz * 0.9; vz += -bx * 0.9; // B169 L9 rechts ran
+        window.__lifeStat && (window.__lifeStat.choke = (window.__lifeStat.choke || 0) + 1); }
+    }
     // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Steering-Inertia: Richtungswechsel
     // laufen weich ein statt ruckartig (lerp auf geglaettete Richtung)
     if (rb.svx == null){ rb.svx = bx; rb.svz = bz; }
@@ -2327,7 +2370,8 @@ function lifeStep(rb, dt, t, crowd){
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
     window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
-    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * (close < 0.7 ? 0.55 : 1)
+    let slow = close < 0.7 ? 0.55 : 1; if (chokeWait) slow = Math.min(slow, 0.5); // B169 L9
+    const sp = 1.05 * dt * (window.__lifeSpeed || 1) * slow
       * Math.min(1, 0.25 + d / 1.2); // Beta 116: Arrive-Bremse - sanftes Anhalten am Ziel
     const px0 = p.x, pz0 = p.z;
     p.x += (vx/vl) * Math.min(sp, d);
@@ -4328,6 +4372,7 @@ tick(); setInterval(tick, 30000);
     window.__p45 = () => ({dockJit: window.__dockJitCount || 0, moor: window.__moorLines || 0, pass: 45}); // B165 W22
     window.__p46 = () => ({taper: window.__boatTaper || 0, pass: 46}); // B166 W23
     window.__p47 = () => ({slabs: window.__softSlabN || 0, pass: 47}); // B167 X24
+    window.__p49 = () => ({chokes: (window.__lifeChokes ? window.__lifeChokes.length : 0), overtake: (window.__lifeStat && window.__lifeStat.overtake) || 0, choke: (window.__lifeStat && window.__lifeStat.choke) || 0, pass: 49}); // B169 L9
     window.__p48 = () => ({tourSoft: true, labelShadow: !!window.__shadowSelected, pass: 48}); // B168 I5
     // Stufe 123 / Beta 160: Block 3 LIFE x EXTRAS Pass 18 - Schirme bei Regen: Agenten gehen mit Regenschirm  // B160 X18
     if (!window.__umbs){ window.__umbs = []; window.__umbCols = [0xd94f4f, 0x4f7bd9, 0x4fd97b, 0xd9b84f, 0x9a5bd9]; } // B160 X18
