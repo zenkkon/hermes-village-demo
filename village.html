@@ -197,8 +197,12 @@ function updateDayNight(){
   scene.fog = new THREE.Fog(sky.getHex(), 55, 160);
   // Stufe 117 / Beta 124: Block 4 EXTRAS Pass 6 - Daemmerungsnebel (Morgen-/Abendnebel)
   const mist = dusk * 0.8;
-  scene.fog.near = 55 - 26 * mist; scene.fog.far = 160 - 70 * mist;
+  // B178 E10: Nebel-Morgen-Modus - Glockenkurve um 6:40, nur im Morgen-Fenster (4-9.3 Uhr)
+  const mf = Math.max(0, 1 - Math.abs(hour - 6.67) / 2.6);
+  window.__morningFog = +mf.toFixed(3);
+  scene.fog.near = 55 - 26 * mist - 34 * mf; scene.fog.far = 160 - 70 * mist - 85 * mf;
   window.__fogRange = () => ({near: +scene.fog.near.toFixed(1), far: +scene.fog.far.toFixed(1)});
+  window.__p58 = () => ({near: +scene.fog.near.toFixed(1), far: +scene.fog.far.toFixed(1), mf: window.__morningFog || 0, pass: 58}); // B178 E10
   window.__updDayNight = updateDayNight;
   const ang = (hour - 6) / 12 * Math.PI;
   sun.position.set(Math.cos(ang) * 30, Math.max(2, Math.sin(ang) * 30), 12);
@@ -4799,7 +4803,7 @@ tick(); setInterval(tick, 30000);
       bgeo.attributes.position.needsUpdate = true;
     }
     sun.color.lerp(mk(0xfff0d6), petalAmt * 0.2);
-    if (scene.fog){ scene.fog.far = 160 - cur.snow * 70; scene.fog.near = 55 - cur.snow * 35; }
+    if (scene.fog){ scene.fog.far = 160 - cur.snow * 70 - 85 * (window.__morningFog || 0); scene.fog.near = 55 - cur.snow * 35 - 34 * (window.__morningFog || 0); } // B178 E10
     if (name !== lastSeasBtn){
       lastSeasBtn = name;
       document.querySelectorAll("#dashSeason button").forEach(b => b.classList.toggle("on", b.dataset.s === name));

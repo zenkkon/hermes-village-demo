@@ -1829,3 +1829,10 @@ Gewitter ausgebaut (B174 E8): (1) Sichtbarer Blitz-Bolt: pro Strike wird aus 7 P
 - Probe window.__p57() = {pathN, fringe, pass: 57}.
 - Tests: Funktionstest 33a (8861, nach Debs-Neuextraktion): pathN 8, fringe 8, p56 (treeN 63, crBlobs 189, flare 63) / p53 / p49 unveraendert, Winter-Jump fehlerfrei, ERRCOUNT 0. Shots rv201_tag (905 kB) + rv201_nacht (877 kB) via 33b/33c (8863/8865): Kanten weich uebergeblendet, Nacht-Szene intakt, ERRCOUNT 0.
 - Naechster Baustein: Beta 178 (LIFE Pass 11: Gruppierungs-Feinschliff oder EXTRAS Pass 5: Nebel-Morgen-Modus).
+
+## M184 - Beta 178: EXTRAS Pass 5 - Nebel-Morgen-Modus (2026-10-24, 09:00-Phase)
+
+- **B178 E10 Morgen-Nebel**: Glockenkurve um 6:40 (nur Morgen-Fenster 4-9.3 Uhr) verschaerkt das Fog: near 55-34*mf, far 160-85*mf; mf = max(0, 1-|hour-6.67|/2.6). Abend-Daemmerungsnebel (B124) unveraendert. Wichtig: das Wetter-Season-Setz-System ueberschreibt scene.fog jeden Frame (Zeile Season-Sweep), daher ist mf dort in die Formel integriert; window.__morningFog als globale Bruecke.
+- Probe window.__p58() = {near, far, mf, pass: 58}.
+- Tests: Funktionstest 34a (8867, nach Debs-Neuextraktion, erster Lauf ohne Wetter-Fix zeigte near/far 55/160 trotz mf 0.999 -> Fix): 6:40 near 21/far 75.1 mf 0.999, 12:00 near 55/far 160 mf 0, 22:30 mf 0. Winter-Jump 34d (8873): p38 unveraendert, Winter+Nebel kombinieren (7:30 mf 0.681, near 31.8/far 102.1). Mini-Check 34e (8875): p57 fringe 8, p56 treeN 63/crBlobs 189/flare 63, p53 rocks 41, p49 chokes 4, ERRCOUNT 0. Shots rv202_morgen (918,915 B, 34b/8869) + rv202_nacht (866,028 B, 34c/8871) angesehen: dichter warmer Morgennebel, Nacht unveraendert sauber.
+- Naechster Baustein: Beta 179 (LIFE Pass 11: Gruppierungs-Feinschliff oder WORLD Pass 28: Platz-/Gebaeude-Kanten weich).
