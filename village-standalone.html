@@ -2557,7 +2557,6 @@ function lifeStep(rb, dt, t, crowd){
       }
     } else if (L.hold <= 0){
       const gpH = rb.life.grp; // B181 L12: Gruppe bei neuem Ziel weiterfuehren statt aufloesen
-      heD.n++; if (gpH) heD.grpSet++;
       if (gpH && gpH.g && gpH.life && gpH.life.grp === rb && !gpH.life.chat && !L.chat){
         if (rb.g.uuid < gpH.g.uuid){
           if (Math.random() < 0.30){ // B187 L17: Gruppen-Re-Chat - die Gruppe unterhaelt sich beim Weiterwandern erneut

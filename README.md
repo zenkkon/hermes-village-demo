@@ -1960,3 +1960,11 @@ und geshippt.
 **Ship:** village.html 1.580.948 B (md5 d8eb404b34bf9902f8668d988e9f0d3d), village-standalone.html synced, beta187.zip, Commit auf main, Push versucht.
 
 **Next:** LIFE Pass 18: rechat/regroup bei natuerlichen Gruppen-Hold-Enden beobachten (laengere Laeufe, mehr Villager-Startzeit), danach WORLD/EXTRAS-Feinschliff Blender-Lock gegen kanzie-referenz.png.
+
+## M195 - Beta 188: LIFE Pass 18 - Re-Chat/Regroup am natuerlichen Gruppen-Hold-Ende verifiziert + heD-Restlinie entfernt (B188 L19)
+- Fix (aus 22:30-Nachtrag umgesetzt): untagged Diagnostic-Restzeile `heD.n++; if (gpH) heD.grpSet++;` (vormals Zeile 2560) aus BEIDEN Dateien entfernt (const heD war beim Strippen gefallen, Restlinie haette beim ersten natuerlichen Hold-Ende einen ReferenceError geworfen). Assert-guarded Patch, sonst nichts veraendert.
+- Stand beider Dateien: village.html == village-standalone.html, md5 08145ee27b..., 1.581.026 B, B187-Tags L17/L18 intakt.
+- LIFE Pass 18 Verifikation (600 s Lauf, cdp58c, 400x225, ?time=14:00): ERSTMALS natuerliches RE-CHAT=1 (t=446) und REGROUP=1 (t=487) beobachtet. grpForms 0->7, chatStarts 7, chatEnds 10, grpWait 20, choke 26, Sim die ganze Zeit aktiv. perr=[] über 487 s: 0 JS-Fehler, L19-Fix im echten Betrieb bestaetigt (Hold-Ende feuert, Re-Chat 30%-Chance, danach Regroup).
+- Headless-Review Tag+Nacht (rv212, village-standalone.html): Tag ?time=14:00 (rv212_tag.png, 324.513 B) und Nacht ?time=22:30 (rv212_nacht.png, 311.439 B) angesehen: Topbar/KPI-Karten/Detail-Panel/tabbed Agenten-Tabelle (7 Agenten, idle)/Lauf-Tracker intakt, Tag hell mit Villager-Chat-Bubble, Nacht dunkel mit Laternen und schlafenden Villagern (sleep 6), keine JS-Fehler, kein UI-Bruch.
+- Sandbox-Hinweis: Capture-Pipeline ab ~22:35 stark verlangsamt (Frames ~100-200 s statt Sekunden); Aufnahme mit langem Budget (500 s) wieder moeglich. Weitere 12 Versuche (pg.screenshot fonts-hang, CDP fromSurface true/false, beginFrame, Chrome-CLI virtual-time-budget, --disable-dev-shm-usage) haengten.
+- SHIP: beta188.zip (village.html + village-standalone.html), README M195, Commit B188 L19.
