@@ -1915,3 +1915,26 @@ Begegnungen daher selten. 0 JS-Fehler, EXC 0, Tag- und Nacht-Shots rv208
 geprueft (sauber). Naechster Hebel: LIFE Pass 15 - Begegnungsfrequenz
 (kuerzere Zwischenziele oder Stroll auch waehrend walk), dann sollte der
 Counter greifen.
+
+## M191 - Beta 185: LIFE Pass 15 - Begegnungsfrequenz (2026-10-24, 16:50)
+
+B185 L15: wanderPick(px, pz) ersetzt den B184-Helfer und behebt dabei einen
+echten Fehler: durch eine nachgelagerte globale Ersetzung rief der Fallback
+von wanderPick sich selbst rekursiv auf (terminierte zwar praktisch immer
+und verursachte 0 Fehler, der Nicht-Plaza-Zweig war aber de facto tot -
+effektiv 100% Plaza-Ziele statt 45%). Neu: wanderPick waehlt mit
+Positions-Argument einen der drei naechstgelegenen Wanderpunkte (mit
+Jitter), kurze Etappen statt langer Querfeldezuege, mehr Zielwechsel, mehr
+Begegnungen; 45% Plaza-Bias bleibt, Spawn ohne Argument. Alle 4 Aufruf-
+stellen mit p.x/p.z versorgt (Spawn ohne), Stroll-Schwelle 6 -> 4, 6
+Marker, 0 Rekursions-Reste.
+Funktionsbefund (Headless cdp43a, 100 s natuerlich): 0 JS-Fehler, EXC 0,
+Dichte vill 1 -> 5; seek/stroll/chat blieben im Fenster erneut 0 - bei
+1 fps und Zielwechsel alle paar Deka-Sekunden sind Begegnungen im kurzen
+Fenster selten; die Mechanik ist durch B181 belegt. Naechster Hebel:
+LIFE Pass 16 - Chat-Start direkt bei Begegnung im Walk (Naehe-Trigger
+unter ~2.5 Einheiten), unabhaengig vom Idle-Ast.
+Tag- und Nacht-Shots rv209 geprueft (sauber: Panels, KIRA-Bubble,
+Nacht-Laternen). Nachtrag: Die 14:00- und 14:30-Fires wurden vom Lauf-
+Budget abgeschnitten, Pass 15 wurde daher in dieser Phase 15:00 getestet
+und geshippt.
