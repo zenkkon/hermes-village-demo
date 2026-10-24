@@ -1987,3 +1987,13 @@ und geshippt.
 - Headless-Review (rv214, village-standalone.html, 800x450, Raw-CDP-Capture): Tag ?time=14:00 (rv214_tag.png, 324.555 B), Sommer-Nacht ?time=23:00 (rv214_sommernacht.png, 311.182 B; p70 ff=0.85 -> Gluehwuermchen aktiv), Winter-Nacht (rv214_winternacht.png, 327.641 B; p70 smVis=2, ff=0 -> Schneemaenner sichtbar, Gluehwuermchen aus, Schnee + Aurora). UI in allen drei komplett (Topbar, KPI, Detail-Panel, tabbed Tabelle 7 Agenten idle, Lauf-Tracker, v1.2), perr=0 in allen Laeufen. Beobachtung (nicht B190-regressiv, vor E21 vorhanden): diagonal Streifen oben links in allen drei Shots -> als bestehendes Wetter-/Partikelsystem eingeordnet, Check in einer spaeteren Phase.
 - Infrastruktur-Notiz: Sandbox-Restart riss /tmp weg; Chrome-Lib-Abhaengigkeiten erneut nachgebaut (9+libXi via Debian-Pool direkt, /tmp/chromedeps); Raw-CDP-Capture laeuft stabil (gleicher Target wie Playwright-Page: ctx.pages[0]).
 - SHIP: beta190.zip (village.html + village-standalone.html), README M197, Commit B190 E21.
+
+## M198 - Beta 191: WORLD Pass 21 - Dach-Silhouetten weicher (B191 W21)
+- Ziel: WORLD-Block, Blocky-Look weiter abbauen (weiche, Blender-artige Silhouetten).
+- Neu (beide Dateien identisch, md5 6277d0b54d..., 1.584.526 B):
+  1) Web-Hotel-Lehmdach: lumpyCone 12 -> 20 Segmente.
+  2) Telegram-Zentrale (Boathouse)-Dach: Zylinder 12 -> 18 Segmente.
+  3) Berg-Gipfel: 20 -> 26 Segmente; Schneekappe: 14 -> 20 Segmente.
+- Streak-Befund aus rv214 (Lektuere): Die diagonalen hellen Streifen sind NICHT das Regensystem (lineMat nur bei w > 0.5 sichtbar, Default Klar w=0) - am wahrscheinlichsten die vorhandenen Vogel-/Partikel-Systeme (p20 bird) im Flug, benign.
+- Headless-Review (rv215, 800x450, Raw-CDP): Tag 14:00 (rv215_tag.png 320.066 B, Voegel oben links sichtbar - bestaetigt Streak-Befund) + Nacht 23:00 (rv215_nacht.png 305.671 B, Laternen/Fensterlicht/Gluehwuermchen ff=0.85, p70 smVis=0), UI in beiden komplett, perr=0 in beiden Laeufen.
+- SHIP: beta191.zip (village.html + village-standalone.html), README M198, Commit B191 W21.

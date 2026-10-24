@@ -582,7 +582,7 @@ function stiltHouse(x, z, ry){
   }
   const body = new THREE.Mesh(new rboxGeo(1.7, 1.1, 1.5, 0.05), matWall(0xf2e3c9));
   body.name = "wh_body"; body.position.y = 1.85; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 12), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide
+  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 20), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide // B191 W21
   roof.name = "wh_roof"; roof.position.y = 2.82; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const win = winPlane(0.4, 0.42); win.position.set(0, 1.95, 0.78); g.add(win);
   const lamp = new THREE.PointLight(0xffb340, 0.3, 6); lamp.position.set(0, 2.0, 1.2); g.add(lamp);
@@ -839,7 +839,7 @@ function buildBoathouse(x, z, ry){
   const g = new THREE.Group();
   const body = new THREE.Mesh(new rboxGeo(2.0, 1.4, 1.8, 0.05), matWall(0x7a94b8));
   body.position.y = 0.7; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 12), matWall(0x34528a)); // B140 P21
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 18), matWall(0x34528a)); // B140 P21 // B191 W21
   roof.position.y = 1.85; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const door = new THREE.Mesh(new rboxGeo(0.8, 0.9, 0.08, 0.05), matWall(0x2a3648));
   door.position.set(0, 0.45, 0.92); g.add(door);
@@ -1451,9 +1451,9 @@ fenceLine(-3.4, -1.0, -3.6, -4.8); fenceLine(-7.9, -4.7, -7.9, -6.2); fenceLine(
 
 // Berge am hinteren Inselrand
 function mountain(x, z, h, r){
-  const peak = new THREE.Mesh(new THREE.ConeGeometry(r, h, 20), matWall(0x8f96a6));
+  const peak = new THREE.Mesh(new THREE.ConeGeometry(r, h, 26), matWall(0x8f96a6)); // B191 W21
   peak.position.set(x, h/2, z); peak.castShadow = true; scene.add(peak);
-  const snow = new THREE.Mesh(new THREE.ConeGeometry(r*0.4, h*0.3, 14), matWall(0xf4f7fb));
+  const snow = new THREE.Mesh(new THREE.ConeGeometry(r*0.4, h*0.3, 20), matWall(0xf4f7fb)); // B191 W21
   snow.position.set(x, h*0.85, z); scene.add(snow);
 }
 mountain(-15.5, -14.5, 6.5, 3.4);
