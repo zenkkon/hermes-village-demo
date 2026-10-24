@@ -4314,7 +4314,31 @@ tick(); setInterval(tick, 30000);
   window.__weather = () => w > 0.5;
   window.__weatherMode = () => storm ? "gewitter" : (w > 0.5 ? "regen" : "klar");
   window.__weatherForce = v => { w = +v; };
-  window.__weatherFlash = () => { flashT = 0.32; };
+  // B174 E8: sichtbarer Blitz-Bolt (Tube + Glow-Rohr) beim Gewitter + Donner-Delay
+  const boltMat = new THREE.MeshBasicMaterial({color: 0xf4f8ff, transparent: true, opacity: 0, depthWrite: false});
+  const boltGlowMat = new THREE.MeshBasicMaterial({color: 0xaebfd8, transparent: true, opacity: 0, depthWrite: false});
+  const boltGroup = new THREE.Group(); boltGroup.visible = false; scene.add(boltGroup);
+  window.__boltN = 0; window.__boltPending = 0; let flashDist = 6;
+  const strikeBolt = () => {
+    while (boltGroup.children.length){ const c = boltGroup.children.pop(); c.geometry.dispose(); }
+    const bx = (Math.random()*2-1)*8, bz = (Math.random()*2-1)*8, seg = 7, pts = []; // B174 E8: zentral, im Kameraausschnitt
+    pts.push(new THREE.Vector3(bx, 9.5, bz));
+    for (let i = 1; i <= seg; i++){
+      const tS = i / seg;
+      pts.push(new THREE.Vector3(bx + (Math.random()*2-1)*1.6*(1 - tS), 9.5 - 9.4*tS, bz + (Math.random()*2-1)*1.6*(1 - tS)));
+    }
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const core = new THREE.Mesh(new THREE.TubeGeometry(curve, seg*4, 0.07, 5), boltMat);
+    const glow = new THREE.Mesh(new THREE.TubeGeometry(curve, seg*4, 0.17, 5), boltGlowMat);
+    core.frustumCulled = glow.frustumCulled = false;
+    boltGroup.add(core); boltGroup.add(glow);
+    boltGroup.visible = true;
+    window.__boltN++;
+    flashDist = 3 + Math.random()*9;
+    window.__boltPending = flashDist / 20;
+  }; // B174 E8
+  window.__weatherFlash = () => { flashT = 0.32; strikeBolt(); }; // B174 E8
+  window.__p54 = () => ({boltN: window.__boltN || 0, boltVis: boltGroup.visible, pending: +(window.__boltPending || 0).toFixed(3), pass: 54}); // B174 E8
   window.__weatherSet = v => {
     const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
@@ -4473,9 +4497,12 @@ tick(); setInterval(tick, 30000);
       if (scene.fog) scene.fog.color.copy(scene.background);
       sun.intensity += 4.2 * f;
       hemi.intensity += 1.1 * f;
+      const bf = Math.max(0, Math.min(1, (flashT - 0.18) / 0.14)); // B174 E8
+      boltMat.opacity = bf; boltGlowMat.opacity = bf * 0.35;
+      if (flashT <= 0.18) boltGroup.visible = false; // B174 E8
       flashT -= dt;
     }
-    if (stormW > 0.5 && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09) flashT = 0.32; // B143 E1
+    if (stormW > 0.5 && w > 0.6 && flashT <= 0 && Math.random() < dt * 0.09){ flashT = 0.32; strikeBolt(); } // B143 E1 + B174 E8
     // Pfuetzen: erscheinen nach dem Regen, verblassen in ~40 s
     const rainNow = w > 0.5;
     if (rainNow) wasRain = true;
@@ -4559,12 +4586,12 @@ tick(); setInterval(tick, 30000);
     const prevST = window.__extraTick;
     window.__extraTick = function(dt, t){
       if (prevST) prevST(dt, t);
+      if (window.__boltPending > 0){ window.__boltPending -= dt; if (window.__boltPending <= 0){ window.__boltPending = 0; if (soundOn) triggerThunder(); } } // B174 E8: Donner nach Distanz-Delay
       if (master){
         const g = soundOn ? (0.05 + 0.16 * w) * (0.7 + 0.3 * stormW) : 0;
         master.gain.value += (g - master.gain.value) * Math.min(1, dt * 3);
         rumbleG.gain.value = soundOn ? 0.12 * stormW : 0;
         filt.frequency.value = 650 + 2100 * w + 400 * stormW;
-        if (flashT > 0 && lastFlash <= 0) triggerThunder(); // B146 E4: Blitz loest Donner aus
         lastFlash = flashT;
       }
     }; // B145 E3
@@ -5457,7 +5484,7 @@ window.__pond = () => {
       '<div class="row"><span>Erfolgsquote</span><span>' + (tot ? Math.round(100 * fin / tot) + '%' : '–') + '</span></div>' +
       '<div class="row"><span>Services</span><span>' + BUILDINGS.length + '</span></div>' +
       '<div class="row"><span>Saison</span><span>' + (sb ? sb.textContent : "Sommer") + '</span></div>' +
-      '<div class="row"><span>Wetter</span><span>' + (window.__weather && window.__weather() ? "Regen" : "Klar") + '</span></div>';
+      '<div class="row"><span>Wetter</span><span>' + (window.__weatherMode ? (window.__weatherMode() === "gewitter" ? "Gewitter" : (window.__weatherMode() === "regen" ? "Regen" : "Klar")) : (window.__weather && window.__weather() ? "Regen" : "Klar")) + '</span></div>'; // B174 E8
     pnl.style.display = "block";
   };
   window.__panelOverview(true);
