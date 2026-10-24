@@ -2273,16 +2273,25 @@ function lifeStep(rb, dt, t, crowd){
       const o = L.chat;
       if (o && o.life && o.life.chat === rb){ o.life.chat = null; o.life.hold = 0.5 + Math.random()*2; }
       L.chat = null; L.hold = 0.5 + Math.random()*2;
-      // B172 L10: Trift-Weiterzug - nach Chat mit 40% ziehen beide zum selben Wanderpunkt weiter
-      if (o && o.g && o.life && Math.random() < 0.4){
+      window.__chatEnds = (window.__chatEnds || 0) + 1; // B181 L12 Zaehler
+      // B172 L10 -> B180 L11: Gruppierungs-Feinschliff - mit 55% wandern beide als
+      // koordinierte Gruppe: gemeinsamer Wanderpunkt, gegenlaeufige Seiten-Offsets,
+      // Partner-Referenz .grp fuer Geschwindigkeits-Kopplung im Walk-Pfad
+      if (o && o.g && o.life && Math.random() < 0.55){
         const w2 = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
-        if (rb.villager){ rb.route = lifeRoute(p.x, p.z, w2.x, w2.z); L.mode = "walk"; }
-        rb.target.set(w2.x + (Math.random()-0.5)*1.2, 0, w2.z + (Math.random()-0.5)*1.2);
-        if (o.villager){ o.route = lifeRoute(o.g.position.x, o.g.position.z, w2.x, w2.z); o.life.mode = "walk"; }
-        o.target.set(w2.x + (Math.random()-0.5)*1.6, 0, w2.z + (Math.random()-0.5)*1.6);
+        const ga = Math.random()*Math.PI*2, gr = 0.9 + Math.random()*0.5;
+        rb.life.grp = o; o.life.grp = rb; // B180 L11
+        window.__grpForms = (window.__grpForms || 0) + 1; // B181 L12 Zaehler
+        if (rb.villager) rb.route = lifeRoute(p.x, p.z, w2.x, w2.z);
+        rb.target.set(w2.x + Math.cos(ga)*gr, 0, w2.z + Math.sin(ga)*gr);
+        if (o.villager) o.route = lifeRoute(o.g.position.x, o.g.position.z, w2.x, w2.z);
+        o.target.set(w2.x - Math.cos(ga)*gr, 0, w2.z - Math.sin(ga)*gr);
+        L.mode = "walk"; o.life.mode = "walk"; // B181 L12: Gruppe startet sofort im Walk
+        if (!window.__p61) window.__p61 = function(){ return {regroup: (window.__lifeStat && window.__lifeStat.regroup) || 0, pass: 61}; }; // B181 L12
         o.life.hold = 2 + Math.random()*3; L.hold = 2 + Math.random()*3;
+        window.__lifeStat && (window.__lifeStat.grp = (window.__lifeStat.grp || 0) + 1);
         window.__lifeStat && (window.__lifeStat.stroll = (window.__lifeStat.stroll || 0) + 1);
-      } // B172 L10
+      } // B180 L11
     } else {
       const op = L.chat.g.position;
       const cdx = op.x - p.x, cdz = op.z - p.z, cd = Math.hypot(cdx, cdz);
@@ -2342,7 +2351,9 @@ function lifeStep(rb, dt, t, crowd){
       window.__lifeStat && (window.__lifeStat.minClose = Math.min(window.__lifeStat.minClose ?? 1e9, close)); // B141 L8
       if (od > 0.001 && od < 1.8){
         const push = (1.8 - od) / 1.8;
-        vx -= (ox/od) * push * 2.0; vz -= (oz/od) * push * 2.0;
+        const isGrp = (rb.life && rb.life.grp === o); // B180 L11
+        const pf = isGrp ? 0.55 : 1.0;
+        vx -= (ox/od) * push * 2.0 * pf; vz -= (oz/od) * push * 2.0 * pf;
         if ((bx*ox + bz*oz) / od > 0.3){ vx += bz * push * 1.6; vz += -bx * push * 1.6; yields++; }
         if (od < 0.55){ if (!iChat && !(o.life && o.life.chat)) window.__lifeStat && (window.__lifeStat.overlap = (window.__lifeStat.overlap || 0) + 1); vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; } // B141 L8
       }
@@ -2427,6 +2438,17 @@ function lifeStep(rb, dt, t, crowd){
     }
     // Stufe 112 / Beta 116: Block 3 LIFE Pass 7 - Steering-Inertia: Richtungswechsel
     // laufen weich ein statt ruckartig (lerp auf geglaettete Richtung)
+    { // B180 L11: Gruppen-Kopplung - langsamer werden, wenn der Partner hinten bleibt;
+      // Gruppe aufloesen bei grosser Distanz oder wenn einer chattet
+      const gp = rb.life && rb.life.grp;
+      if (gp && gp.g && gp.life && !gp.life.chat && !rb.life.chat){
+        const gx = gp.g.position.x - p.x, gz = gp.g.position.z - p.z, gd = Math.hypot(gx, gz);
+        if (gd > 6 || (gp.life && gp.life.grp !== rb)){ rb.life.grp = null; if (gp.life) gp.life.grp = null; }
+        else if (gd > 0.01 && ((gx*bx + gz*bz) / gd) < -0.85 && gd > 1.6){
+          vx *= 0.72; vz *= 0.72; window.__lifeStat && (window.__lifeStat.grpWait = (window.__lifeStat.grpWait || 0) + 1);
+        }
+      } else if (rb.life.grp) rb.life.grp = null;
+    } // B180 L11
     if (rb.svx == null){ rb.svx = bx; rb.svz = bz; }
     const slerp = Math.min(1, dt * 6);
     vx = rb.svx + (vx - rb.svx) * slerp;
@@ -2500,7 +2522,22 @@ function lifeStep(rb, dt, t, crowd){
         L.hold = 3 + Math.random()*4;
       }
     } else if (L.hold <= 0){
-      if (rb.villager || Math.random() < 0.6){
+      const gpH = rb.life.grp; // B181 L12: Gruppe bei neuem Ziel weiterfuehren statt aufloesen
+      if (gpH && gpH.g && gpH.life && gpH.life.grp === rb && !gpH.life.chat && !L.chat){
+        if (rb.g.uuid < gpH.g.uuid){
+          const w2 = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+          const ga = Math.random()*Math.PI*2, gr = 0.9 + Math.random()*0.5;
+          rb.target.set(w2.x + Math.cos(ga)*gr, 0, w2.z + Math.sin(ga)*gr);
+          gpH.target.set(w2.x - Math.cos(ga)*gr, 0, w2.z - Math.sin(ga)*gr);
+          if (rb.villager) rb.route = lifeRoute(p.x, p.z, rb.target.x, rb.target.z);
+          if (gpH.villager) gpH.route = lifeRoute(gpH.g.position.x, gpH.g.position.z, gpH.target.x, gpH.target.z);
+          gpH.life.mode = "walk"; gpH.life.hold = 4 + Math.random()*4;
+          L.mode = "walk"; L.hold = 4 + Math.random()*4;
+          window.__lifeStat && (window.__lifeStat.regroup = (window.__lifeStat.regroup || 0) + 1);
+        } else {
+          L.hold = 1.5 + Math.random()*2; // Follower wartet auf den Leader
+        }
+      } else if (rb.villager || Math.random() < 0.6){
         const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
         if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
         rb.target.set(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8);
@@ -4400,6 +4437,8 @@ tick(); setInterval(tick, 30000);
     const m = (v === 2 || v === "2" || v === "gewitter") ? 2 : ((v === 1 || v === "1" || v === true) ? 1 : 0);
     storm = m === 2; target = m ? 1 : 0; nextSwitch = Date.now() + (storm ? 200000 : 120000);
   };
+window.__p60 = function(){ let g = 0; for (const c of (window.__crowd || [])){ if (c.life && c.life.grp) g++; } return {grp: g, pass: 60}; }; // B180 L11
+window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: window.__grpForms || 0, regroup: (window.__lifeStat && window.__lifeStat.regroup) || 0, pass: 62}; }; // B181 L12
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)
@@ -4995,6 +5034,7 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
   // Roboter + Villagers: LIFE (Stufe 61) - Give-way, Ausweichen, endlose Loops
   if (robotProto && villagers.length < 6) spawnVillager();
   const crowd = robots.concat(villagers);
+  window.__crowd = crowd; // B180 L11: Probe-Zugriff
   for (const rb of robots){
     if (rb.cur === "wave" && rb.mixer){
       if (rb.waveStart === null) rb.waveStart = rb.mixer.time;

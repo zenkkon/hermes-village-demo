@@ -1850,3 +1850,21 @@ Gewitter ausgebaut (B174 E8): (1) Sichtbarer Blitz-Bolt: pro Strike wird aus 7 P
 - Probe window.__p60() = {grp, pass: 60} (zaehlt c.life.grp; crowd-Zugriff ueber window.__crowd).
 - Tests: Funktionstest 38a/38c (Ports 8896ff, chrome-headless-shell mit --enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader, Fehler-Recorder via addScriptToEvaluateOnNewDocument): p60 {grp 0, pass 60} antwortet, p59 skirt 10, p56 treeN 63/crBlobs 189/flare 63, p57 fringe 8, p53 rocks 41, p49 chokes 4, ERRCOUNT 0, window.__errs leer. Winter-Jump ok. Shots rv204_tag (455,068 B) + rv204_nacht (467,501 B) angesehen: Tag/Nacht intakt, KIRA-Chat-Panel korrekt, Winter-Schnee sauber. Offen: grp > 0-Nachweis (Paare nach Chat-Ende) war im Zeitbudget der Phase nicht mehr belegbar, Probe-Mechanik geprueft.
 - Naechster Baustein: Beta 181 (EXTRAS Pass 6: Wind-Streuung/Partikel-Feinschliff oder grp > 0-Nachweis + Feinschliff der Gruppenwanderung).
+
+## M187 - Beta 181: LIFE Pass 12 - Gruppen bleiben bestehend (2026-10-24, 13:30)
+
+Bugfix zu B180 L11: Die Gruppierung nach Chat-Ende zerfiel nach Sekunden.
+Ursache: Nach dem ersten gemeinsamen Ziel holten beide Partner unabhaengige
+neue Wanderziele, liefen auseinander (gd > 6) und der Kopplungsblock loeschte
+life.grp. Fix (B181 L12):
+- Hold-Ende: Hat ein Agent eine Gruppe, zieht der Leader (kleinere g.uuid)
+  ein neues gemeinsames Wanderziel fuer beide (gegenlaeufige Offsets),
+  der Follower wartet kurz auf die Neueinteilung. regroup-Zaehler.
+- Chat-Ende: Gruppe startet sofort im Walk-Modus (beide), Villager mit Route.
+- Zaehler/Probes: window.__chatEnds, __grpForms, Probe __p62 (chatEnds,
+  grpForms, regroup), __p61 bleibt Alias im Gruppen-Zweig.
+Funktionsnachweis (Headless, cdp40c): Erzwungenes Chat-Ende benachbarter
+Agenten -> grp:2, danach 40 s Persistenz, 4 Checks in Folge alle grp:2.
+Vorher: Gruppe nach ~4 s weg. Gruppierte Paare bleiben also bestehend und
+wandern koordiniert weiter. Probes p49/p56/p57 gruen, 0 JS-Fehler,
+Tag+Nacht-Shots rv205 geprueft.
