@@ -4552,6 +4552,32 @@ tick(); setInterval(tick, 30000);
     cur.gK = tgt.gK; cur.lK = tgt.lK; cur.sK = tgt.sK; cur.snow = tgt.snow;
     return true;
   };
+    // B170 E6: Herbst-Laufflecken am Boden (Deckung folgt leafAmt) + ungleichmaessige Terrain-Toenung
+  const _tc = new THREE.Color();
+  const leafPatchGroup = new THREE.Group(); scene.add(leafPatchGroup);
+  const leafPatchCols = [0xc9802e, 0xb5651d, 0xd9a441, 0x8f5a2b, 0xa86b2f];
+  window.__leafPatches = [];
+  (function leafPatches(){
+    const spots = [[-7.5,4.5],[6.5,7.2],[11.5,3.5],[-11,7.5],[-3,9.2],[2.5,-9.5],[9,-9],[-13,-6.5],[14,-7.5],[-8.5,-10.5],[4.5,12.5],[-15,2],[16,4.5],[8.5,11],[-2,-13],[12,-4.5],[-5,-4.5],[15.5,-11],[0.5,6.8],[-9.5,-2.5],[17,-2],[-16.5,-3.5]];
+    let pi = 0;
+    for (const s of spots){
+      let ok = true;
+      if (typeof LIFE !== "undefined" && LIFE.obstacles){ for (const ob of LIFE.obstacles){ if (Math.hypot(s[0]-ob.x, s[1]-ob.z) < (ob.r || 0.5) + 0.6){ ok = false; break; } } }
+      if (!ok) continue;
+      for (let j = 0; j < 2; j++){
+        const r = 0.5 + ((pi * 37 + j * 61) % 17) / 17 * 0.55;
+        const m = new THREE.Mesh(new THREE.CircleGeometry(r, 10),
+          new THREE.MeshStandardMaterial({color: leafPatchCols[(pi + j) % leafPatchCols.length], roughness: 1, transparent: true, opacity: 0, depthWrite: false}));
+        m.rotation.set(-Math.PI / 2, 0, ((pi * 53 + j * 29) % 628) / 100);
+        m.scale.set(1, 0.55 + ((pi * 13 + j * 7) % 10) / 10 * 0.5, 1);
+        m.position.set(s[0] + (j ? 0.7 * (((pi * 7) % 10) / 10 - 0.5) : 0), 0.045 + (pi % 5) * 0.004, s[1] + (j ? 0.6 * (((pi * 11) % 10) / 10 - 0.5) : 0));
+        leafPatchGroup.add(m); window.__leafPatches.push(m);
+      }
+      pi++;
+    }
+    leafPatchGroup.visible = false;
+  })(); // B170 E6
+  window.__p50 = () => ({patches: window.__leafPatches.length, leafOp: +(window.__leafPatches[0] ? window.__leafPatches[0].opacity.toFixed(3) : 0), tinted: (window.__terrainMats || []).filter(t => t.tintSeed !== undefined).length, pass: 50}); // B170 E6
   const N = 700, geo = new THREE.BufferGeometry(), pos = new Float32Array(N*3);
   for (let i = 0; i < N; i++){
     const r = 4 + Math.random()*30, a = Math.random()*Math.PI*2;
@@ -4602,7 +4628,11 @@ tick(); setInterval(tick, 30000);
     cur.snow += ((tgt.snow || 0) - cur.snow) * k;
     cur.grass.lerp(mk(tgt.grass), k); cur.leaf.lerp(mk(tgt.leaf), k);
     if (tgt.sea) cur.sea.lerp(mk(tgt.sea), k);
-    (window.__terrainMats || []).forEach(tm => tm.mat.color.lerp(cur.grass, cur.gK));
+    (window.__terrainMats || []).forEach(tm => { // B170 E6: per-Mat-HSL-Jitter (deterministisch) statt Flat-Tint
+      if (tm.tintSeed === undefined) tm.tintSeed = (Math.abs(Math.round(tm.day)) % 97) / 97;
+      _tc.copy(cur.grass).offsetHSL((tm.tintSeed - 0.5) * 0.035, (tm.tintSeed - 0.5) * 0.06, (tm.tintSeed - 0.5) * 0.035);
+      tm.mat.color.lerp(_tc, cur.gK);
+    });
     foliage.forEach(e => { e.mat.color.copy(e.base); e.mat.color.lerp(cur.leaf, cur.lK); });
     if (window.__seaMat) window.__seaMat.color.lerp(cur.sea, cur.sK);
     sun.color.lerp(mk(0xbfd4ff), cur.snow * 0.3);
@@ -4615,6 +4645,7 @@ tick(); setInterval(tick, 30000);
     lmat.opacity = leafAmt * 0.85;
     lpts.visible = leafAmt > 0.03;
     lmat.color.lerp(cur.leaf, k);
+    if (leafPatchGroup){ leafPatchGroup.visible = leafAmt > 0.03; window.__leafPatches.forEach((m, i) => { m.opacity = Math.max(0, leafAmt - 0.05) * (0.38 + ((i * 29) % 13) / 13 * 0.34); }); } // B170 E6
     if (lpts.visible){
       const la = lgeo.attributes.position.array;
       for (let i = 0; i < LN; i++){
