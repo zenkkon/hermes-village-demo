@@ -2223,6 +2223,16 @@ function lifeStep(rb, dt, t, crowd){
       const o = L.chat;
       if (o && o.life && o.life.chat === rb){ o.life.chat = null; o.life.hold = 0.5 + Math.random()*2; }
       L.chat = null; L.hold = 0.5 + Math.random()*2;
+      // B172 L10: Trift-Weiterzug - nach Chat mit 40% ziehen beide zum selben Wanderpunkt weiter
+      if (o && o.g && o.life && Math.random() < 0.4){
+        const w2 = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        if (rb.villager){ rb.route = lifeRoute(p.x, p.z, w2.x, w2.z); L.mode = "walk"; }
+        rb.target.set(w2.x + (Math.random()-0.5)*1.2, 0, w2.z + (Math.random()-0.5)*1.2);
+        if (o.villager){ o.route = lifeRoute(o.g.position.x, o.g.position.z, w2.x, w2.z); o.life.mode = "walk"; }
+        o.target.set(w2.x + (Math.random()-0.5)*1.6, 0, w2.z + (Math.random()-0.5)*1.6);
+        o.life.hold = 2 + Math.random()*3; L.hold = 2 + Math.random()*3;
+        window.__lifeStat && (window.__lifeStat.stroll = (window.__lifeStat.stroll || 0) + 1);
+      } // B172 L10
     } else {
       const op = L.chat.g.position;
       const cdx = op.x - p.x, cdz = op.z - p.z, cd = Math.hypot(cdx, cdz);
@@ -2415,6 +2425,22 @@ function lifeStep(rb, dt, t, crowd){
         const ddx = o.g.position.x - p.x, ddz = o.g.position.z - p.z, dd2 = Math.hypot(ddx, ddz);
         if (dd2 > 1.1 && dd2 < 8 && dd2 < bd){ bd = dd2; best = o; }
       }
+      // B172 L10: Drift zu Trifts - ohne Partner gelegentlich zu einem laufenden Chat-Paar hin
+      if (!best && Math.random() < 0.3){
+        let gp = null, gd = 1e9;
+        for (const o of crowd){
+          if (o === rb || !o.villager || !o.life || !o.life.chat || !o.g || !o.life.chat.g) continue;
+          const ddx = o.g.position.x - p.x, ddz = o.g.position.z - p.z, dd2 = Math.hypot(ddx, ddz);
+          if (dd2 < 12 && dd2 < gd){ gd = dd2; gp = o; }
+        }
+        if (gp){
+          const mp = gp.life.chat.g.position;
+          rb.target.set((gp.g.position.x + mp.x)/2 + (Math.random()-0.5)*1.4, 0, (gp.g.position.z + mp.z)/2 + (Math.random()-0.5)*1.4);
+          rb.route = lifeRoute(p.x, p.z, rb.target.x, rb.target.z);
+          L.mode = "walk"; L.hold = 3.5 + Math.random()*3;
+          window.__lifeStat && (window.__lifeStat.drift = (window.__lifeStat.drift || 0) + 1);
+        }
+      } // B172 L10
       if (best){ L.chatSeek = best; rb.route = []; L.mode = "walk"; window.__lifeStat && (window.__lifeStat.seek = (window.__lifeStat.seek || 0) + 1); }
     }
     L.hold -= dt;
@@ -2438,6 +2464,7 @@ function lifeStep(rb, dt, t, crowd){
   if (rb.mixer) rb.mixer.update(dt);
 }
 window.__spawnRobot = spawnRobot;
+window.__p52 = () => ({stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, pass: 52}); // B172 L10
 window.__lifeSpeed = 1;
 window.__lifeProbe = () => villagers.map(r => ({p: [+r.g.position.x.toFixed(2), +r.g.position.z.toFixed(2)], t: [+r.target.x.toFixed(2), +r.target.z.toFixed(2)], life: r.life, cur: r.cur}));
 window.__lifeSleep = () => ({nightK: +(window.__nightK || 0).toFixed(2), slept: villagers.filter(v => v.life && v.life.sleep).length, walkingHome: villagers.filter(v => v.life && v.life.sleep && v.life.mode === "walk").length});
