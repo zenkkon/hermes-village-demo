@@ -1836,3 +1836,10 @@ Gewitter ausgebaut (B174 E8): (1) Sichtbarer Blitz-Bolt: pro Strike wird aus 7 P
 - Probe window.__p58() = {near, far, mf, pass: 58}.
 - Tests: Funktionstest 34a (8867, nach Debs-Neuextraktion, erster Lauf ohne Wetter-Fix zeigte near/far 55/160 trotz mf 0.999 -> Fix): 6:40 near 21/far 75.1 mf 0.999, 12:00 near 55/far 160 mf 0, 22:30 mf 0. Winter-Jump 34d (8873): p38 unveraendert, Winter+Nebel kombinieren (7:30 mf 0.681, near 31.8/far 102.1). Mini-Check 34e (8875): p57 fringe 8, p56 treeN 63/crBlobs 189/flare 63, p53 rocks 41, p49 chokes 4, ERRCOUNT 0. Shots rv202_morgen (918,915 B, 34b/8869) + rv202_nacht (866,028 B, 34c/8871) angesehen: dichter warmer Morgennebel, Nacht unveraendert sauber.
 - Naechster Baustein: Beta 179 (LIFE Pass 11: Gruppierungs-Feinschliff oder WORLD Pass 28: Platz-/Gebaeude-Kanten weich).
+
+## M185 - Beta 179: WORLD Pass 28 - weiche Gebaeude-Sockel (2026-10-24, 09:30-Phase)
+
+- **B179 W28 Gebaeude-Sockel**: Unter jedem der 10 BUILDINGS-Objekte liegt jetzt ein weicher Erd-Sockel (gequetschte Kugel, SphereGeometry 18x10, scale hw*1.16 / 0.3 / hd*1.16, Farbe 0x94896e roughness 0.96) auf Box3-Basis; Kappen bei 2.4 Halbbreite gegen uebergrosse Schild-Bounds. Die harte Box-Kante auf dem Gras wird damit weich in einen Erdhuegel ueberfuehrt (analog Wurzelansatz B176 an den Baeumen). Counter window.__skirtN.
+- Probe window.__p59() = {skirt, pass: 59}.
+- Tests: Funktionstest 35a (8877): skirt 10, p58 Morgen-Nebel aktiv (mf 0.559 zur echten Zeit 9:52, near 36/far 112.5), p57 fringe 8, p56 treeN 63/crBlobs 189/flare 63, p53 rocks 41, p49 chokes 4 (overtake 6 = LIFE-Sim normal), Winter-Jump p38 unveraendert, ERRCOUNT 0. Shots rv203_tag (902,408 B, 35b/8879; erster Versuch vom 260s-Timeout erwischt, Retry 400s ok) + rv203_nacht (867,477 B, 35c/8881) angesehen: Sockel weich, Nacht intakt, Panel korrekt, ERRCOUNT 0.
+- Naechster Baustein: Beta 180 (LIFE Pass 11: Gruppierungs-Feinschliff oder EXTRAS Pass 6: Wind-Streuung/Partikel-Feinschliff).
