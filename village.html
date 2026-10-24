@@ -2510,7 +2510,7 @@ function lifeStep(rb, dt, t, crowd){
         p.z += (sz/sd) * push * 0.5 * dt;
       }
     }
-    if (rb.villager && !L.chat && !L.sleep && Math.random() < dt * 0.9){
+    if (rb.villager && !L.chat && !L.sleep && L.hold > 0.5 && Math.random() < dt * 0.9){ // B187 L18: Fix - Soziallogik darf Hold-Ende nicht verhungern lassen
       let best = null, bd = 1e9;
       for (const o of crowd){
         if (o === rb || !o.villager || !o.life || o.life.chat || !o.g) continue;
@@ -2557,8 +2557,17 @@ function lifeStep(rb, dt, t, crowd){
       }
     } else if (L.hold <= 0){
       const gpH = rb.life.grp; // B181 L12: Gruppe bei neuem Ziel weiterfuehren statt aufloesen
+      heD.n++; if (gpH) heD.grpSet++;
       if (gpH && gpH.g && gpH.life && gpH.life.grp === rb && !gpH.life.chat && !L.chat){
         if (rb.g.uuid < gpH.g.uuid){
+          if (Math.random() < 0.30){ // B187 L17: Gruppen-Re-Chat - die Gruppe unterhaelt sich beim Weiterwandern erneut
+            const until2 = t + 5 + Math.random()*6;
+            L.chat = gpH; L.until = until2; L.mode = "chat";
+            gpH.life.chat = rb; gpH.life.until = until2; gpH.life.mode = "chat"; gpH.life.hold = 0;
+            if (rb.route) rb.route = []; if (gpH.route) gpH.route = [];
+            window.__lifeStat && (window.__lifeStat.rechat = (window.__lifeStat.rechat || 0) + 1);
+            if (!window.__p65) window.__p65 = function(){ return {rechat: (window.__lifeStat && window.__lifeStat.rechat) || 0, pass: 65}; }; // B187 L17
+          } else {
           const w2 = wanderPick(p.x, p.z) // B185 L15;
           const ga = Math.random()*Math.PI*2, gr = 0.9 + Math.random()*0.5;
           rb.target.set(w2.x + Math.cos(ga)*gr, 0, w2.z + Math.sin(ga)*gr);
@@ -2568,6 +2577,7 @@ function lifeStep(rb, dt, t, crowd){
           gpH.life.mode = "walk"; gpH.life.hold = 4 + Math.random()*4;
           L.mode = "walk"; L.hold = 4 + Math.random()*4;
           window.__lifeStat && (window.__lifeStat.regroup = (window.__lifeStat.regroup || 0) + 1);
+          }
         } else {
           L.hold = 1.5 + Math.random()*2; // Follower wartet auf den Leader
         }
