@@ -2323,6 +2323,20 @@ function lifeStep(rb, dt, t, crowd){
   const dx = rb.target.x - p.x, dz = rb.target.z - p.z;
   const d = Math.hypot(dx, dz);
   if (d > 0.2){
+    if (rb.villager && !L.chat && !L.chatSeek && !L.grp && !L.sleep){ // B186 L16: Chat bei Begegnung im Walk - Naehe-Trigger, unabhaengig vom Idle-Ast
+      for (const o of crowd){
+        if (o === rb || !o.villager || !o.life || o.life.chat || o.life.chatSeek || o.life.grp || !o.g) continue;
+        const ex = o.g.position.x - p.x, ez = o.g.position.z - p.z, ed = Math.hypot(ex, ez);
+        if (ed < 2.5 && Math.random() < 0.25){
+          const until = t + 6 + Math.random()*7;
+          L.chat = o; L.until = until; L.mode = "chat"; window.__lifeStat && (window.__lifeStat.chat = (window.__lifeStat.chat || 0) + 1);
+          o.life.chat = rb; o.life.until = until; o.life.mode = "chat"; o.life.hold = 0;
+          if (o.route) o.route = []; rb.route = [];
+          window.__chatStarts = (window.__chatStarts || 0) + 1;
+          break;
+        }
+      }
+    }
     if (rb.villager && rb.route && rb.route.length){
       const nxt = rb.route[0];
       if (Math.hypot(nxt.x - p.x, nxt.z - p.z) < 0.55) rb.route.shift();
@@ -4459,7 +4473,7 @@ tick(); setInterval(tick, 30000);
   };
 window.__p60 = function(){ let g = 0; for (const c of (window.__crowd || [])){ if (c.life && c.life.grp) g++; } return {grp: g, pass: 60}; }; // B180 L11
 window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: window.__grpForms || 0, regroup: (window.__lifeStat && window.__lifeStat.regroup) || 0, pass: 62}; }; // B181 L12
-window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, vill: (typeof villagers !== "undefined" ? villagers.length : c.filter(x => x.villager).length), pass: 64}; }; // B184 L14
+window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, vill: (typeof villagers !== "undefined" ? villagers.length : c.filter(x => x.villager).length), starts: window.__chatStarts || 0, pass: 64}; }; // B184 L14
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)

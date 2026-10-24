@@ -1938,3 +1938,11 @@ Tag- und Nacht-Shots rv209 geprueft (sauber: Panels, KIRA-Bubble,
 Nacht-Laternen). Nachtrag: Die 14:00- und 14:30-Fires wurden vom Lauf-
 Budget abgeschnitten, Pass 15 wurde daher in dieser Phase 15:00 getestet
 und geshippt.
+
+## M192 - Beta 186: LIFE Pass 16 - Chat bei Begegnung im Walk (2026-10-24, 19:15)
+
+**Baustein:** LIFE Pass 16 (B186 L16). Naehe-Trigger startet Chats direkt im Walk: Villager im walk-Modus ohne Chat/Seek/Gruppe/Schlaf prueft pro Frame Agenten im Umkreis 2.5 Einheiten, 25 % Chance pro Begegnung -> sofortiger Chat-Start (beidseitig, until 6-13 s, route geleert), unabhaengig vom Idle-Ast. Schutz gegen doppelte Chats/Gruppen/Schlaf. Neuer Zaehler `window.__chatStarts`, Probe `__p64` um `starts` erweitert.
+
+**Tests:** Funktionstest headless (cdp48a, swiftshader-Flags): Natuerlicher Trigger mehrfach gezuendet - starts 3, chatNow 6 von 9 Agenten im Chat, vill 9, alle Probes intakt (p49 chokes 4/overtake 2, p56 treeN 63/crBlobs 189/flare 63, p57 fringe 8, p53 rocks 41, p63 wind 0.325/driftOn), window.__errs 0, 0 pageerror. Review rv210_tag.png + rv210_nacht.png angesehen: Dashboard/Tracker/Tabelle intakt, KIRA-Chat-Panel korrekt, keine Layout-Breaks. Kontext: Patch lag uncommitted im Arbeitsverzeichnis eines abgebrochenen Laufs, Diff geprueft, Test und Review hier nachgeholt.
+
+**Ship:** village.html 1.580.250 B (md5 d2ccb00bc9ad4427e7ed632eb7be2403), village-standalone.html synced, beta186.zip, Commit auf main, Push versucht.
