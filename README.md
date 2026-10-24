@@ -1900,3 +1900,18 @@ Bevoelkerung sind Begegnungen selten..grp blieb ueber den Lauf 0; der
 Mechanismus an sich ist durch B181 (erzwungenes Chat-Ende -> grp:2,
 40 s Persistenz) belegt. Naechster Hebel: Bevoelkerungsdichte/Plaza-
 Gewichtung der Wanderziele. Tag- und Nacht-Shots rv207 geprueft, sauber.
+
+## M190 - Beta 184: LIFE Pass 14 - Dichte + Plaza-Anziehung (2026-10-24, 15:20)
+
+B184 L14: Bevoelkerungsdichte erhoeht, Villager-Cap 6 -> 9; wanderPick() mit
+45% Plaza-Bias ersetzt alle vier Zufalls-Wander-Picks (Spawn, Gruppen-Ende,
+Einzel-Ziel) - die vier zentralen Wanderpunkte nahe der Plaza werden
+bevorzugt, damit sich Wege kreuzen. Probe __p64 erweitert um vill
+(Villager-Zahl). Funktionsbefund (Headless cdp42b, 85 s natuerlich): Dichte
+greift, vill 2 -> 7 im Lauf, Cap 9 aktiv; seek/stroll/chat blieben 0 -
+Ursache eingelesen: der Chat-Such-Zweig sitzt im Idle-Ast und Agenten
+waehlen nur alle ~30-60 s ein neues Ziel, im kurzen Fenster entstehen
+Begegnungen daher selten. 0 JS-Fehler, EXC 0, Tag- und Nacht-Shots rv208
+geprueft (sauber). Naechster Hebel: LIFE Pass 15 - Begegnungsfrequenz
+(kuerzere Zwischenziele oder Stroll auch waehrend walk), dann sollte der
+Counter greifen.

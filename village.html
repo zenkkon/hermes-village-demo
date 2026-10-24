@@ -2215,6 +2215,10 @@ BUILDINGS.forEach(bb => LIFE.obstacles.push({x: bb.position.x, z: bb.position.z,
   }
   if (window.__bridgeChoke) LIFE.chokes.push(window.__bridgeChoke); // B169 L9 Bruecke
   LIFE.chokes.push({x: 0.35, z: -5.3, w: 1.3}); // B169 L9 Gate-Durchgang (Plaza -> Cron Gatehouse)
+  function wanderPick(){ // B184 L14: 45% Plaza-Bias - zentrale Punkte bevorzugt, damit sich Wege kreuzen
+    if (Math.random() < 0.45) return LIFE.wander[(Math.random()*4)|0];
+    return wanderPick() // B184 L14 Plaza-Bias;
+  }
   window.__lifeChokes = LIFE.chokes; // B169 L9 Export fuer Probe
 function spawnVillager(){
   if (!robotProto) return;
@@ -2223,7 +2227,7 @@ function spawnVillager(){
   const h = Math.max(0.01, box.max.y - box.min.y);
   g.scale.setScalar(0.82 / h);
   g.traverse(o => { if (o.isMesh){ o.castShadow = true; } });
-  const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+  const w = wanderPick() // B184 L14 Plaza-Bias;
   const ox = (Math.random()-0.5)*1.6, oz = (Math.random()-0.5)*1.6;
   g.position.set(w.x + ox, 0, w.z + oz);
   const rec = {g, mixer: null, act: null, cur: "walk", target: new THREE.Vector3(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8), villager: true};
@@ -2278,7 +2282,7 @@ function lifeStep(rb, dt, t, crowd){
       // koordinierte Gruppe: gemeinsamer Wanderpunkt, gegenlaeufige Seiten-Offsets,
       // Partner-Referenz .grp fuer Geschwindigkeits-Kopplung im Walk-Pfad
       if (o && o.g && o.life && Math.random() < 0.55){
-        const w2 = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        const w2 = wanderPick() // B184 L14 Plaza-Bias;
         const ga = Math.random()*Math.PI*2, gr = 0.9 + Math.random()*0.5;
         rb.life.grp = o; o.life.grp = rb; // B180 L11
         window.__grpForms = (window.__grpForms || 0) + 1; // B181 L12 Zaehler
@@ -2539,7 +2543,7 @@ function lifeStep(rb, dt, t, crowd){
       const gpH = rb.life.grp; // B181 L12: Gruppe bei neuem Ziel weiterfuehren statt aufloesen
       if (gpH && gpH.g && gpH.life && gpH.life.grp === rb && !gpH.life.chat && !L.chat){
         if (rb.g.uuid < gpH.g.uuid){
-          const w2 = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+          const w2 = wanderPick() // B184 L14 Plaza-Bias;
           const ga = Math.random()*Math.PI*2, gr = 0.9 + Math.random()*0.5;
           rb.target.set(w2.x + Math.cos(ga)*gr, 0, w2.z + Math.sin(ga)*gr);
           gpH.target.set(w2.x - Math.cos(ga)*gr, 0, w2.z - Math.sin(ga)*gr);
@@ -2552,7 +2556,7 @@ function lifeStep(rb, dt, t, crowd){
           L.hold = 1.5 + Math.random()*2; // Follower wartet auf den Leader
         }
       } else if (rb.villager || Math.random() < 0.6){
-        const w = LIFE.wander[(Math.random()*LIFE.wander.length)|0];
+        const w = wanderPick() // B184 L14 Plaza-Bias;
         if (rb.villager) rb.route = lifeRoute(p.x, p.z, w.x, w.z);
         rb.target.set(w.x + (Math.random()-0.5)*1.8, 0, w.z + (Math.random()-0.5)*1.8);
         L.hold = L.vil ? (1.5 + Math.random()*3.5) : (4 + Math.random()*5);
@@ -4453,7 +4457,7 @@ tick(); setInterval(tick, 30000);
   };
 window.__p60 = function(){ let g = 0; for (const c of (window.__crowd || [])){ if (c.life && c.life.grp) g++; } return {grp: g, pass: 60}; }; // B180 L11
 window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: window.__grpForms || 0, regroup: (window.__lifeStat && window.__lifeStat.regroup) || 0, pass: 62}; }; // B181 L12
-window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, pass: 64}; }; // B183 L13
+window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, vill: (typeof villagers !== "undefined" ? villagers.length : c.filter(x => x.villager).length), pass: 64}; }; // B184 L14
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)
@@ -5096,7 +5100,7 @@ window.__p11 = () => ({cr: treeReg.filter(x => x.cr).length, rot0: treeReg[0] &&
     if (s.age > 1.6){ scene.remove(s.m); smoke.splice(i, 1); }
   }
   // Roboter + Villagers: LIFE (Stufe 61) - Give-way, Ausweichen, endlose Loops
-  if (robotProto && villagers.length < 6) spawnVillager();
+  if (robotProto && villagers.length < 9) spawnVillager(); // B184 L14 Cap 9
   const crowd = robots.concat(villagers);
   window.__crowd = crowd; // B180 L11: Probe-Zugriff
   for (const rb of robots){
