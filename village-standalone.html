@@ -634,6 +634,40 @@ const frostRing = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.62, 28), frostMat
 frostRing.rotation.x = -Math.PI / 2; frostRing.scale.set(1.04, 1.07, 1);
 frostRing.position.set(12.6, 0.614, 7.4); frostRing.visible = false; scene.add(frostRing);
 window.__frostMat = frostMat;
+// B190 E21: EXTRAS Pass 21 - Winter-Schneemaenner + Gluehwuermchen in warmen Naechten
+(function(){
+  const smMatW = new THREE.MeshStandardMaterial({color: 0xf6fafc, roughness: 0.85});
+  const smScarf = new THREE.MeshStandardMaterial({color: 0xd9534f, roughness: 0.8});
+  const smCoal = new THREE.MeshStandardMaterial({color: 0x2a2a30, roughness: 0.6});
+  const smNose = new THREE.MeshStandardMaterial({color: 0xe08a3c, roughness: 0.8});
+  const mkSnowman = (x, z) => {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.42, 22, 16), smMatW); body.position.y = 0.36; body.castShadow = true;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 14), smMatW); head.position.y = 0.94; head.castShadow = true;
+    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.26, 10), smNose); nose.position.set(0, 0.94, 0.3); nose.rotation.x = Math.PI / 2;
+    const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.055, 10, 20), smScarf); scarf.position.y = 0.72; scarf.rotation.x = Math.PI / 2;
+    const e1 = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 6), smCoal); e1.position.set(-0.09, 1.02, 0.24);
+    const e2 = e1.clone(); e2.position.x = 0.09;
+    const b1 = e1.clone(); b1.position.set(0, 0.52, 0.38); b1.scale.setScalar(1.3);
+    const b2 = b1.clone(); b2.position.y = 0.28;
+    g.add(body, head, nose, scarf, e1, e2, b1, b2);
+    g.position.set(x, 0.02, z); g.rotation.y = ((x * 73 + z * 41) % 628) / 100; g.scale.setScalar(0.001); g.visible = false;
+    scene.add(g); return g;
+  };
+  window.__snowMen = [mkSnowman(-2.4, 11.3), mkSnowman(9.6, -5.2)];
+  const FN = 26; window.__fireN = FN;
+  const fgeo = new THREE.BufferGeometry();
+  const fpos = new Float32Array(FN * 3);
+  for (let i = 0; i < FN; i++){
+    const a = (i * 137.5 % 360) * Math.PI / 180, r = 3.5 + ((i * 53) % 130) / 10;
+    fpos[i*3] = Math.cos(a) * r; fpos[i*3+1] = 0.4 + ((i * 29) % 10) / 10 * 0.9; fpos[i*3+2] = Math.sin(a) * r;
+  }
+  fgeo.setAttribute('position', new THREE.BufferAttribute(fpos, 3));
+  const fmat = new THREE.PointsMaterial({color: 0xffe08a, size: 0.1, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending});
+  const fg = new THREE.Points(fgeo, fmat); fg.visible = false; scene.add(fg);
+  window.__fireGroup = fg; window.__fireGeo = fgeo; window.__fireflyMat = fmat;
+  window.__p70 = () => ({sm: (window.__snowMen || []).length, smVis: (window.__snowMen || []).filter(g => g.visible).length, ff: window.__fireflyMat ? +window.__fireflyMat.opacity.toFixed(2) : 0, pass: 70}); // B190 E21
+})();
 
 // Bach vom Teich zur Inselkante + Holzbruecke
 (function bach(){
@@ -4873,6 +4907,23 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
     snowRoofMat.opacity = cur.snow * 0.96;
     iceMat.opacity = cur.snow * 0.92; iceMesh.visible = cur.snow > 0.04;
     if (frostMat){ frostMat.opacity = cur.snow * 0.8; frostRing.visible = cur.snow > 0.04; } // B171 E7
+    // B190 E21: Schneemaenner-Fade + Gluehwuermchen (warme Naechte, kein Winter)
+    const smK = Math.max(0, (cur.snow - 0.45) / 0.55);
+    (window.__snowMen || []).forEach(g => { g.scale.setScalar(Math.max(0.001, smK)); g.visible = smK > 0.02; });
+    if (window.__fireflyMat){
+      const ffK = Math.max(0, ((window.__nightK || 0) - 0.35) / 0.65) * (1 - cur.snow);
+      window.__fireflyMat.opacity = ffK * 0.85;
+      window.__fireGroup.visible = ffK > 0.02;
+      if (window.__fireGroup.visible){
+        const fa = window.__fireGeo.attributes.position.array;
+        for (let i = 0; i < window.__fireN; i++){
+          fa[i*3] += Math.sin(t * 0.6 + i * 1.7) * dt * 0.35;
+          fa[i*3+1] += Math.sin(t * 0.9 + i) * dt * 0.12;
+          fa[i*3+2] += Math.cos(t * 0.55 + i * 1.1) * dt * 0.3;
+        }
+        window.__fireGeo.attributes.position.needsUpdate = true;
+      }
+    }
     const aurNf = Math.max(0, ((window.__nightK || 0) - 0.3) / 0.7);
     auroraMats.forEach((m, i) => { m.opacity = Math.max(0, cur.snow * aurNf * (0.2 + 0.12 * Math.sin(t * 0.45 + i * 1.7))); });
     auroraGroup.visible = auroraMats[0].opacity > 0.008;

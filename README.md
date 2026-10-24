@@ -1977,3 +1977,13 @@ und geshippt.
   3) Licht: hemi 0.82 -> 0.88 (weicheres Fuelllicht), sun 1.0 -> 0.94 (sanftere Sonne, geringere Kontraste).
 - Headless-Review Tag+Nacht (rv213, village-standalone.html, 800x450): Tag ?time=14:00 (rv213_tag.png, 322.341 B, t=224) und Nacht ?time=22:30 (rv213_nacht.png, 291.095 B, t=363) angesehen: UI komplett (Topbar, KPI, Detail-Panel, tabbed Agenten-Tabelle 7 Agenten idle, Lauf-Tracker, v1.2), Szene sauber, Kronen/glattere Patches sichtbar, Nacht mit Laternen + Fensterlicht, perr=[] in beiden Laeufen (0 JS-Fehler), lifeStat aktiv (Tag: chat 3/overtake 12; Nacht: overlap 2).
 - SHIP: beta189.zip (village.html + village-standalone.html), README M196, Commit B189 L20.
+
+## M197 - Beta 190: EXTRAS Pass 21 - Winter-Schneemaenner + Gluehwuermchen in warmen Naechten (B190 E21)
+- Ziel: EXTRAS-Block vertiefen (Jahreszeitendressing + Nacht-Atmosphaere).
+- Neu (beide Dateien identisch, md5 4e8f0dd558..., 1.584.478 B):
+  1) 2 Schneemaenner (Kugelkoerper+Kopf, Karottennase, roter Schal, Kohleaugen/-knöpfe) bei (-2.4, 11.3) und (9.6, -5.2); Fade mit cur.snow (ab 0.45), im Sommer unsichtbar.
+  2) 26 Gluehwuermchen (additive Points, warm 0xffe08a) wandern in warmen Naechten (nightK > 0.35, kein Winter) sanft ueber der Wiese; Opacity-Fade.
+  3) Probe __p70 (sm/smVis/ff, pass 70).
+- Headless-Review (rv214, village-standalone.html, 800x450, Raw-CDP-Capture): Tag ?time=14:00 (rv214_tag.png, 324.555 B), Sommer-Nacht ?time=23:00 (rv214_sommernacht.png, 311.182 B; p70 ff=0.85 -> Gluehwuermchen aktiv), Winter-Nacht (rv214_winternacht.png, 327.641 B; p70 smVis=2, ff=0 -> Schneemaenner sichtbar, Gluehwuermchen aus, Schnee + Aurora). UI in allen drei komplett (Topbar, KPI, Detail-Panel, tabbed Tabelle 7 Agenten idle, Lauf-Tracker, v1.2), perr=0 in allen Laeufen. Beobachtung (nicht B190-regressiv, vor E21 vorhanden): diagonal Streifen oben links in allen drei Shots -> als bestehendes Wetter-/Partikelsystem eingeordnet, Check in einer spaeteren Phase.
+- Infrastruktur-Notiz: Sandbox-Restart riss /tmp weg; Chrome-Lib-Abhaengigkeiten erneut nachgebaut (9+libXi via Debian-Pool direkt, /tmp/chromedeps); Raw-CDP-Capture laeuft stabil (gleicher Target wie Playwright-Page: ctx.pages[0]).
+- SHIP: beta190.zip (village.html + village-standalone.html), README M197, Commit B190 E21.
