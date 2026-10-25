@@ -2008,3 +2008,13 @@ und geshippt.
   5) Gruppen-Kopplung: Warte-Bremse 0.72 -> 0.78 (weniger Stotter-Effekt).
 - Headless-Review (rv216, 800x450, Raw-CDP-Playwright): Soak-Taglauf (7 Samples ueber ~6 min) + Tag-Shot rv216_tag.png 319.297 B: UI komplett, Daecher aus B191 glatt, Voegel oben links bestaetigt. Nacht rv216_nacht.png 304.453 B: Laternen/Fensterlicht, Gluehwuermchen ff=0.85, 2 schlafende Villager (slept=2). Kennzahlen: minD 0.57-0.72 (ueber 0.55-Schwelle), overlap nur 1-2 Ereignisse pro 30-s-Fenster, grpWait 0, yields 15-19, headOn 0-10 (Abbremsung greift), perr=0 (Nachtl Lauf; Tag-Soak stdout ging beim Timeout verloren, Shot rendert sauber).
 - SHIP: beta192.zip (village.html + village-standalone.html), README M199, Commit B192 L19.
+
+## M200 - Beta 193: WORLD Pass 22 - Boden- und Weg-Weichheit (B193 W22)
+- Ziel: Block 5 WORLD, Boden/Welt weicher und organischer (weniger blockig).
+- Neu (beide Dateien identisch, md5 26a54483cb..., 1.584.912 B):
+  1) Weg-Segmente: organische Breite 0.91-0.99 je Segment (statt fix 0.95), Rundung 0.013 -> 0.02.
+  2) Weg-Hoehenwobble weicher ((i*41)%7)*0.001 statt (i%2)*0.002.
+  3) Gras-Patches: 3 neue weiche Flecken (-7.5,-1.5 / 12.5,8.5 / 5.5,-3.5), Opacity-Staffelung 0.16/0.175/0.19.
+  4) Insel-Zylinder 56 -> 64 Segmente, Wasser-Scheibe 56 -> 64 (glatte Silhouette).
+- Headless-Review (rv217, 800x450, je eigene Chrome-Instanz wegen 2. Goto-Timeout): Tag 14:00 (rv217_tag.png 324.258 B, minD 0.589) + Nacht 23:00 (rv217_nacht.png 308.524 B, Laternen/Fensterlicht/Gluehwuermchen ff=0.85), UI in beiden komplett, Wege organisch, Inselform glatt, perr=0 in beiden Laeufen.
+- SHIP: beta193.zip (village.html + village-standalone.html), README M200, Commit B193 W22.

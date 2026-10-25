@@ -255,7 +255,7 @@ layers.forEach(L => {
   const tm = new THREE.MeshStandardMaterial({color: L.c, roughness: 0.82}); // Stufe 118 / Beta 130: WORLD Pass 13 Terrain-Clay
   window.__terrainMats.push({mat: tm, day: L.c});
   const m = new THREE.Mesh(
-    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 56),
+    new THREE.CylinderGeometry(L.r, L.r * 0.985, L.h, 64), // B193 W22
     tm);
   m.position.y = L.y - L.h / 2 + 0.6;
   m.receiveShadow = true; scene.add(m);
@@ -266,17 +266,18 @@ layers.forEach(L => {
   const spots = [
     [-9.5, 3.5, 2.6], [6.5, 5.5, 2.2], [-5.5, -8.5, 2.4], [11.5, -7.5, 2.0],
     [-14.5, 6.5, 2.1], [2.5, 9.5, 1.9], [14.5, 3.5, 1.8], [-11.5, -6.5, 2.2],
-    [8.5, 11.5, 1.7], [-2.5, -13.5, 2.0]
+    [8.5, 11.5, 1.7], [-2.5, -13.5, 2.0], // B193 W22: neue weiche Flecken
+    [-7.5, -1.5, 1.6], [12.5, 8.5, 1.5], [5.5, -3.5, 1.7]
   ];
   window.__p8 = {patches: 0};
   spots.forEach((p, i) => {
     const m = new THREE.Mesh(new THREE.CircleGeometry(p[2], 40),
-      new THREE.MeshStandardMaterial({color: gCols[i % 4], roughness: 1, transparent: true, opacity: 0.19, depthWrite: false}));
+      new THREE.MeshStandardMaterial({color: gCols[i % 4], roughness: 1, transparent: true, opacity: 0.16 + (i % 3) * 0.015, depthWrite: false})); // B193 W22
     m.rotation.x = -Math.PI / 2; m.position.set(p[0], 0.012 + i * 0.0005, p[1]);
     m.renderOrder = 1; scene.add(m); window.__p8.patches++;
   });
 })();
-const water = new THREE.Mesh(new THREE.CircleGeometry(80, 56),
+const water = new THREE.Mesh(new THREE.CircleGeometry(80, 64), // B193 W22
   new THREE.MeshStandardMaterial({color: 0x2c5f86, roughness: 0.14, metalness: 0.22, envMapIntensity: 0.85})); // Stufe 118 / Beta 132: Pass 15 Wasser-Clay
 water.rotation.x = -Math.PI/2; water.position.y = -5.4;
 window.__seaMat = water.material;
@@ -3350,8 +3351,8 @@ tick(); setInterval(tick, 30000);
         const segL = Math.hypot(pt[0]-prev[0], pt[1]-prev[1]) || 0.001;
         const pm = pathMat.clone();
         pm.color.offsetHSL(0, (i * 37 % 5 - 2) * 0.008, (i * 53 % 7 - 3) * 0.012);
-        const seg = new THREE.Mesh(new rboxGeo(0.95, 0.04, segL + 0.14, 0.013), pm);
-        seg.position.set((pt[0]+prev[0])/2, 0.615 + (i % 2) * 0.002, (pt[1]+prev[1])/2);
+        const seg = new THREE.Mesh(new rboxGeo(0.91 + ((i * 29) % 5) * 0.02, 0.04, segL + 0.14, 0.02), pm); // B193 W22
+        seg.position.set((pt[0]+prev[0])/2, 0.615 + ((i * 41) % 7) * 0.001, (pt[1]+prev[1])/2); // B193 W22
         seg.rotation.y = Math.atan2(pt[0]-prev[0], pt[1]-prev[1]);
         seg.receiveShadow = true;
         scene.add(seg);
