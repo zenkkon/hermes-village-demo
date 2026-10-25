@@ -4525,6 +4525,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
   window.__blizW = {v: 0}; let wobCur = 0; // B195 X23
   window.__blizGet = () => ({winterW: +winterW.toFixed(3), stormW: +stormW.toFixed(3)}); // B195 X23
   window.__p71 = () => ({snowOp: +mat.opacity.toFixed(3), snowSize: +mat.size.toFixed(3), fall: +fallCur.toFixed(1), wob: +wobCur.toFixed(2), blizW: +window.__blizW.v.toFixed(2), stormW: +stormW.toFixed(2), winterW: +winterW.toFixed(2), pass: 71}); // B195 X23
+  window.__springW = window.__springW || {v: 0}; // B196 X24: Fruehlings-Zustand
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)
   const autumnW = {v: 0};
   const leafCols = [0xd97a2b, 0xc75d2a, 0xe0a13c, 0x8f4b1f];
@@ -4547,6 +4548,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
     lastSe = se; lastWinter = se === "winter";
     winterW += ((lastWinter ? 1 : 0) - winterW) * Math.min(1, dt * 1.0); // B144 E2: Winter-Uebergang gleitet
     autumnW.v += ((lastSe === "herbst" ? 1 : 0) - autumnW.v) * Math.min(1, dt * 0.8); // B152 X10: Herbst-Uebergang gleitet
+    window.__springW.v += ((window.__season ? (window.__season() === "fruehling" ? 1 : 0) : 0) - window.__springW.v) * Math.min(1, dt * 0.8); // B196 X24: Fruehlings-Uebergang gleitet
     leaves.forEach(lf => { // B152 X10: Laub faellt mit Wind und Drall
       lf.material.opacity = lf.userData.bo * autumnW.v; // B194 X22
       lf.visible = autumnW.v > 0.02;
@@ -4964,6 +4966,51 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
       bgeo.attributes.position.needsUpdate = true;
     }
     sun.color.lerp(mk(0xfff0d6), petalAmt * 0.2);
+    if (!window.__b196init){ // B196 X24: Blieten-Patches + Bluetenpetals
+      window.__b196init = true;
+      const flowerCols = [0xffb7c5, 0xfff3b0, 0xffffff, 0xc9a0dc];
+      window.__flowers = [];
+      const flowerSpots = [[-6.2,5.8],[7.8,6.1],[12.6,2.4],[-10.2,6.9],[-2.1,8.6],[3.6,-8.4],[10.2,-8.1],[-12.1,-5.4],[4.9,11.8],[14.2,-6.6],[-6.8,-9.7],[1.2,6.2]];
+      for (const s of flowerSpots){
+        let ok = true;
+        if (typeof LIFE !== "undefined" && LIFE.obstacles){ for (const ob of LIFE.obstacles){ if (Math.hypot(s[0]-ob.x, s[1]-ob.z) < (ob.r || 0.5) + 0.5){ ok = false; break; } } }
+        if (!ok) continue;
+        for (let j = 0; j < 6; j++){
+          const fm = new THREE.MeshStandardMaterial({color: flowerCols[(j + Math.floor(Math.abs(s[0]*7+s[1]*3)) % 4)], roughness: 0.9, transparent: true, opacity: 0});
+          const fb = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random()*0.05, 8, 6), fm);
+          const ang = Math.random()*Math.PI*2, rad = 0.25 + Math.random()*0.55;
+          fb.position.set(s[0] + Math.cos(ang)*rad, 0.12 + Math.random()*0.06, s[1] + Math.sin(ang)*rad);
+          fb.userData = {by: fb.position.y, ph: Math.random()*6.28};
+          fb.castShadow = false; fb.receiveShadow = false;
+          scene.add(fb); window.__flowers.push(fb);
+        }
+      }
+      const petalCols = [0xffc0cb, 0xffd9e3, 0xfff0f5];
+      window.__petals = [];
+      for (let i = 0; i < 40; i++){
+        const pm = new THREE.MeshBasicMaterial({color: petalCols[i % 3], side: THREE.DoubleSide, transparent: true, opacity: 0});
+        const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.09 + Math.random()*0.05, 0.09 + Math.random()*0.05), pm);
+        pl.position.set((Math.random() - 0.5) * 30, 0.4 + Math.random() * 7, (Math.random() - 0.5) * 30);
+        pl.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+        pl.userData = {fy: 0.35 + Math.random()*0.3, ph: Math.random()*Math.PI*2, sr: 0.6 + Math.random()*1.2, bo: 0.78 + Math.random()*0.2};
+        scene.add(pl); window.__petals.push(pl);
+      }
+      window.__p72 = () => ({springW: +window.__springW.v.toFixed(2), flowerN: window.__flowers.length, petalN: window.__petals.length, pass: 72}); // B196 X24
+    }
+    const fsw = window.__springW.v;
+    for (const fb of window.__flowers){ // B196 X24: Blieten atmen im Fruehling
+      fb.material.opacity = 0.92 * fsw; fb.visible = fsw > 0.02;
+      if (fb.visible) fb.position.y = fb.userData.by + Math.sin(t * 1.3 + fb.userData.ph) * 0.02 * fsw;
+    }
+    for (const pl of window.__petals){ // B196 X24: Bluetenpetals treiben wie Laub, sanfter
+      pl.material.opacity = pl.userData.bo * fsw * 0.8; pl.visible = fsw > 0.02;
+      if (!pl.visible) continue;
+      pl.position.y -= dt * pl.userData.fy;
+      pl.position.x += dt * 1.1; pl.position.z += Math.sin(t * 0.9 + pl.userData.ph * 6) * dt * 0.5;
+      if (pl.position.x > 16) pl.position.x = -16;
+      pl.rotation.x += dt * pl.userData.sr; pl.rotation.z += dt * pl.userData.sr * 0.7;
+      if (pl.position.y < 0.05){ pl.position.y = 7 + Math.random() * 3; pl.position.z = (Math.random() - 0.5) * 30; }
+    }
     if (scene.fog){ const bz = window.__blizGet ? window.__blizGet() : {winterW: 0, stormW: 0}; window.__blizW.v = bz.winterW * bz.stormW; scene.fog.far = 160 - cur.snow * 70 - 85 * (window.__morningFog || 0) - window.__blizW.v * 45; scene.fog.near = 55 - cur.snow * 35 - 34 * (window.__morningFog || 0) - window.__blizW.v * 20; } // B178 E10 // B195 X23: Blizzard-Dunst
     if (name !== lastSeasBtn){
       lastSeasBtn = name;
