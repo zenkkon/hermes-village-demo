@@ -312,12 +312,12 @@ for (let i = 0; i < 3; i++){
     {x: 6, z: 42, r: 5, h: 9}
   ];
   defs.forEach(d => {
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r, d.h, 20),
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r, d.h, 32),
       new THREE.MeshStandardMaterial({color: 0x89949c, roughness: 1}));
     body.position.set(d.x, d.h/2 - 3, d.z);
     scene.add(body);
     const snowH = d.h * 0.3;
-    const snow = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r * 0.42, snowH, 16),
+    const snow = new THREE.Mesh(new THREE.CylinderGeometry(0.01, d.r * 0.42, snowH, 28),
       new THREE.MeshStandardMaterial({color: 0xe6edf3, roughness: 0.9}));
     snow.position.set(d.x, d.h - 3 - snowH/2 + 0.05, d.z);
     snow.rotation.y = 0.4;
@@ -412,11 +412,11 @@ function cottage(x, z, w, h, d, wall, roof, name, role, jobs, ry){
   const roofMat = matWall(roof);
   roofMat.color.offsetHSL((((x*7 + z*3) % 5) - 2) * 0.008, 0, (((x*3 + z*11) % 7) - 3) * 0.022);
   // Stufe 114 / Beta 118: Block 5 WORLD Pass 10 - Silhouetten weicher (mehr Segmente)
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 16), roofMat);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(w*0.72, w*0.78, h*0.14, 28), roofMat);
   cap.position.y = h + h*0.07; cap.rotation.y = Math.PI/4; cap.castShadow = true; g.add(cap);
-  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 16), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
+  const top = new THREE.Mesh(new THREE.ConeGeometry(w*0.78, h*0.62, 32), roofMat); window.__p8.roofSeg = top.geometry.parameters.radialSegments;
   top.position.y = h + h*0.14 + h*0.31; top.rotation.y = Math.PI/4; top.castShadow = true; g.add(top);
-  const snowTop = new THREE.Mesh(new THREE.ConeGeometry(w*0.78*0.55, h*0.34, 16), snowRoofMat);
+  const snowTop = new THREE.Mesh(new THREE.ConeGeometry(w*0.78*0.55, h*0.34, 32), snowRoofMat);
   snowTop.position.y = (h + h*0.14 + h*0.62) - h*0.17; snowTop.rotation.y = Math.PI/4; g.add(snowTop);
   window.__snowRoofs.push(snowTop);
   // Tuer + Fenster vorn und seitlich
@@ -446,11 +446,11 @@ window.__studioSwap = studio;
 // 2) Research Observatory: Kuppel
 function dome(x, z){
   const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 2.1, 2.0, 18), matWall(0xd8d3c8));
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 2.1, 2.0, 28), matWall(0xd8d3c8));
   base.name = "do_base";
   base.position.y = 1.0; base.castShadow = true; base.receiveShadow = true; g.add(base);
   const slitMat = new THREE.MeshStandardMaterial({color: 0x1c2430, emissive: 0x9fc4ff, emissiveIntensity: 0.5});
-  const domeM = new THREE.Mesh(new THREE.SphereGeometry(1.75, 20, 12, 0, Math.PI*2, 0, Math.PI/2), matWall(0x8b93a8));
+  const domeM = new THREE.Mesh(new THREE.SphereGeometry(1.75, 28, 20, 0, Math.PI*2, 0, Math.PI/2), matWall(0x8b93a8));
   domeM.position.y = 2.0; domeM.castShadow = true; g.add(domeM);
   domeM.name = "do_dome";
   const slit = new THREE.Mesh(new rboxGeo(0.42, 1.1, 1.9, 0.05), slitMat);
@@ -516,9 +516,9 @@ function hotel(x, z){
     const winS = winPlane(0.5, 0.62); winS.position.set(w/2 + 0.05, f*fh + fh*0.55, 0); winS.rotation.y = Math.PI/2; g.add(winS);
   }
   // Flaches Walmdach
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 16), matWall(0x6a4fa3));
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74, 1.0, 32), matWall(0x6a4fa3));
   roof.position.y = floors*fh + 0.5; roof.rotation.y = Math.PI/4; roof.castShadow = true; roof.name = "mh_roof"; g.add(roof);
-  const snowMh = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74*0.6, 0.4, 16), snowRoofMat);
+  const snowMh = new THREE.Mesh(new THREE.CylinderGeometry(0.01, w*0.74*0.6, 0.4, 32), snowRoofMat);
   snowMh.position.y = floors*fh + 0.8; snowMh.rotation.y = Math.PI/4; g.add(snowMh);
   window.__snowRoofs.push(snowMh);
   // Leuchtschild
@@ -543,7 +543,7 @@ const media = hotel(-10.5, 3.5); window.__mhSwap = media;
 // 5) Cron Gatehouse: Uhrturm mit gehender Uhr
 function clockTower(x, z){
   const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 18), matWall(0x9aa0ac));
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 5.6, 28), matWall(0x9aa0ac));
   base.position.y = 2.8; base.castShadow = true; base.receiveShadow = true; g.add(base); base.name = "gt_base";
   const face = new THREE.Mesh(new THREE.CircleGeometry(0.78, 24),
     new THREE.MeshStandardMaterial({color: 0xfff6e6, emissive: 0xffe9b0, emissiveIntensity: 0.15}));
@@ -555,9 +555,9 @@ function clockTower(x, z){
   hourH.geometry.translate(0, 0.17, 0); hourH.position.set(0, 4.9, 1.27); g.add(hourH);
   const minH = new THREE.Mesh(softSlab(0.06, 0.03, 0.6, 0.025), handM); // B167 X24
   minH.geometry.translate(0, 0.27, 0); minH.position.set(0, 4.9, 1.27); g.add(minH);
-  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 16), matWall(0x3f6fb5));
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(1.45, 1.7, 32), matWall(0x3f6fb5));
   cone.position.y = 5.6 + 0.85; cone.castShadow = true; g.add(cone); cone.name = "gt_roof";
-  const snowGt = new THREE.Mesh(new THREE.ConeGeometry(0.8, 0.58, 16), snowRoofMat);
+  const snowGt = new THREE.Mesh(new THREE.ConeGeometry(0.8, 0.58, 32), snowRoofMat);
   snowGt.position.y = 7.3 - 0.29; snowGt.rotation.y = Math.PI/4; g.add(snowGt);
   window.__snowRoofs.push(snowGt);
   const ball = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12),
@@ -583,7 +583,7 @@ function stiltHouse(x, z, ry){
   }
   const body = new THREE.Mesh(new rboxGeo(1.7, 1.1, 1.5, 0.05), matWall(0xf2e3c9));
   body.name = "wh_body"; body.position.y = 1.85; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 20), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide // B191 W21
+  const roof = new THREE.Mesh(lumpyCone(new THREE.ConeGeometry(1.45, 0.85, 32), 7.3, 0.08), matWall(0xd97e3f)); // B161 X19: weiches Lehm-Dach statt Pyramide // B191 W21
   roof.name = "wh_roof"; roof.position.y = 2.82; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const win = winPlane(0.4, 0.42); win.position.set(0, 1.95, 0.78); g.add(win);
   const lamp = new THREE.PointLight(0xffb340, 0.3, 6); lamp.position.set(0, 2.0, 1.2); g.add(lamp);
@@ -647,7 +647,7 @@ window.__frostMat = frostMat;
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 14), smMatW); head.position.y = 0.94; head.castShadow = true;
     const nose = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.26, 10), smNose); nose.position.set(0, 0.94, 0.3); nose.rotation.x = Math.PI / 2;
     const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.055, 10, 20), smScarf); scarf.position.y = 0.72; scarf.rotation.x = Math.PI / 2;
-    const e1 = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 6), smCoal); e1.position.set(-0.09, 1.02, 0.24);
+    const e1 = new THREE.Mesh(new THREE.SphereGeometry(0.028, 12, 9), smCoal); e1.position.set(-0.09, 1.02, 0.24);
     const e2 = e1.clone(); e2.position.x = 0.09;
     const b1 = e1.clone(); b1.position.set(0, 0.52, 0.38); b1.scale.setScalar(1.3);
     const b2 = b1.clone(); b2.position.y = 0.28;
@@ -730,7 +730,7 @@ window.__frostMat = frostMat;
   for (const s of [-1, 1]){
     const lp = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.5, 10), matWall(0x4a4a4a));
     lp.position.set(s * 1.0, 0.95, 0); bridge.add(lp);
-    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), new THREE.MeshStandardMaterial({color: 0xffe9b0, emissive: 0xffd27a, emissiveIntensity: 0.4}));
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12), new THREE.MeshStandardMaterial({color: 0xffe9b0, emissive: 0xffd27a, emissiveIntensity: 0.4}));
     lamp.position.set(s * 1.0, 1.23, 0); bridge.add(lamp);
   }
   bridge.position.set(mid[0], 0, mid[1]);
@@ -762,7 +762,7 @@ window.__frostMat = frostMat;
   lob.position.set(11.3, 0.603, 6.2); scene.add(lob);
   // B173 W25: softRock - organisch verzeichnete, geglattete Felsen statt harte Dodekaeder
   function softRock(rad, seed){
-    const g = new THREE.SphereGeometry(rad, 10, 8);
+    const g = new THREE.SphereGeometry(rad, 16, 12);
     const pos = g.attributes.position;
     for (let i = 0; i < pos.count; i++){
       const vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
@@ -800,7 +800,7 @@ window.__frostMat = frostMat;
   const reedM = [0x3d7a3f, 0x4d8a4a];
   [[9.0,6.5],[11.6,10.2],[16.1,5.6]].forEach((p, ci) => {
     for (let i = 0; i < 3; i++){
-      const reed = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.42 + i * 0.09, 8), matWall(reedM[i % 2])); // B137 P20
+      const reed = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.42 + i * 0.09, 14), matWall(reedM[i % 2])); // B137 P20
       reed.position.set(p[0] + (i - 1) * 0.09, 0.24, p[1] + (i % 2) * 0.06);
       reed.rotation.z = (i - 1) * 0.12; scene.add(reed);
     }
@@ -840,7 +840,7 @@ function buildBoathouse(x, z, ry){
   const g = new THREE.Group();
   const body = new THREE.Mesh(new rboxGeo(2.0, 1.4, 1.8, 0.05), matWall(0x7a94b8));
   body.position.y = 0.7; body.castShadow = true; g.add(body);
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 18), matWall(0x34528a)); // B140 P21 // B191 W21
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 1.35, 0.9, 28), matWall(0x34528a)); // B140 P21 // B191 W21
   roof.position.y = 1.85; roof.rotation.y = Math.PI/4; roof.castShadow = true; g.add(roof);
   const door = new THREE.Mesh(new rboxGeo(0.8, 0.9, 0.08, 0.05), matWall(0x2a3648));
   door.position.set(0, 0.45, 0.92); g.add(door);
@@ -889,7 +889,7 @@ rope.rotation.x = Math.PI / 2; rope.position.set(0.45, 0.74, -1.5); dock.add(rop
   ]);
   const moor = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.022, 8, false), ropeM);
   moor.castShadow = true; dock.add(moor);
-  const stone = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), new THREE.MeshStandardMaterial({color: 0x8a8578, roughness: 0.95}));
+  const stone = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), new THREE.MeshStandardMaterial({color: 0x8a8578, roughness: 0.95}));
   stone.position.set(1.55, 0.08, 0.05); stone.scale.y = 0.6; stone.castShadow = true; dock.add(stone);
   window.__moorLines = (window.__moorLines || 0) + 1; // B165 W22
 }
@@ -1586,7 +1586,7 @@ window.__ffTick = (dt, t) => {
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
       const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12),
         new THREE.MeshStandardMaterial({color: patchCols[(ci + k) % 3]}));
       head.position.set(fx, 0.79, fz); head.castShadow = true; scene.add(head);
     }
@@ -1704,7 +1704,7 @@ window.__ffTick = (dt, t) => {
   function potFlower(x, z, col){
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.09, 0.16, 10), matWall(0xb06a45));
     pot.position.set(x, 0.08, z); pot.castShadow = true; scene.add(pot);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12),
       new THREE.MeshStandardMaterial({color: col, roughness: 0.8}));
     head.position.set(x, 0.2, z); scene.add(head);
   }
@@ -1789,7 +1789,7 @@ window.__ffTick = (dt, t) => {
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
       const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12),
         new THREE.MeshStandardMaterial({color: pc2[(ci + k) % 3]}));
       head.position.set(fx, 0.79, fz); head.castShadow = true; scene.add(head);
     }
@@ -1905,7 +1905,7 @@ const greens3 = [0x4f9140, 0x3f7f36, 0x6bae52, 0x2f6b3a];
       const fx = c[0] + Math.cos(ang) * rr, fz = c[1] + Math.sin(ang) * rr;
       const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.16, 8), matWall(0x3f7f36)); // B140 P21
       stem.position.set(fx, 0.68, fz); scene.add(stem);
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10),
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12),
         new THREE.MeshStandardMaterial({color: pc3[(ci + k) % 3]}));
       head.position.set(fx, 0.79, fz); head.castShadow = true; scene.add(head);
     }
@@ -4977,7 +4977,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
         if (!ok) continue;
         for (let j = 0; j < 6; j++){
           const fm = new THREE.MeshStandardMaterial({color: flowerCols[(j + Math.floor(Math.abs(s[0]*7+s[1]*3)) % 4)], roughness: 0.9, transparent: true, opacity: 0});
-          const fb = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random()*0.05, 8, 6), fm);
+          const fb = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random()*0.05, 12, 9), fm);
           const ang = Math.random()*Math.PI*2, rad = 0.25 + Math.random()*0.55;
           fb.position.set(s[0] + Math.cos(ang)*rad, 0.12 + Math.random()*0.06, s[1] + Math.sin(ang)*rad);
           fb.userData = {by: fb.position.y, ph: Math.random()*6.28};
@@ -4996,6 +4996,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
         scene.add(pl); window.__petals.push(pl);
       }
       window.__p72 = () => ({springW: +window.__springW.v.toFixed(2), flowerN: window.__flowers.length, petalN: window.__petals.length, pass: 72}); // B196 X24
+  window.__p73 = () => { let n = 0; try { scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.parameters && (o.geometry.parameters.radialSegments || 0) >= 24) n++; }); } catch (e) {} return {softN: n, pass: 73}; }; // B197 X25
     }
     const fsw = window.__springW.v;
     for (const fb of window.__flowers){ // B196 X24: Blieten atmen im Fruehling

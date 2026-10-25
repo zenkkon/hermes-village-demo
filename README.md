@@ -1740,3 +1740,10 @@ Block 4 EXTRAS Pass 3 (Gewitter + Pfuetzen):
 - Neue Probe window.__p72 (springW, flowerN, petalN, pass 72); Tags B196 X24 (6); village.html und village-standalone.html identisch (md5 0a3252e2, 1589552 Zeichen)
 - Review rv221 (Headless, tools/pw64.py in hermes-nexus, Server 8778): Tag 14:00 (rv221_tag.png 454632 B) + Nacht 23:00 (rv221_nacht.png 438816 B) angesehen, Frosted-Glass-Dashboard intakt, keine Regression, 0 echte JS-Fehler (nur benigner 404 /api/village/stream); Fruehlings-Check: springW 0.76, flowerN 54, petalN 40, Shot rv221_fruehling.png 454117 B angesehen, Panel korrekt "Saison: Fruehling"
 - beta196.zip gebaut (beide HTML-Dateien + README)
+
+## M204 - Beta 197: WORLD Pass 23 - Segment-Politur / weiche Kanten (B197 X25)
+- 20 Geometrie-Upgrades gegen den Blocky-Rest: Dach-Kegel und Turmspitzen 16/20 -> 32 Segmente (Hauptdach, Nebendach, Wasserturm-Dach, Kirchturm-Kegel, Turmdeckel), Gebaeude-Waelnde/Zylinder 18/20 -> 28-32 (Body, Wasserturm-Basis, Turmschaft, Hafenkran-Fuss, Eis-Schnee-Kappe), Turmkugel 20x12 -> 28x20
+- Kleinteile geglaettet: Deko-Kugeln 10x8/12x10 -> 16x12 (5x), Pilz-Punkte 8x6 -> 12x9, Kerzen-Kegel 8 -> 14 Segmente, B196-Blieten 8x6 -> 12x9
+- Probe window.__p73 (softN = Meshes mit radialSegments >= 24, pass 73); 1 Tag B197 X25 (Probe); village.html und village-standalone.html identisch (md5 910dfbf5, 1589795 Zeichen)
+- Review rv222 (Headless, tools/pw64.py in hermes-nexus, Server 8778): Tag 14:00 (rv222_tag.png 457148 B) + Nacht 23:00 (rv222_nacht.png 447902 B) beide ANGESEHEN: Dach-Silhouetten sichtbar weicher (weniger Fasetten), Frosted-Glass-Dashboard intakt, keine Regression, 0 echte JS-Fehler (nur benigner 404 /api/village/stream)
+- beta197.zip gebaut (beide HTML-Dateien + README); Abgleich: identische Dateien nach /workspace/hvd kopiert (Demo)
