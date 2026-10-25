@@ -4526,12 +4526,12 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
   const autumnW = {v: 0};
   const leafCols = [0xd97a2b, 0xc75d2a, 0xe0a13c, 0x8f4b1f];
   const leaves = [];
-  for (let i = 0; i < 90; i++){
+  for (let i = 0; i < 120; i++){ // B194 X22: dichteres Laub
     const lm = new THREE.MeshBasicMaterial({color: leafCols[i % 4], side: THREE.DoubleSide, transparent: true, opacity: 0}); // B152 X10
-    const lf = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.16), lm);
+    const lf = new THREE.Mesh(new THREE.PlaneGeometry(0.11 + Math.random() * 0.09, 0.11 + Math.random() * 0.09), lm); // B194 X22: organische Groessen
     lf.position.set((Math.random() - 0.5) * 30, 0.4 + Math.random() * 8, (Math.random() - 0.5) * 30);
     lf.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-    lf.userData = {fy: 0.45 + Math.random() * 0.5, ph: Math.random() * Math.PI * 2, sr: 0.6 + Math.random() * 1.2}; // B152 X10
+    lf.userData = {fy: 0.45 + Math.random() * 0.5, ph: Math.random() * Math.PI * 2, sr: 0.6 + Math.random() * 1.2, bo: 0.72 + Math.random() * 0.24}; // B152 X10 // B194 X22
     scene.add(lf); leaves.push(lf);
   }
   window.__p33 = () => ({leafN: leaves.length, autumnW: +autumnW.v.toFixed(2), leafY: +leaves[0].position.y.toFixed(2), pass: 33}); // B152 X10
@@ -4545,11 +4545,12 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
     winterW += ((lastWinter ? 1 : 0) - winterW) * Math.min(1, dt * 1.0); // B144 E2: Winter-Uebergang gleitet
     autumnW.v += ((lastSe === "herbst" ? 1 : 0) - autumnW.v) * Math.min(1, dt * 0.8); // B152 X10: Herbst-Uebergang gleitet
     leaves.forEach(lf => { // B152 X10: Laub faellt mit Wind und Drall
-      lf.material.opacity = 0.92 * autumnW.v;
+      lf.material.opacity = lf.userData.bo * autumnW.v; // B194 X22
       lf.visible = autumnW.v > 0.02;
       if (!lf.visible) return;
       lf.position.y -= dt * lf.userData.fy;
       lf.position.x += dt * 1.6; // Wind wie der Regen (+x) // B152 X10
+      lf.position.z += Math.sin(t * 0.9 + lf.userData.ph * 6) * dt * 0.55; // B194 X22: Z-Schwoegen
       if (lf.position.x > 16) lf.position.x = -16;
       lf.rotation.x += dt * lf.userData.sr; lf.rotation.z += dt * lf.userData.sr * 0.7; // B152 X10
       if (lf.position.y < 0.05){ lf.position.y = 8 + Math.random() * 3; lf.position.z = (Math.random() - 0.5) * 30; }
@@ -4609,7 +4610,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
     const rOn = gfx.pMat.opacity > 0.05; // Ripple nur bei sichtbarem Wasser
     gfx.rip.forEach(rr => {
       const u = rr.userData;
-      u.ph = (u.ph + dt * 0.55) % 1;
+      u.ph = (u.ph + dt * (0.55 + stormW * 0.5)) % 1; // B194 X22: schneller bei Gewitter
       const sc = 0.4 + u.ph * 2.2;
       rr.scale.set(sc, sc, 1);
       rr.material.opacity = rOn ? Math.max(0, (1 - u.ph) * 0.5 * gfx.pMat.opacity / 0.42) : 0;

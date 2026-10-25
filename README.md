@@ -2018,3 +2018,11 @@ und geshippt.
   4) Insel-Zylinder 56 -> 64 Segmente, Wasser-Scheibe 56 -> 64 (glatte Silhouette).
 - Headless-Review (rv217, 800x450, je eigene Chrome-Instanz wegen 2. Goto-Timeout): Tag 14:00 (rv217_tag.png 324.258 B, minD 0.589) + Nacht 23:00 (rv217_nacht.png 308.524 B, Laternen/Fensterlicht/Gluehwuermchen ff=0.85), UI in beiden komplett, Wege organisch, Inselform glatt, perr=0 in beiden Laeufen.
 - SHIP: beta193.zip (village.html + village-standalone.html), README M200, Commit B193 W22.
+## M201 - Beta 194: EXTRAS Pass 22 - Herbstlaub-Dichte + Wind (B194 X22)
+- Herbstlaub ausgebaut (EXTRAS Pass 22): 90 -> 120 Blaetter, organische Groesse 0.11+rand*0.09, per-leaf Opacity 0.72+rand*0.24
+- Neuer Z-Sway pro Blatt: sin(t*0.9+ph*6)*dt*0.55 (jedes Blatt taumelt individuell)
+- Regnen-Ripples im Sturm schneller: 0.55+stormW*0.5
+- 6 Tags B194 X22; village.html und village-standalone.html identisch (md5 10507c345f, 1585240 Zeichen)
+- Review rv218 (Headless): Tag 14:00 t=238 (errN 1 = bekannter benigner 404 /api/village/stream auf statischem Server) + Nacht 23:00 t=118 (ripOp 0.291 on, leafN 120, errN 0); beide Screenshots angesehen, Frosted-Glass-Dashboard intakt, Regen/Nacht-Look sauber
+- Herbst-Look per Probe verifiziert (window.__seasonSet('herbst'): autumnW lerpt hoch, leafN 120, errN 0); Herbst-Screenshot-Capture scheiterte in diesem Feuer 3x (WebSocketTimeoutException) - visueller Herbst-Check nachgereicht im naechsten Phase-Review
+- beta194.zip gebaut (beide HTML-Dateien)
