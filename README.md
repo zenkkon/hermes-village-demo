@@ -2026,3 +2026,13 @@ und geshippt.
 - Review rv218 (Headless): Tag 14:00 t=238 (errN 1 = bekannter benigner 404 /api/village/stream auf statischem Server) + Nacht 23:00 t=118 (ripOp 0.291 on, leafN 120, errN 0); beide Screenshots angesehen, Frosted-Glass-Dashboard intakt, Regen/Nacht-Look sauber
 - Herbst-Look per Probe verifiziert (window.__seasonSet('herbst'): autumnW lerpt hoch, leafN 120, errN 0); Herbst-Screenshot-Capture scheiterte in diesem Feuer 3x (WebSocketTimeoutException) - visueller Herbst-Check nachgereicht im naechsten Phase-Review
 - beta194.zip gebaut (beide HTML-Dateien)
+
+## M202 - Beta 195: EXTRAS Pass 23 - Blizzard-Modus (B195 X23)
+- Blizzard-Kopplung Winter x Sturm (EXTRAS Pass 23): Schnee-Dichte mat.opacity = w*0.85*winterW*(1+stormW*0.18), Flockengroesse +0.03*stormW*winterW
+- Blizzard-Turbulenz: wobCur = 0.4*winterW*(1+stormW*1.6) zusaetzlich 2. Gust-Sinusterm 0.25*stormW*winterW
+- Blizzard-Dunst: fog.far -45*blizW, fog.near -20*blizW; blizW = winterW*stormW, abfragbar via window.__blizGet
+- Neue Probe window.__p71 (snowOp, snowSize, fall, wob, blizW, stormW, winterW, pass 71); Tags B195 X23; village.html und village-standalone.html identisch (md5 88d266cab9, 1586243 Zeichen)
+- Review rv220 (Headless, Playwright-Capture): Tag 14:00 (rv220_tag.png 433897 B) + Nacht 23:00 (rv220_nacht.png 422374 B) angesehen, Frosted-Glass-Dashboard intakt, keine Regression; einziger JS-Fehler der bekannte benigne 404 /api/village/stream
+- Blizzard-Diagnose (tools/diag.py): Saison-Override haelt (se bleibt winter), winterW/stormW/blizW lerpen im Headless-Modus langsam aber stetig voll durch (t=180s: blizW 0.86, winterW 0.91, wob 0.92, snowOp 0.821, errs 0)
+- Blizzard-Shot rv220_blizzard2.png (428279 B) angesehen: dichter Blizzard mit Dunst, Detail-Panel korrekt "Saison: Winter / Wetter: Gewitter", UI komplett
+- beta195.zip gebaut (beide HTML-Dateien)

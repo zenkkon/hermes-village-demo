@@ -4522,6 +4522,9 @@ window.__p62 = function(){ return {chatEnds: window.__chatEnds || 0, grpForms: w
 window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.filter(x => x.life && x.life.chat).length, seek: (window.__lifeStat && window.__lifeStat.seek) || 0, stroll: (window.__lifeStat && window.__lifeStat.stroll) || 0, drift: (window.__lifeStat && window.__lifeStat.drift) || 0, vill: (typeof villagers !== "undefined" ? villagers.length : c.filter(x => x.villager).length), starts: window.__chatStarts || 0, pass: 64}; }; // B184 L14
   window.__p26 = () => ({stormW: +stormW.toFixed(2), storm, winterW: +winterW.toFixed(2), pass: 26}); // B144 E2 erweitert // Stufe 121 / Beta 143: EXTRAS Pass Probe (B143 E1)
   window.__p31 = () => ({streak: !!rainLines, rainOp: +lineMat.opacity.toFixed(3), snowOp: +mat.opacity.toFixed(3), winterW: +winterW.toFixed(2), w: +w.toFixed(2), fall: +fallCur.toFixed(1), pass: 31}); // B150 X8
+  window.__blizW = {v: 0}; let wobCur = 0; // B195 X23
+  window.__blizGet = () => ({winterW: +winterW.toFixed(3), stormW: +stormW.toFixed(3)}); // B195 X23
+  window.__p71 = () => ({snowOp: +mat.opacity.toFixed(3), snowSize: +mat.size.toFixed(3), fall: +fallCur.toFixed(1), wob: +wobCur.toFixed(2), blizW: +window.__blizW.v.toFixed(2), stormW: +stormW.toFixed(2), winterW: +winterW.toFixed(2), pass: 71}); // B195 X23
   // B152 X10: Herbstlaub (Fallblaetter im Herbst, Gegenstueck zum Schnee)
   const autumnW = {v: 0};
   const leafCols = [0xd97a2b, 0xc75d2a, 0xe0a13c, 0x8f4b1f];
@@ -4569,8 +4572,8 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
     const raining = w > 0.02;
     rain.visible = raining;
     rainLines.visible = raining; // B150 X8
-    mat.opacity = w * 0.85 * winterW; // B150 X8: Punkte sind jetzt nur Schnee
-    mat.size = 0.12 + 0.04 * winterW; // B150 X8: Schneegroesse (B144 E2-Basis)
+    mat.opacity = w * 0.85 * winterW * (1 + stormW * 0.18); // B150 X8: Punkte sind jetzt nur Schnee // B195 X23: Blizzard-Dichte
+    mat.size = 0.12 + 0.04 * winterW + 0.03 * stormW * winterW; // B150 X8: Schneegroesse (B144 E2-Basis) // B195 X23: Blizzard-Flocken
     mat.color.setHex(0x9fc8e8).lerp(winterRainCol, winterW); // B144 E2: Regen-/Schneefarbe gleitet
     lineMat.opacity = w * 0.55 * (1 - winterW); // B150 X8: Streaks nur bei Regen
     lineMat.color.setHex(0x9fc8e8).lerp(stormTint, stormW * 0.4); // B150 X8
@@ -4647,7 +4650,8 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
       fallCur = fall; // B150 X8
       for (let i = 0; i < N; i++){
         arr[i*3+1] -= dt * fall;
-        arr[i*3] += dt * wx + Math.sin(t * 1.1 + i * 0.73) * dt * 0.4 * winterW; // B150 X8: Schnee-Wobbel
+        wobCur = 0.4 * winterW * (1 + stormW * 1.6); // B195 X23: Blizzard-Turbulenz
+        arr[i*3] += dt * wx + Math.sin(t * 1.1 + i * 0.73) * dt * wobCur + Math.sin(t * 2.7 + i * 1.31) * dt * 0.25 * stormW * winterW; // B150 X8: Schnee-Wobbel // B195 X23: Blizzard-Gusts
         arr[i*3+2] += dt * wz;
         if (arr[i*3+1] < 0) arr[i*3+1] = 13 + Math.random() * 2;
         if (arr[i*3] > 17) arr[i*3] = -17; else if (arr[i*3] < -17) arr[i*3] = 17;
@@ -4960,7 +4964,7 @@ window.__p64 = function(){ const c = window.__crowd || []; return {chatNow: c.fi
       bgeo.attributes.position.needsUpdate = true;
     }
     sun.color.lerp(mk(0xfff0d6), petalAmt * 0.2);
-    if (scene.fog){ scene.fog.far = 160 - cur.snow * 70 - 85 * (window.__morningFog || 0); scene.fog.near = 55 - cur.snow * 35 - 34 * (window.__morningFog || 0); } // B178 E10
+    if (scene.fog){ const bz = window.__blizGet ? window.__blizGet() : {winterW: 0, stormW: 0}; window.__blizW.v = bz.winterW * bz.stormW; scene.fog.far = 160 - cur.snow * 70 - 85 * (window.__morningFog || 0) - window.__blizW.v * 45; scene.fog.near = 55 - cur.snow * 35 - 34 * (window.__morningFog || 0) - window.__blizW.v * 20; } // B178 E10 // B195 X23: Blizzard-Dunst
     if (name !== lastSeasBtn){
       lastSeasBtn = name;
       document.querySelectorAll("#dashSeason button").forEach(b => b.classList.toggle("on", b.dataset.s === name));
