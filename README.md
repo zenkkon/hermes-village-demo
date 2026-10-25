@@ -1997,3 +1997,14 @@ und geshippt.
 - Streak-Befund aus rv214 (Lektuere): Die diagonalen hellen Streifen sind NICHT das Regensystem (lineMat nur bei w > 0.5 sichtbar, Default Klar w=0) - am wahrscheinlichsten die vorhandenen Vogel-/Partikel-Systeme (p20 bird) im Flug, benign.
 - Headless-Review (rv215, 800x450, Raw-CDP): Tag 14:00 (rv215_tag.png 320.066 B, Voegel oben links sichtbar - bestaetigt Streak-Befund) + Nacht 23:00 (rv215_nacht.png 305.671 B, Laternen/Fensterlicht/Gluehwuermchen ff=0.85, p70 smVis=0), UI in beiden komplett, perr=0 in beiden Laeufen.
 - SHIP: beta191.zip (village.html + village-standalone.html), README M198, Commit B191 W21.
+
+## M199 - Beta 192: LIFE Pass 19 - Give-way-Feintuning (B192 L19)
+- Ziel: Block 3 LIFE, Ausweich-/Ueberhol-Logik feiner machen (kein Ueberlappen, weiches Passieren).
+- Neu (beide Dateien identisch, md5 800e0388fa..., 1.584.712 B):
+  1) Overlap-Haertung: Push bei od<0.55 von 2.6 auf 3.2 (B141 L8-Basis).
+  2) Head-on: Trigger-Radius 2.2 -> 2.4, neues rb.ho-Flag, sanfte Abbremsung auf 0.72 bei Head-on.
+  3) Choke-Warten: slow 0.5 -> 0.45 (Engstellen rechts-ran bleibt).
+  4) Ueberhol: laterale Staerke 1.3 -> 1.4, Reichweite 2.4 -> 2.6.
+  5) Gruppen-Kopplung: Warte-Bremse 0.72 -> 0.78 (weniger Stotter-Effekt).
+- Headless-Review (rv216, 800x450, Raw-CDP-Playwright): Soak-Taglauf (7 Samples ueber ~6 min) + Tag-Shot rv216_tag.png 319.297 B: UI komplett, Daecher aus B191 glatt, Voegel oben links bestaetigt. Nacht rv216_nacht.png 304.453 B: Laternen/Fensterlicht, Gluehwuermchen ff=0.85, 2 schlafende Villager (slept=2). Kennzahlen: minD 0.57-0.72 (ueber 0.55-Schwelle), overlap nur 1-2 Ereignisse pro 30-s-Fenster, grpWait 0, yields 15-19, headOn 0-10 (Abbremsung greift), perr=0 (Nachtl Lauf; Tag-Soak stdout ging beim Timeout verloren, Shot rendert sauber).
+- SHIP: beta192.zip (village.html + village-standalone.html), README M199, Commit B192 L19.

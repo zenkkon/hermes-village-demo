@@ -2409,19 +2409,21 @@ function lifeStep(rb, dt, t, crowd){
         const pf = isGrp ? 0.55 : 1.0;
         vx -= (ox/od) * push * 2.0 * pf; vz -= (oz/od) * push * 2.0 * pf;
         if ((bx*ox + bz*oz) / od > 0.3){ vx += bz * push * 1.6; vz += -bx * push * 1.6; yields++; }
-        if (od < 0.55){ if (!iChat && !(o.life && o.life.chat)) window.__lifeStat && (window.__lifeStat.overlap = (window.__lifeStat.overlap || 0) + 1); vx -= (ox/od) * push * 2.6; vz -= (oz/od) * push * 2.6; } // B141 L8
+        if (od < 0.55){ if (!iChat && !(o.life && o.life.chat)) window.__lifeStat && (window.__lifeStat.overlap = (window.__lifeStat.overlap || 0) + 1); vx -= (ox/od) * push * 3.2; vz -= (oz/od) * push * 3.2; } // B141 L8 // B192 L19
       }
     }
     // Stufe 111 / Beta 111: Block 3 LIFE Pass 6 - Head-on-Erkennung via Ist-Geschwindigkeit,
     // beide lenken gleichsinnig lateral -> sie passieren sich statt zu blockieren
+    rb.ho = 0; // B192 L19: Head-on-Flag fuer sanfte Abbremsung
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z, od = Math.hypot(ox, oz);
-      if (od > 0.01 && od < 2.2){
+      if (od > 0.01 && od < 2.4){
         const ovx = o.pvx || 0, ovz = o.pvz || 0;
         if (bx * ovx + bz * ovz < -0.25 && (bx * ox + bz * oz) / od > 0.4){
           window.__lifeStat && (window.__lifeStat.headOn = (window.__lifeStat.headOn || 0) + 1);
-          const s = (2.2 - od) / 2.2;
+          rb.ho = 1; // B192 L19
+          const s = (2.4 - od) / 2.4;
           vx += -bz * s * 1.5; vz += bx * s * 1.5;
         }
       }
@@ -2465,13 +2467,13 @@ function lifeStep(rb, dt, t, crowd){
     for (const o of crowd){
       if (o === rb || !o.g) continue;
       const ox = o.g.position.x - p.x, oz = o.g.position.z - p.z, od = Math.hypot(ox, oz);
-      if (od < 0.05 || od > 2.4) continue;
+      if (od < 0.05 || od > 2.6) continue;
       const along = (bx * ox + bz * oz) / od;
       if (along < 0.35) continue;
       const ovn = Math.hypot(o.pvx || 0, o.pvz || 0) || 1;
       if (((o.pvx || 0) * bx + (o.pvz || 0) * bz) / ovn > 0.6){
-        const s = (2.4 - od) / 2.4;
-        vx += bz * s * rb.ovSide * 1.3; vz += -bx * s * rb.ovSide * 1.3; // B169 L9
+        const s = (2.6 - od) / 2.6;
+        vx += bz * s * rb.ovSide * 1.4; vz += -bx * s * rb.ovSide * 1.4; // B169 L9 // B192 L19
         ovN++;
       }
     }
@@ -2499,7 +2501,7 @@ function lifeStep(rb, dt, t, crowd){
         const gx = gp.g.position.x - p.x, gz = gp.g.position.z - p.z, gd = Math.hypot(gx, gz);
         if (gd > 6 || (gp.life && gp.life.grp !== rb)){ rb.life.grp = null; if (gp.life) gp.life.grp = null; }
         else if (gd > 0.01 && ((gx*bx + gz*bz) / gd) < -0.85 && gd > 1.6){
-          vx *= 0.72; vz *= 0.72; window.__lifeStat && (window.__lifeStat.grpWait = (window.__lifeStat.grpWait || 0) + 1);
+          vx *= 0.78; vz *= 0.78; window.__lifeStat && (window.__lifeStat.grpWait = (window.__lifeStat.grpWait || 0) + 1); // B192 L19
         }
       } else if (rb.life.grp) rb.life.grp = null;
     } // B180 L11
@@ -2512,7 +2514,7 @@ function lifeStep(rb, dt, t, crowd){
     if (yields) window.__lifeYields = (window.__lifeYields || 0) + yields;
     window.__lifeStat = window.__lifeStat || {seek: 0, chat: 0};
     const vl = Math.hypot(vx, vz) || 1;
-    let slow = close < 0.7 ? 0.55 : 1; if (chokeWait) slow = Math.min(slow, 0.5); // B169 L9
+    let slow = close < 0.7 ? 0.55 : 1; if (chokeWait) slow = Math.min(slow, 0.45); if (rb.ho) slow = Math.min(slow, 0.72); // B169 L9 // B192 L19
     const sp = 1.05 * dt * (window.__lifeSpeed || 1) * slow
       * Math.min(1, 0.25 + d / 1.2); // Beta 116: Arrive-Bremse - sanftes Anhalten am Ziel
     const px0 = p.x, pz0 = p.z;
